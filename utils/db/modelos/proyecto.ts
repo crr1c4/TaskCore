@@ -15,6 +15,7 @@ export interface Proyecto {
   nombre: string
   descripcion: string
   fechaCreacion: Date
+  correoAdmin: string
   correosIntegrantesEquipo: string[]
 }
 
@@ -32,24 +33,26 @@ export async function crearProyecto(
     nombre: string
     descripcion: string
     correosIntegrantesEquipo: string[]
+    correoAdmin: string
   },
-  correoAdmin: string,
 ): Promise<string | null> {
+  // Creacion del proyecto
   const proyecto: Proyecto = {
     id: crypto.randomUUID(),
     nombre: datosInicialesProyecto.nombre,
     descripcion: datosInicialesProyecto.descripcion,
     fechaCreacion: new Date(),
+    correoAdmin: datosInicialesProyecto.correoAdmin,
     correosIntegrantesEquipo: datosInicialesProyecto.correosIntegrantesEquipo,
   }
 
-  const admin = await obtenerUsuario(correoAdmin)
+  const admin = await obtenerUsuario(datosInicialesProyecto.correoAdmin)
 
   // Solo los usuarios que son administradores pueden crear proyectos
   if (!admin) return null
   if (admin.rol != "admin") return null
 
-  const llave = [PROYECTOS, correoAdmin, proyecto.id]
+  const llave = [PROYECTOS, proyecto.id]
 
   const resultado = await DB.atomic()
     .check({ key: llave, versionstamp: null })
@@ -61,12 +64,10 @@ export async function crearProyecto(
 
 /**
  * Elimina un proyecto de la base de datos.
- * @param {string} correoAdmin - Correo del administrador del proyecto.
  * @param {string} id - Identificador del proyecto a eliminar.
- * @returns {Promise<void>}
  */
-export async function eliminarProyecto(correoAdmin: string, id: string) {
-  await DB.delete([PROYECTOS, correoAdmin, id])
+export async function eliminarProyecto(id: string) {
+  await DB.delete([PROYECTOS, id])
 }
 
 /**
@@ -77,10 +78,12 @@ export async function eliminarProyecto(correoAdmin: string, id: string) {
 export async function obtenerListaProyectosAdmin(
   correoAdmin: string,
 ): Promise<Proyecto[]> {
-  const proyectos = DB.list<Proyecto>({ prefix: [PROYECTOS, correoAdmin] })
+  const proyectos = DB.list<Proyecto>({ prefix: [PROYECTOS] })
   const proyectos_admin = []
   for await (const proyecto of proyectos) {
-    proyectos_admin.push(proyecto.value)
+    if (proyecto.value.correoAdmin === correoAdmin) {
+      proyectos_admin.push(proyecto.value)
+    }
   }
 
   return proyectos_admin

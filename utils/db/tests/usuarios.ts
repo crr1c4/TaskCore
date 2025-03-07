@@ -8,11 +8,11 @@
  * @see {@link https://jsr.io/@std/expect}
  */
 
-import * as Usuarios from "../models/usuario.ts"
+import * as Usuarios from "../modelos/usuario.ts"
 import { eliminarBaseDatos } from "../mod.ts"
 import { expect } from "jsr:@std/expect"
 import { verify } from "jsr:@felix/bcrypt"
-import { admin } from "./_datosEjemplo.ts"
+import { admin } from "./datosEjemplo.ts"
 
 Deno.test("usuario.creacion", async (tests) => {
   await eliminarBaseDatos()

@@ -1,5 +1,5 @@
-import { Usuario } from "../models/usuario.ts"
-import { Proyecto } from "../models/proyecto.ts"
+import { Usuario } from "../modelos/usuario.ts"
+import { Proyecto } from "../modelos/proyecto.ts"
 
 /**
  * Ejemplo del usuario.
@@ -59,6 +59,7 @@ export const proyecto1 = {
     "sofia.mendez@correo.com",
     "diego.fernandez@correo.com",
   ],
+  correoAdmin: "christian.venegas@correo.com"
 }
 
 export const proyecto2 = {
@@ -70,6 +71,7 @@ export const proyecto2 = {
     "luis.ramirez@correo.com",
     "diego.fernandez@correo.com",
   ],
+  correoAdmin: "christian.venegas@correo.com"
 }
 
 export const proyecto3 = {
@@ -81,11 +83,33 @@ export const proyecto3 = {
     "valeria.castillo@correo.com",
     "sofia.mendez@correo.com",
   ],
+  correoAdmin: "christian.venegas@correo.com"
 }
 
 export const proyecto4 = {
   nombre: "Testing",
-  descripcion:
-    "Testing para la aplicacion de TaskCore",
+  descripcion: "Testing para la aplicacion de TaskCore",
   correosIntegrantesEquipo: [],
+  correoAdmin: "christian.venegas@correo.com"
+}
+
+/**
+ * Ejemplo de anuncios para cada proyecto.
+ */
+export const anuncio1 = {
+  titulo: "Inicio del Proyecto",
+  descripcion:
+    "Hoy damos inicio al desarrollo del Sistema de Gestión de Tareas. Revisen los requisitos iniciales.",
+}
+
+export const anuncio2 = {
+  titulo: "Entrega de primeros bocetos",
+  descrpcion:
+    "Se ha completado el primer diseño del nuevo sitio web. Revisar y enviar comentarios.",
+}
+
+export const anuncio3 = {
+  titulo: "Revisión del API",
+  descrpcion:
+    "Se ha implementado la autenticación en la API. Favor de probarla y reportar errores.",
 }

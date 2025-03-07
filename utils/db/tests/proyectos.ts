@@ -1,10 +1,9 @@
-import * as Proyectos from "../models/proyecto.ts"
-import * as Usuarios from "../models/usuario.ts"
+import * as Proyectos from "../modelos/proyecto.ts"
+import * as Usuarios from "../modelos/usuario.ts"
 import { eliminarBaseDatos } from "../mod.ts"
 import { expect } from "jsr:@std/expect"
-// import { verify } from "jsr:@felix/bcrypt"
-import * as DatosEjemplo from "./_datosEjemplo.ts"
-import { Proyecto } from "../models/proyecto.ts"
+import * as DatosEjemplo from "./datosEjemplo.ts"
+import { Proyecto } from "../modelos/proyecto.ts"
 
 
 async function registrarTodo() {
@@ -19,17 +18,17 @@ async function registrarTodo() {
 
   await Proyectos.crearProyecto(
     DatosEjemplo.proyecto1,
-    DatosEjemplo.admin.correo,
+    // DatosEjemplo.admin.correo,
   )
 
   await Proyectos.crearProyecto(
     DatosEjemplo.proyecto2,
-    DatosEjemplo.admin.correo,
+    // DatosEjemplo.admin.correo,
   )
 
   await Proyectos.crearProyecto(
     DatosEjemplo.proyecto3,
-    DatosEjemplo.admin.correo,
+    // DatosEjemplo.admin.correo,
   )
 }
 
@@ -43,7 +42,7 @@ Deno.test("proyecto.creacion", async (tests) => {
 
     const resultado = await Proyectos.crearProyecto(
       DatosEjemplo.proyecto1,
-      DatosEjemplo.admin.correo,
+      // DatosEjemplo.admin.correo,
     )
     expect(resultado).not.toBeNull()
   })
@@ -51,7 +50,7 @@ Deno.test("proyecto.creacion", async (tests) => {
   await tests.step("error.miembro", async () => {
     const resultado = await Proyectos.crearProyecto(
       DatosEjemplo.proyecto1,
-      DatosEjemplo.miembro1.correo,
+      // DatosEjemplo.miembro1.correo,
     )
     expect(resultado).toBeNull()
   })
@@ -100,7 +99,7 @@ Deno.test("proyecto.eliminar", async () => {
   )
   expect(proyectos.length).toBe(3)
   proyectos.forEach((proyecto) =>
-    Proyectos.eliminarProyecto(DatosEjemplo.admin.correo, proyecto.id)
+    Proyectos.eliminarProyecto(proyecto.id)
   )
   proyectos = await Proyectos.obtenerListaProyectosAdmin(
     DatosEjemplo.admin.correo,
@@ -131,7 +130,6 @@ Deno.test("proyecto.editar", async () => {
   await registrarTodo()
   const id = await Proyectos.crearProyecto(
     DatosEjemplo.proyecto4,
-    DatosEjemplo.admin.correo,
   )
   expect(id).not.toBeNull()
   const nuevosDatos: Partial<Proyecto> = {

@@ -1,9 +1,10 @@
 export interface Tarea {
   id: string
   nombre: string
-  completado: boolean
+  estado: boolean
   descripcion: string
   fechaCreacion: Date
   fechaExpiracion: Date
-  enlacesEvidencia: string[]
 }
+
+// PROYECTO -> correoadmin -> idproyecto -> TAREAS -> idTarea

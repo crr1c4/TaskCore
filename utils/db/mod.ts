@@ -2,6 +2,7 @@ export const DB = await Deno.openKv()
 export const USUARIOS = "usuarios"
 export const TAREAS = "tareas";
 export const PROYECTOS = "proyectos"
+export const ANUNCIOS = "anuncios"
 
 /**
  * @author Christian Venegas
