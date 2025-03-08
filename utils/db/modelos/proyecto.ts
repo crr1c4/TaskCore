@@ -3,8 +3,8 @@
  * @author Christian Venegas
  * @description este archivo contiene las funciones de los proyectos para la BD.
  */
-import { DB, PROYECTOS } from "../mod.ts"
-import { obtenerUsuario } from "./usuario.ts"
+import { DB, PROYECTOS } from '../mod.ts'
+import { obtenerUsuario } from './usuario.ts'
 
 // TODO: Añadir verificacion para correos no existentes.
 /**
@@ -25,7 +25,7 @@ export interface Proyecto {
  * @param {string} datosInicialesProyecto.nombre - Nombre del proyecto.
  * @param {string} datosInicialesProyecto.descripcion - Descripción del proyecto.
  * @param {string[]} datosInicialesProyecto.correosIntegrantesEquipo - Correos de los integrantes del equipo.
- * @param {string} correoAdmin - Correo del administrador que crea el proyecto.
+ * @param {string} datosIniciales.correoAdmin - Correo del administrador que crea el proyecto.
  * @returns {Promise<boolean>} `true` si el proyecto se creó con éxito, `false` en caso contrario.
  */
 export async function crearProyecto(
@@ -37,6 +37,11 @@ export async function crearProyecto(
   },
 ): Promise<string | null> {
   // Creacion del proyecto
+  for (const correo of datosInicialesProyecto.correosIntegrantesEquipo) {
+    const usuario = await obtenerUsuario(correo) 
+    if (!usuario) return null
+  }
+
   const proyecto: Proyecto = {
     id: crypto.randomUUID(),
     nombre: datosInicialesProyecto.nombre,
@@ -45,12 +50,6 @@ export async function crearProyecto(
     correoAdmin: datosInicialesProyecto.correoAdmin,
     correosIntegrantesEquipo: datosInicialesProyecto.correosIntegrantesEquipo,
   }
-
-  const admin = await obtenerUsuario(datosInicialesProyecto.correoAdmin)
-
-  // Solo los usuarios que son administradores pueden crear proyectos
-  if (!admin) return null
-  if (admin.rol != "admin") return null
 
   const llave = [PROYECTOS, proyecto.id]
 
@@ -110,30 +109,26 @@ export async function obtenerListaProyectosMiembro(
 
 /**
  * Obtiene un proyecto específico de un administrador.
- * @param {string} correoAdmin - Correo del administrador.
  * @param {string} id - Identificador del proyecto.
  * @returns {Promise<Proyecto | null>} El proyecto si existe, de lo contrario `null`.
  */
 export async function obtenerProyecto(
-  correoAdmin: string,
   id: string,
 ): Promise<Proyecto | null> {
-  return (await DB.get<Proyecto>([PROYECTOS, correoAdmin, id])).value
+  return (await DB.get<Proyecto>([PROYECTOS, id])).value
 }
 
 /**
  * Edita los datos de un proyecto existente.
- * @param {string} correoAdmin - Correo del administrador del proyecto.
  * @param {string} id - Identificador del proyecto.
  * @param {Partial<Proyecto>} datosNuevos - Datos nuevos del proyecto.
  * @returns {Promise<boolean>} `true` si la edición fue exitosa, `false` en caso contrario.
  */
 export async function editarProyecto(
-  correoAdmin: string,
   id: string,
   datosNuevos: Partial<Proyecto>,
 ): Promise<boolean> {
-  const proyecto = await obtenerProyecto(correoAdmin, id)
+  const proyecto = await obtenerProyecto(id)
   if (!proyecto) return false
 
   const proyectoActualizado: Proyecto = {
@@ -146,7 +141,7 @@ export async function editarProyecto(
 
   // Inserción de los nuevos datos.
   const resultado = await DB.atomic()
-    .set([PROYECTOS, correoAdmin, id], proyectoActualizado)
+    .set([PROYECTOS, id], proyectoActualizado)
     .commit()
   return resultado.ok
 }

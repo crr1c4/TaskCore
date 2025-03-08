@@ -3,6 +3,7 @@ export const USUARIOS = "usuarios"
 export const TAREAS = "tareas";
 export const PROYECTOS = "proyectos"
 export const ANUNCIOS = "anuncios"
+export const COMENTARIOS = "comentarios"
 
 /**
  * @author Christian Venegas

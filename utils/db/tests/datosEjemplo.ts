@@ -113,3 +113,21 @@ export const anuncio3 = {
   descrpcion:
     "Se ha implementado la autenticación en la API. Favor de probarla y reportar errores.",
 }
+
+export const tarea1 = {
+  nombre: "Tarea 1",
+  descripcion: "Bañar al perro",
+  fechaExpiracion: new Date(2030, 10, 3)
+}
+
+export const tarea2 = {
+  nombre: "Tarea 2",
+  descripcion: "Bañar al gato",
+  fechaExpiracion: new Date(2025, 1, 6)
+}
+
+export const tarea3 = {
+  nombre: "Tarea 3",
+  descripcion: "Bañar al zorro",
+  fechaExpiracion: new Date(2025, 10, 21)
+}

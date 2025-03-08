@@ -1,3 +1,9 @@
+/**
+ * @file tests/proyectos.ts
+ * @author Christian Venegas
+ * @description Archivo que contiene las pruebas para la gestión de proyectos en la base de datos.
+ */
+
 import * as Proyectos from "../modelos/proyecto.ts"
 import * as Usuarios from "../modelos/usuario.ts"
 import { eliminarBaseDatos } from "../mod.ts"
@@ -5,8 +11,11 @@ import { expect } from "jsr:@std/expect"
 import * as DatosEjemplo from "./datosEjemplo.ts"
 import { Proyecto } from "../modelos/proyecto.ts"
 
-
-async function registrarTodo() {
+/**
+ * Registra todos los usuarios y proyectos en la base de datos para los tests.
+ * @returns {Promise<void>}
+ */
+async function registrarTodo(): Promise<void> {
   await eliminarBaseDatos()
 
   await Usuarios.insertarUsuario(DatosEjemplo.admin)
@@ -32,9 +41,11 @@ async function registrarTodo() {
   )
 }
 
+/**
+ * Prueba la creación de proyectos.
+ */
 Deno.test("proyecto.creacion", async (tests) => {
   await registrarTodo()
-  console.log("Entro aqui")
 
   await tests.step("exito.admin", async () => {
     // Registrar primero el admin
@@ -46,16 +57,11 @@ Deno.test("proyecto.creacion", async (tests) => {
     )
     expect(resultado).not.toBeNull()
   })
-
-  await tests.step("error.miembro", async () => {
-    const resultado = await Proyectos.crearProyecto(
-      DatosEjemplo.proyecto1,
-      // DatosEjemplo.miembro1.correo,
-    )
-    expect(resultado).toBeNull()
-  })
 })
 
+/**
+ * Prueba la obtención y listado de proyectos.
+ */
 Deno.test("proyecto.listar", async (tests) => {
   await registrarTodo()
 
@@ -92,6 +98,9 @@ Deno.test("proyecto.listar", async (tests) => {
   })
 })
 
+/**
+ * Prueba la eliminación de proyectos.
+ */
 Deno.test("proyecto.eliminar", async () => {
   await registrarTodo()
   let proyectos = await Proyectos.obtenerListaProyectosAdmin(
@@ -107,6 +116,9 @@ Deno.test("proyecto.eliminar", async () => {
   expect(proyectos.length).toBe(0)
 })
 
+/**
+ * Prueba la obtención de un proyecto por su ID.
+ */
 Deno.test("proyecto.obtener", async () => {
   await registrarTodo()
 
@@ -116,16 +128,19 @@ Deno.test("proyecto.obtener", async () => {
   expect(proyectos.length).toBe(3)
 
   expect(
-    await Proyectos.obtenerProyecto(DatosEjemplo.admin.correo, proyectos[0].id),
+    await Proyectos.obtenerProyecto(proyectos[0].id),
   ).toBeTruthy()
   expect(
-    await Proyectos.obtenerProyecto(DatosEjemplo.admin.correo, proyectos[1].id),
+    await Proyectos.obtenerProyecto(proyectos[1].id),
   ).toBeTruthy()
   expect(
-    await Proyectos.obtenerProyecto(DatosEjemplo.admin.correo, proyectos[2].id),
+    await Proyectos.obtenerProyecto(proyectos[2].id),
   ).toBeTruthy()
 })
 
+/**
+ * Prueba la edición de un proyecto.
+ */
 Deno.test("proyecto.editar", async () => {
   await registrarTodo()
   const id = await Proyectos.crearProyecto(
@@ -142,9 +157,8 @@ Deno.test("proyecto.editar", async () => {
     ],
   }
 
-  await Proyectos.editarProyecto(DatosEjemplo.admin.correo, id!, nuevosDatos)
+  await Proyectos.editarProyecto(id!, nuevosDatos)
   const proyecto = await Proyectos.obtenerProyecto(
-    DatosEjemplo.admin.correo,
     id!,
   )
 
