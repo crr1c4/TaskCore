@@ -1,6 +1,5 @@
 import { FreshContext } from "$fresh/server.ts"
 import { Handlers } from "$fresh/server.ts"
-import { signupSchema } from "../utils/schemas.ts"
 
 // Esquema específico para validar la complejidad de la contraseña
 
