@@ -7,7 +7,7 @@ export const COMENTARIOS = "comentarios"
 
 /**
  * @author Christian Venegas
- * @description WARNING: Esta función elimina todos los registros de la base de datos.
+ *  WARNING: Esta función elimina todos los registros de la base de datos.
  */
 export async function eliminarBaseDatos() {
   const entries = DB.list({ prefix: [] })

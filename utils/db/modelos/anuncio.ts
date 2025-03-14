@@ -24,7 +24,7 @@ export interface Anuncio {
  * @param {string} idProyecto - ID del proyecto al que pertenece el anuncio.
  * @returns {Promise<string | null>} - El ID del anuncio si la creación es exitosa, o `null` si falla.
  */
-export async function crearAnuncio(
+export async function insertarAnuncio(
   datosIniciales: { titulo: string; descripcion: string },
   idProyecto: string,
 ): Promise<string | null> {

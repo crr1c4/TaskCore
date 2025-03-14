@@ -31,12 +31,12 @@ Deno.test('anuncio.creacion', async (tests) => {
   const idProyecto = await registrarTodo()
 
   await tests.step('exito', async () => {
-    const idAnuncio = await Anuncios.crearAnuncio({ titulo: 'Anuncio 1', descripcion: 'ABC' }, idProyecto!)
+    const idAnuncio = await Anuncios.insertarAnuncio({ titulo: 'Anuncio 1', descripcion: 'ABC' }, idProyecto!)
     expect(idAnuncio).not.toBeNull()
   })
 
   await tests.step('error', async () => {
-    const idAnuncio = await Anuncios.crearAnuncio({ titulo: 'Anuncio 1', descripcion: 'ABC' }, 'id_falsa')
+    const idAnuncio = await Anuncios.insertarAnuncio({ titulo: 'Anuncio 1', descripcion: 'ABC' }, 'id_falsa')
     expect(idAnuncio).toBeNull()
   })
 })
@@ -46,8 +46,8 @@ Deno.test('anuncio.creacion', async (tests) => {
  */
 Deno.test("anuncios.obtener", async () => {
   const idProyecto = await registrarTodo()
-    await Anuncios.crearAnuncio({ titulo: 'Anuncio 1', descripcion: 'ABC' }, idProyecto!)
-    await Anuncios.crearAnuncio({ titulo: 'Anuncio 2', descripcion: 'ABC' }, idProyecto!)
+    await Anuncios.insertarAnuncio({ titulo: 'Anuncio 1', descripcion: 'ABC' }, idProyecto!)
+    await Anuncios.insertarAnuncio({ titulo: 'Anuncio 2', descripcion: 'ABC' }, idProyecto!)
   
   const anuncios = await Anuncios.obtenerAnunciosProyecto(idProyecto!)
 
@@ -59,8 +59,8 @@ Deno.test("anuncios.obtener", async () => {
  */
 Deno.test("anuncios.eliminar", async () => {
   const idProyecto = await registrarTodo()
-    const idAnuncio1 = await Anuncios.crearAnuncio({ titulo: 'Anuncio 1', descripcion: 'ABC' }, idProyecto!)
-    const idAnuncio2 = await Anuncios.crearAnuncio({ titulo: 'Anuncio 2', descripcion: 'ABC' }, idProyecto!)
+    const idAnuncio1 = await Anuncios.insertarAnuncio({ titulo: 'Anuncio 1', descripcion: 'ABC' }, idProyecto!)
+    const idAnuncio2 = await Anuncios.insertarAnuncio({ titulo: 'Anuncio 2', descripcion: 'ABC' }, idProyecto!)
 
   let anuncios = await Anuncios.obtenerAnunciosProyecto(idProyecto!)
   expect(anuncios.length).toBe(2)
