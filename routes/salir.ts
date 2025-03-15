@@ -1,18 +1,26 @@
-import { FreshContext, Handlers } from '$fresh/server.ts'
-import { deleteCookie } from 'jsr:@std/http/cookie'
+import { Handlers } from "$fresh/server.ts";
+import { deleteCookie } from "jsr:@std/http/cookie";
 
-// Esquema específico para validar la complejidad de la contraseña
+/**
+ * Manejador para cerrar sesión eliminando la cookie de autenticación.
+ * @type {Handlers} Manejador de solicitudes HTTP.
+ */
 export const handler: Handlers = {
-  GET(_req: Request, _ctx: FreshContext) {
-    const headers = new Headers()
+  /**
+   * Maneja la solicitud GET para cerrar sesión.
+   */
+  GET() {
+    const headers = new Headers();
 
-    deleteCookie(headers, 'token')
-    headers.set("location", "/ingresar")
-    
+    // Eliminar la cookie de autenticación.
+    deleteCookie(headers, "token");
+
+    // Redirigir al usuario a la página de inicio de sesión.
+    headers.set("Location", "/ingresar");
+
     return new Response(null, {
-      status: 302,
-      headers
-    })
+      status: 302, // Redirección temporal.
+      headers,
+    });
   },
-
-}
+};

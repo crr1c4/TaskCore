@@ -1,13 +1,17 @@
-import { FreshContext } from '$fresh/server.ts'
 import { Handlers } from '$fresh/server.ts'
 import * as esquemas from '../utils/esquemas.ts'
 import { insertarUsuario, Usuario } from '../utils/db/modelos/usuario.ts'
 
-// TODO: CAMBIAR LOS ERRORES PARA PONERLOS CON EL FRESH CONTEXT
-
-// Esquema específico para validar la complejidad de la contraseña
+/**
+ * Manejador de la ruta de registro de usuarios.
+ * @type {Handlers} Define un manejador para la solicitud HTTP POST.
+ */
 export const handler: Handlers = {
-  async POST(req: Request, _ctx: FreshContext) {
+  /**
+   * Maneja la solicitud POST para registrar un nuevo usuario.
+   * @param {Request} req - La solicitud HTTP entrante.
+   */
+  async POST(req: Request) {
     try {
       // Obtención de los datos del formulario de envio.
       const formulario = await req.formData()
@@ -73,6 +77,7 @@ export const handler: Handlers = {
         },
       })
     } catch (error) {
+      // En caso de error, se redirige al formulario de registro con un mensaje de error.
       const params = new URLSearchParams({ error: JSON.stringify(error) })
       return new Response(null, {
         status: 303,

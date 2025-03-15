@@ -1,5 +1,4 @@
 import { JWTPayload, jwtVerify, SignJWT } from 'npm:jose'
-import { JWTVerifyResult } from 'npm:jose'
 
 /**
  * Crea un JWT.
@@ -23,8 +22,9 @@ export async function crearToken(contenidoToken: JWTPayload): Promise<string> {
 }
 
 /**
- * Crea un JWT.
- * @param contenidoToken {JWTPayload} el contenido que se le va pasar al token
+ * Obtiene el contenido del token.
+ * @param token {string} el token que se pasa de la cookie. 
+ * @returns {Promise<JWTPayload>} el contenido del token
  */
 export async function verificarToken(token: string): Promise<JWTPayload> {
   // Verificación de la variable de entorno.
@@ -36,6 +36,6 @@ export async function verificarToken(token: string): Promise<JWTPayload> {
   const secreto = new TextEncoder().encode(Deno.env.get('SECRETO'))
 
   // Obtención del contenido del token.
-  const resultado = await jwtVerify(token, secreto) as JWTVerifyResult
-  return resultado.payload
+  const { payload } = await jwtVerify(token, secreto)
+  return payload
 }
