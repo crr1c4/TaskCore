@@ -1,104 +1,49 @@
-import { JSX } from "preact";
-import { IS_BROWSER } from "$fresh/runtime.ts";
+// deno-lint-ignore-file
 
-export  function ButtonBlue1(props: JSX.HTMLAttributes<HTMLButtonElement>) {
-  return (
-    <button
-      {...props}
-      disabled={!IS_BROWSER || props.disabled}
-      class="px-2 py-1 bg-sky-500/75 border-2  hover:bg-gray-200 transition-colors
-        font-sans font-semibold rounded-lg shadow-md cursor-pointer"
-    > Ingresar</button>
-  );
+// Definición de la interfaz ColorProps que permite seleccionar entre tres colores predefinidos.
+interface ColorProps {
+  color: 'sky-500' | 'green-400' | 'orange-400'
 }
 
-
-export function ButtonBlue2(props: JSX.HTMLAttributes<HTMLButtonElement>) {
-  return (
-    <button
-      {...props}
-      disabled={!IS_BROWSER || props.disabled}
-      class="w-1/4 px-2 py-1 bg-sky-500/75 border-2  hover:bg-gray-200 transition-colors
-        font-sans font-semibold rounded-lg shadow-md cursor-pointer"
-    > + Agregar Tarea / - Eliminar Tarea</button>
-  );
+// Mapeo de colores de fondo para aplicar estilos dinámicos en los botones.
+const backgroundColors = {
+  'sky-500': 'bg-sky-500',
+  'green-400': 'bg-green-400',
+  'orange-400': 'bg-orange-400',
 }
-
-export function ButtonBlue3(props: JSX.HTMLAttributes<HTMLButtonElement>) {
+// Componente ButtonIngresar: Botón estilizado con colores dinámicos y efecto hover cambiando su color de fondo.
+export function ButtonIngresar(props: ColorProps) {
+  const { color } = props
   return (
     <button
-      {...props}
-      disabled={!IS_BROWSER || props.disabled}
-      class="w-1/4 px-2 py-1 bg-sky-500/75 border-2  hover:bg-gray-200 transition-colors
-        font-sans font-semibold rounded-lg shadow-md cursor-pointer"
-    > Tarea Completada</button>
-  );
+      class={`px-2 py-1 ${backgroundColors[color]} border-2  hover:bg-gray-200 transition-colors
+        font-sans font-semibold rounded-lg shadow-md cursor-pointer`}
+    >
+      Ingresar
+    </button>
+  )
 }
-
-export  function ButtonOrange1(props: JSX.HTMLAttributes<HTMLButtonElement>) {
+// Componente ButtonAcciones: Botón con estilos dinámicos para agregar o eliminar tareas.
+export function ButtonAcciones(props: ColorProps) {
+  const { color } = props
   return (
     <button
-      {...props}
-      disabled={!IS_BROWSER || props.disabled}
-      class="px-2 py-1 bg-orange-400/75 border-2  hover:bg-gray-200 transition-colors
-        font-sans font-semibold rounded-lg shadow-md cursor-pointer"
-    > Ingresar</button>
-  );
+      class={`w-1/4 px-2 py-1 ${backgroundColors[color]} border-2  hover:bg-gray-200 transition-colors
+        font-sans font-semibold rounded-lg shadow-md cursor-pointer`}
+    >
+      + Agregar Tarea / - Eliminar Tarea
+    </button>
+  )
 }
-
-
-export function ButtonOrange2(props: JSX.HTMLAttributes<HTMLButtonElement>) {
+// Componente ButtonTareaCompletada: Botón con estilos dinámicos para marcar una tarea como completada.
+export function ButtonTareaCompletada(props: ColorProps) {
+  const { color } = props
   return (
     <button
-      {...props}
-      disabled={!IS_BROWSER || props.disabled}
-      class="w-1/4 px-2 py-1 bg-orange-400/75 border-2  hover:bg-gray-200 transition-colors
-        font-sans font-semibold rounded-lg shadow-md cursor-pointer"
-    > + Agregar Tarea / - Eliminar Tarea</button>
-  );
-}
-
-export function ButtonOrange3(props: JSX.HTMLAttributes<HTMLButtonElement>) {
-  return (
-    <button
-      {...props}
-      disabled={!IS_BROWSER || props.disabled}
-      class="w-1/4 px-2 py-1 bg-orange-400/75 border-2  hover:bg-gray-200 transition-colors
-        font-sans font-semibold rounded-lg shadow-md cursor-pointer"
-    > Tarea Completada</button>
-  );
-}
-
-export default function ButtonGreen1(props: JSX.HTMLAttributes<HTMLButtonElement>) {
-  return (
-    <button
-      {...props}
-      disabled={!IS_BROWSER || props.disabled}
-      class="px-2 py-1 bg-green-400/75 border-2  hover:bg-gray-200 transition-colors
-        font-sans font-semibold rounded-lg shadow-md cursor-pointer"
-    > Ingresar</button>
-  );
-}
-
-
-export function ButtonGreen2(props: JSX.HTMLAttributes<HTMLButtonElement>) {
-  return (
-    <button
-      {...props}
-      disabled={!IS_BROWSER || props.disabled}
-      class="w-1/4 px-2 py-1 bg-green-400/75 border-2  hover:bg-gray-200 transition-colors
-        font-sans font-semibold rounded-lg shadow-md cursor-pointer"
-    > + Agregar Tarea / - Eliminar Tarea</button>
-  );
-}
-
-export function ButtonGreen3(props: JSX.HTMLAttributes<HTMLButtonElement>) {
-  return (
-    <button
-      {...props}
-      disabled={!IS_BROWSER || props.disabled}
-      class="w-1/4 px-2 py-1 bg-green-400/75 border-2  hover:bg-gray-200 transition-colors
-        font-sans font-semibold rounded-lg shadow-md cursor-pointer"
-    > Tarea Completada</button>
-  );
+      class={`w-1/4 px-2 py-1 ${backgroundColors[color]} border-2  hover:bg-gray-200 transition-colors
+        font-sans font-semibold rounded-lg shadow-md cursor-pointer`}
+    >
+      Tarea Completada
+    </button>
+  )
 }

@@ -1,41 +1,19 @@
-import { JSX } from "preact";
-import { IS_BROWSER } from "$fresh/runtime.ts";
-
-export  function TextAreaBlue(props: JSX.HTMLAttributes<HTMLTextAreaElement>){
-    return(
-        <textarea
-            {...props}
-            disabled={!IS_BROWSER || props.disabled}
-            class=" mr-3 w-80 h-64
-                    border-2 border-sky-500 rounded-lg
-                    cursor-text"
-            placeholder="Ingresa un comentario al proyecto"
-            ></textarea>
-    );
+// Definición de la interfaz ColorProps que permite seleccionar entre tres colores predefinidos.
+interface ColorProps {
+  color: 'sky-500' | 'green-400' | 'orange-400'
 }
 
-export  function TextAreaGreen(props: JSX.HTMLAttributes<HTMLTextAreaElement>){
-    return(
-        <textarea
-            {...props}
-            disabled={!IS_BROWSER || props.disabled}
-            class=" mr-3 w-80 h-64
-                    border-2 border-green-400 rounded-lg
-                    cursor-text"
-            placeholder="Ingresa un comentario al proyecto"
-            ></textarea>
-    );
-}
+/*Función TextArea la cual modifica las propiedades de color,
+tamaño, estilo del contorno, bordes y cursor al posicionarse por encima*/
+export function TextArea(props: ColorProps) {
+  const { color } = props
 
-export  function TextAreaOrange(props: JSX.HTMLAttributes<HTMLTextAreaElement>){
-    return(
-        <textarea
-            {...props}
-            disabled={!IS_BROWSER || props.disabled}
-            class="mr-3 w-80 h-64
-                    border-2 border-orange-400 rounded-lg
-                    cursor-text"
-            placeholder="Ingresa un comentario al proyecto"
-            ></textarea>
-    );
+  return (
+    <textarea
+      class={` mr-3 w-80 h-64
+                    border-2 border-${color} rounded-lg
+                    cursor-text`}
+      placeholder='Ingresa un comentario al proyecto'
+    />
+  )
 }
