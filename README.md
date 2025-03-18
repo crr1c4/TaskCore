@@ -1,16 +1,37 @@
-# Fresh project
+# TaskCore
+## RAMA DB
 
-Your new Fresh project is ready to go. You can follow the Fresh "Getting
-Started" guide here: https://fresh.deno.dev/docs/getting-started
+Los cambios de esta rama estan en utils/db/
 
-### Usage
-
-Make sure to install Deno: https://deno.land/manual/getting_started/installation
-
-Then start the project:
-
+Para ejecutar los tests:
 ```
-deno task start
+deno task test_db
 ```
 
-This will watch the project directory and restart as necessary.
+Para subir las cambios (**Pedir permiso**):
+Checar que si sea asi XD:
+```
+git switch -c db-{nombre-rama}
+git add .
+git commit -m "Su log de los cambios"
+git push origin db-{nombre-rama}
+```
+De aqui hacen su pull request para checar los cambios.
+
+[!TODO] Anuncios
+    - Funciones
+    - Testing
+
+[!TODO] Comentarios
+    - Funciones
+    - Testing
+
+[!TODO] Tareas
+    - Funciones
+    - Testing
+
+https://nextjs.org/docs/pages/building-your-application/authentication
+
+https://docs.deno.com/examples/creating_and_verifying_jwt/
+
+https://deno.com/blog/setup-auth-with-fresh
