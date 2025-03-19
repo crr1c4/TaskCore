@@ -29,9 +29,3 @@ De aqui hacen su pull request para checar los cambios.
 [!TODO] Tareas
     - Funciones
     - Testing
-
-https://nextjs.org/docs/pages/building-your-application/authentication
-
-https://docs.deno.com/examples/creating_and_verifying_jwt/
-
-https://deno.com/blog/setup-auth-with-fresh
