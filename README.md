@@ -29,7 +29,3 @@ De aqui hacen su pull request para checar los cambios.
 [!TODO] Tareas
     - Funciones
     - Testing
-
-
-# RAMA estilos
-- cambiar unicamente la carpeta estilos/
