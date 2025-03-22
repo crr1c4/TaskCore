@@ -75,7 +75,7 @@ export const handler: Handlers = {
         throw {
           ...datos,
           error:
-            'Las contraseñas deben ser de 8 caracteres, debe contar con mayúsculas, minúsculas, números y carácteres especiales.',
+            'Las contraseñas deben ser mayor de 8 caracteres, debe contar con mayúsculas, minúsculas, números y carácteres especiales.',
         }
       }
 
@@ -88,7 +88,10 @@ export const handler: Handlers = {
       }
 
       if (!await insertarUsuario(usuario)) {
-        throw 'El correo electronico ya esta registrado.'
+        throw {
+          ...datos,
+          error: 'El correo electronico ya esta registrado.',
+        }
       }
 
       // Respuesta la petición
