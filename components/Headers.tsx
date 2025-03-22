@@ -1,11 +1,16 @@
-// Componente Header1: Encabezado H1 con un efecto de degradado en el texto.
+import { ComponentChildren } from 'preact'
 
-export function Header1() {
+interface Props {
+  children: ComponentChildren
+}
+
+// Componente Header1: Encabezado H1 con un efecto de degradado en el texto.
+export function EncabezadoPrincipal({ children }: Props) {
   return (
-    <h1 class='text text-4xl font-semibold drop-shadow-md
-        bg-gradient-to-r from-sky-500/75 to-orange-400  bg-clip-text
-         text-transparent'>
-      Primer tipo de encabezado
+    <h1 class='text-4xl font-semibold drop-shadow-md
+        bg-gradient-to-r from-sky-500/75 to-yellow-400 bg-clip-text
+         text-transparent text-center pb-2'>
+      {children}
     </h1>
   )
 }
@@ -26,7 +31,6 @@ al posicionar el cursor por encima en la palabra tipo, agregando un color azul c
 export function Header3() {
   return (
     <h1 class=' text-xl font-semibold drop-shadow-md
-                    
                     cursor-pointer'>
       Tercer{' '}
       <a
