@@ -2,7 +2,6 @@ import { PageProps } from '$fresh/server.ts'
 import { EstadoUsuario } from '../_middleware.ts'
 
 export default function Home(props: PageProps<EstadoUsuario>) {
-  
   return (
     <div>
       bienvenido miembro

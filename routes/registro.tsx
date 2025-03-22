@@ -1,6 +1,19 @@
 import { Handlers } from '$fresh/server.ts'
 import * as esquemas from '../utils/esquemas.ts'
 import { insertarUsuario, Usuario } from '../utils/db/modelos/usuario.ts'
+import { EncabezadoPrincipal } from '../components/Headers.tsx'
+import { CampoIngreso } from '../components/Input.tsx'
+import { BotonIngresar } from '../components/Button.tsx'
+import { ModalError } from '../islands/Modal.tsx'
+import Fondo from '../components/Fondo.tsx'
+import Enlace from '../components/Enlace.tsx'
+import Footer from '../components/Footer.tsx'
+
+interface DatosErrorRegistro {
+  nombre: string
+  correo: string
+  error: string
+}
 
 /**
  * Manejador de la ruta de registro de usuarios.
@@ -27,34 +40,43 @@ export const handler: Handlers = {
       const verificacionEsquemaContraseña = esquemas.esquemaContraseña.safeParse(contraseña)
 
       // Verificación de que los datos no sean undefined.
-      if (!nombre || !correo || !contraseña || !verificacionContraseña) {
-        throw 'Error en el envio del formulario.'
+      if (!nombre || !correo || !contraseña || !verificacionContraseña || !rol) {
+        throw { nombre: '', correo: '', error: 'Error en el envio del formulario.' }
+      }
+
+      const datos = {
+        nombre,
+        correo,
       }
 
       // Verificar que las contraseñas sean iguales.
       if (contraseña !== verificacionContraseña) {
-        throw 'Las contraseñas no coinciden.'
+        throw { ...datos, error: 'Las contraseñas no coinciden.' }
       }
 
       // Verificación del rol.
       if (rol !== 'miembro' && rol !== 'admin') {
-        throw 'No se ingreso un rol valido.'
+        throw { ...datos, error: 'No se ingreso un rol valido.' }
       }
 
       // Verificar que los esquemas esten correctos.
       // Verificación del esquema del nombre.
       if (!verificacionEsquemaNombre.success) {
-        throw 'El nombre de usuario no es valido.'
+        throw { ...datos, error: 'El nombre de usuario no es valido.' }
       }
 
       // Verificación del esquema del correo.
       if (!verificacionEsquemaCorreo.success) {
-        throw 'El correo electronico no es valido.'
+        throw { ...datos, error: 'El correo electronico no es valido.' }
       }
 
       // Verificación del esquema de la contraseña.
       if (!verificacionEsquemaContraseña.success) {
-        throw 'Las contraseñas deben ser de 8 caracteres, debe contar con mayúsculas, minúsculas, números y carácteres especiales.'
+        throw {
+          ...datos,
+          error:
+            'Las contraseñas deben ser de 8 caracteres, debe contar con mayúsculas, minúsculas, números y carácteres especiales.',
+        }
       }
 
       // Creación e inserción del usuario.
@@ -77,12 +99,17 @@ export const handler: Handlers = {
         },
       })
     } catch (error) {
-      // En caso de error, se redirige al formulario de registro con un mensaje de error.
-      const params = new URLSearchParams({ error: JSON.stringify(error) })
+      // En caso de error, se redirige al formulario de registro con un mensaje de error
+      const objetoErrores = error as DatosErrorRegistro
+      const params = new URLSearchParams({
+        nombre: objetoErrores.nombre,
+        correo: objetoErrores.correo,
+        error: objetoErrores.error,
+      })
+
       return new Response(null, {
         status: 303,
         headers: {
-          'Content-Type': 'application/json',
           'Location': `/registro?${params.toString()}`,
         },
       })
@@ -90,60 +117,93 @@ export const handler: Handlers = {
   },
 }
 
-export default function PaginaInicioSesion(req: Request) {
+/**
+ * Renderiza la página de registro de usuario.
+ *
+ * Esta página muestra un formulario para que el usuario se registre, incluyendo campos para
+ * nombre, correo electrónico, contraseña, verificación de contraseña y selección de rol.
+ * Además, muestra mensajes de error en caso de que se proporcionen datos inválidos desde la URL.
+ *
+ * Los valores de nombre y correo pueden ser prellenados si son enviados como parámetros en la URL.
+ *
+ * @param {Request} req - La solicitud HTTP entrante, utilizada para extraer parámetros de la URL.
+ */
+export default function Registro(req: Request) {
+  // Obtiene la URL actual y extrae los parámetros 'error', 'nombre' y 'correo' (si existen).
   const url = new URL(req.url)
-  const error = url.searchParams.get('error') ?? ''
+  const error = url.searchParams.get('error')?.replaceAll('"', '') || ''
+  const nombre = url.searchParams.get('nombre')?.replaceAll('"', '') || ''
+  const correo = url.searchParams.get('correo')?.replaceAll('"', '') || ''
 
   return (
-    <div>
-      <h1 class='font-bold text-2xl'>Creacion de cuenta</h1>
-      <div>
-        {error}
-      </div>
+    <div class='w-screen h-screen bg-black flex flex-col justify-center items-center'>
+      <Fondo ruta='/fondo3.gif' />
 
-      <form action='/registro' method='post' class='p-20 border border-emerald-500 flex flex-col w-1/2'>
-        <input
+      {error ? <ModalError mensaje={error} /> : ''}
+
+      <form
+        action='/registro'
+        method='post'
+        class='p-4 flex flex-col w-full gap-2 bg-white z-20 sm:w-2/3 xl:w-1/3 rounded-md'
+      >
+        <img src='/icono.jpeg' alt='Logo TaskCore' class='w-12 h-12 self-center' />
+        <EncabezadoPrincipal>Registro de usuario</EncabezadoPrincipal>
+
+        <CampoIngreso
           type='text'
           name='nombre'
           placeholder='Nombre'
           required
-          value={'Chris'}
           autoComplete='off'
+          color='sky-500'
+          value={nombre}
         />
-        <input
+
+        <CampoIngreso
           type='email'
           name='correo'
           placeholder='Correo'
           required
-          value={'chris@gmail.com'}
           autoComplete='off'
+          color='sky-500'
+          value={correo}
         />
 
-        <label for='rol'>Elige un rol:</label>
-        <select name='rol'>
-          <option value='admin'>Administrador</option>
-          <option value='miembro' default>Miembro</option>
-        </select>
-
-        <input
+        <CampoIngreso
           type='password'
           name='contraseña'
           placeholder='Contraseña'
           required
-          value={'1234abcD@'}
           autoComplete='off'
+          color='sky-500'
         />
-        <input
+
+        <CampoIngreso
           type='password'
           name='verificacionContraseña'
           placeholder='Verificar contraseña'
           required
-          value={'1234abcD@'}
           autoComplete='off'
+          color='sky-500'
         />
 
-        <input type='submit' class='bg-emerald-500' />
+        <select
+          name='rol'
+          class='px-2 py-1 h-10 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg w-full font-sans font-semibold shadow-md cursor-pointer hover:border-sky-500'
+        >
+          <option selected>Elige un rol:</option>
+          <option value='admin'>Administrador</option>
+          <option value='miembro' default>Miembro</option>
+        </select>
+
+        <BotonIngresar color='sky-500'>Registrar</BotonIngresar>
+        <Enlace direccion='/' texto='Regresar al inicio' />
+        <Enlace direccion='/ingresar' texto='Iniciar sesión' />
+
+        <Footer />
       </form>
     </div>
   )
 }
+
+// value={'1234abcD@'}

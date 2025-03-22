@@ -17,6 +17,7 @@ import * as $usuario_miembro_middleware from './routes/usuario/miembro/_middlewa
 import * as $usuario_miembro_configuracion from './routes/usuario/miembro/configuracion.tsx'
 import * as $usuario_miembro_index from './routes/usuario/miembro/index.tsx'
 import * as $Counter from './islands/Counter.tsx'
+import * as $Modal from './islands/Modal.tsx'
 import type { Manifest } from '$fresh/server.ts'
 
 const manifest = {
@@ -38,6 +39,7 @@ const manifest = {
   },
   islands: {
     './islands/Counter.tsx': $Counter,
+    './islands/Modal.tsx': $Modal,
   },
   baseUrl: import.meta.url,
 } satisfies Manifest
