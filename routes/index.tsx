@@ -10,12 +10,14 @@
 
 /* Componente principal Home: Renderiza la estructura de la página principal con distintos componentes.
  Muestra encabezados, botones, inputs, listas de tareas y detalles de proyectos.*/
-export default function Home() {
+export default function Bienvenida() {
   // const count = useSignal(3)
   return (
-    <div class='text-4xl'>
-      PAGINA PRINCIPAL
-    </div>
+    <main class='text-4xl'>
+      <section className='h-screen w-full'>nomas van a cambiar este archivo, Descripcion de la pagina en general, gestion de proyectos sencilos</section>
+      <section className='h-screen w-full'>ventajas de usar taskcore sobre otras aplicaciones</section>
+      <section className='h-screen w-full'>agreguen algo aqui xd</section>
+    </main>
     // <div class='pl-10 pb-7'>
     //   <h2>Tipos de encabezados</h2>
     //   <EncabezadoPrincipal></EncabezadoPrincipal>
