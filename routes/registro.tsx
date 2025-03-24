@@ -4,7 +4,7 @@ import { insertarUsuario, Usuario } from '../utils/db/modelos/usuario.ts'
 import { EncabezadoPrincipal } from '../components/Headers.tsx'
 import { CampoIngreso } from '../components/Input.tsx'
 import { BotonIngresar } from '../components/Button.tsx'
-import { ModalError } from '../islands/Modal.tsx'
+import { ModalError, ModalLink } from '../islands/Modal.tsx'
 import Fondo from '../components/Fondo.tsx'
 import Enlace from '../components/Enlace.tsx'
 import Footer from '../components/Footer.tsx'
@@ -95,10 +95,21 @@ export const handler: Handlers = {
       }
 
       // Respuesta la petición
+      // return new Response(null, {
+      //   status: 303,
+      //   headers: {
+      //     'Location': '/agradecimientos',
+      //   },
+      // })
+      //
+      const params = new URLSearchParams({
+        resultado: 'ok',
+      })
+
       return new Response(null, {
         status: 303,
         headers: {
-          'Location': '/agradecimientos',
+          'Location': `/registro?${params.toString()}`,
         },
       })
     } catch (error) {
@@ -137,12 +148,22 @@ export default function Registro(req: Request) {
   const error = url.searchParams.get('error')?.replaceAll('"', '') || ''
   const nombre = url.searchParams.get('nombre')?.replaceAll('"', '') || ''
   const correo = url.searchParams.get('correo')?.replaceAll('"', '') || ''
+  const resultado = url.searchParams.get('resultado')?.replaceAll('"', '') || ''
 
   return (
     <div class='w-screen h-screen bg-black flex flex-col justify-center items-center'>
       <Fondo ruta='/fondo3.gif' />
 
       {error ? <ModalError mensaje={error} /> : ''}
+      {resultado === 'ok'
+        ? (
+          <ModalLink
+            mensaje='¡Registro completado exitosamente! Inicia sesión para empezar a utilizar TaskCore.'
+            enlace='/ingresar'
+            textoEnlace='Iniciar sesión'
+          />
+        )
+        : ''}
 
       <form
         action='/registro'
