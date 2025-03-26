@@ -11,6 +11,7 @@ export default function Home(props: PageProps<EstadoUsuario>) {
       <h1>Proyectos</h1>
 
       <a class='underline text-blue-400' href='/salir'>Cerrar sesion</a>
+      <h1>admin</h1>
     </div>
   )
 }
