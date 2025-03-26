@@ -3,7 +3,7 @@ import * as esquemas from '../utils/esquemas.ts'
 import { insertarUsuario, Usuario } from '../utils/db/modelos/usuario.ts'
 import { EncabezadoPrincipal } from '../components/Headers.tsx'
 import { CampoIngreso } from '../components/Input.tsx'
-import { BotonIngresar } from '../components/Button.tsx'
+import { BotonPrincipal } from '../components/Button.tsx'
 import { ModalError, ModalLink } from '../islands/Modal.tsx'
 import Fondo from '../components/Fondo.tsx'
 import Enlace from '../components/Enlace.tsx'
@@ -220,7 +220,7 @@ export default function Registro(req: Request) {
           <option value='miembro' default>Miembro</option>
         </select>
 
-        <BotonIngresar color='sky-500'>Registrar</BotonIngresar>
+        <BotonPrincipal color='sky-500'>Registrar</BotonPrincipal>
         <Enlace direccion='/' texto='Regresar al inicio' />
         <Enlace direccion='/ingresar' texto='Iniciar sesión' />
 

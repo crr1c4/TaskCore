@@ -6,7 +6,7 @@ import * as bcrypt from 'jsr:@felix/bcrypt'
 import { setCookie } from 'jsr:@std/http/cookie'
 import { CampoIngreso } from '../components/Input.tsx'
 import { EncabezadoPrincipal } from '../components/Headers.tsx'
-import { BotonIngresar } from '../components/Button.tsx'
+import { BotonPrincipal } from '../components/Button.tsx'
 import { ModalError } from '../islands/Modal.tsx'
 import Fondo from '../components/Fondo.tsx'
 import Enlace from '../components/Enlace.tsx'
@@ -148,7 +148,7 @@ export default function Ingresar(req: Request) {
           autoComplete='off'
         />
 
-        <BotonIngresar color='sky-500'>Iniciar sesión</BotonIngresar>
+        <BotonPrincipal color='sky-500'>Iniciar sesión</BotonPrincipal>
         <Enlace direccion='/' texto='Regresar al inicio' />
         <Enlace direccion='/registro' texto='Crear una nueva cuenta' />
       </form>
