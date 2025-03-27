@@ -23,17 +23,17 @@ export default function Bienvenida() {
           La mejor plataforma para gestionar tus proyectos y tareas de manera sencilla, eficiente y colaborativa.
         </p>
         <div className='mt-6 flex gap-4'>
-          <BotonPrincipal color='green-400'>
-            <a href='/ingresar'>
+          <a href='/ingresar'>
+            <BotonPrincipal color='green-400'>
               Iniciar sesión
-            </a>
-          </BotonPrincipal>
+            </BotonPrincipal>
+          </a>
 
-          <BotonPrincipal color='sky-500'>
-            <a href='/registro'>
+          <a href='/registro'>
+            <BotonPrincipal color='sky-500'>
               Crear cuenta
-            </a>
-          </BotonPrincipal>
+            </BotonPrincipal>
+          </a>
         </div>
       </section>
 
@@ -58,7 +58,7 @@ export default function Bienvenida() {
         </ul>
       </section>
 
-    <Footer />
+      <Footer />
     </main>
   )
 }
