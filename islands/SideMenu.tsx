@@ -3,6 +3,12 @@ import { useState } from "preact/hooks";
 export default function SideMenu() {
   const [isOpen, setIsOpen] = useState(false);
 
+  const menuitems: string[] = [
+    "Proyecto A", "Proyecto B", "Proyecto C", "Proyecto D", "Proyecto E",
+    "Proyecto F", "Proyecto G", "Proyecto H", "Proyecto I", "Proyecto J",
+    "Proyecto K", "Proyecto L", "Proyecto M", "Proyecto N", "Proyecto O"
+  ];
+
   return (
     <>
       {/* Top Bar con botón */}
@@ -53,35 +59,32 @@ export default function SideMenu() {
               class="w-10 h-10 rounded-full object-cover border-2 border-gray-300"
             />
           </div>
-          
+
         </div>
       </header>
 
-      {/* Menú lateral */}
       <aside class={`
-        fixed left-0 z-30 mt-16
+        fixed left-0 z-30
         transition-transform duration-300
         ${isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}
-        bg-gray-300 rounded-r-lg shadow-xl
-        top-1/2 -translate-y-1/2
-      `}>
+        bg-gray-300 shadow-xl
+        w-64
+        top-20 // Igual a la altura de tu header (h-16)
+        md:bottom-14 // En desktop deja espacio para footer
+        bottom-0 // En móvil llega hasta abajo
+        overflow-y-auto
+        scrollbar-hidden
+    `}>
+        {/* Contenido del menú */}
         <nav class="p-4">
-          <ul class="space-y-3">
-            <li>
-              <a href="#" class="block px-6 py-3 bg-yellow-300 rounded-lg hover:bg-yellow-400 transition-colors shadow">
-                Inicio
-              </a>
-            </li>
-            <li>
-              <a href="#" class="block px-6 py-3 bg-yellow-300 rounded-lg hover:bg-yellow-400 transition-colors shadow">
-                Proyectos
-              </a>
-            </li>
-            <li>
-              <a href="#" class="block px-6 py-3 bg-yellow-300 rounded-lg hover:bg-yellow-400 transition-colors shadow">
-                Configuración
-              </a>
-            </li>
+          <ul class="space-y-2">
+            {menuitems.map((item, index) => (
+              <li key={`${item}-${index}`}>
+                <a href="#" class="block px-4 py-3 bg-yellow-300 rounded-lg hover:bg-yellow-400 transition-colors shadow">
+                  {item}
+                </a>
+              </li>
+            ))}
           </ul>
         </nav>
       </aside>
