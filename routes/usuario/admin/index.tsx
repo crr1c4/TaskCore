@@ -1,19 +1,27 @@
-import { PageProps } from '$fresh/server.ts'
-import { EstadoUsuario } from '../_middleware.ts'
+import SideMenu from '../../../islands/SideMenu.tsx'
+import Footer from '../../../components/FooterWelcome.tsx'
+import ProjectsSection from '../../../islands/ProjectSection.tsx'
 
-export default function Home(props: PageProps<EstadoUsuario>) {
+export default function Home() {
   return (
-    <div>
-      bienvenido admin
-      {props.state.correo}
-      {props.state.nombre}
+    <div class='relative min-h-screen pt-16'>
+      <SideMenu rol='admin' />
 
-      <h1>Proyectos</h1>
+      <main class='md:ml-64 p-6'>
+        {/* Sección de bienvenida */}
+        <div class='bg-white p-6 rounded-lg shadow mb-8'>
+          <h2 class='text-2xl font-bold mb-4'>Contenido Principal</h2>
+          <p class='text-gray-700'>
+            Hola amigos, bienvenidos a TaskCore. Esta es una plantilla de aplicación web con diseño minimalista y
+            funcionalidades básicas.
+          </p>
+        </div>
 
-      <a class='underline text-blue-400' href='/salir'>Cerrar sesion</a>
-      <h1>admin</h1>
+        {/* Sección de proyectos (componente separado) */}
+        <ProjectsSection rol='admin' />
+      </main>
+
+      <Footer />
     </div>
   )
 }
-
-//Christian el trailero valiente
