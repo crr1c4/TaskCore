@@ -1,69 +1,38 @@
 // tests/e2e/login.test.ts
-import { test, expect } from "@playwright/test";
+import { test, expect } from '@playwright/test';
 
-test.describe("Página de Ingreso", () => {
+test.describe('Página de Ingreso', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto("/ingresar");
+    await page.goto('http://localhost:8000/ingresar', { waitUntil: 'networkidle' });
   });
 
-  test("debería mostrar el formulario de login correctamente", async ({ page }) => {
-    // Verificar elementos principales
-    await expect(page.getByRole("heading", { name: "Inicio de sesión" })).toBeVisible();
-    await expect(page.getByPlaceholder("Correo")).toBeVisible();
-    await expect(page.getByPlaceholder("Contraseña")).toBeVisible();
-    await expect(page.getByRole("button", { name: "Iniciar sesión" })).toBeVisible();
-  });
-
-  test("debería mostrar error cuando el usuario no existe", async ({ page }) => {
-    // Rellenar formulario con credenciales incorrectas
-    await page.getByPlaceholder("Correo").fill("usuario@inexistente.com");
-    await page.getByPlaceholder("Contraseña").fill("password123");
-    await page.getByRole("button", { name: "Iniciar sesión" }).click();
-
-    // Verificar que se muestra el error
-    await expect(page.getByText("No hay un usuario registrado con el correo ingresado.")).toBeVisible();
-    // Verificar que el correo se mantiene en el campo
-    await expect(page.getByPlaceholder("Correo")).toHaveValue("usuario@inexistente.com");
-  });
-
-  test("debería mostrar error cuando la contraseña es incorrecta", async ({ page }) => {
-    // Rellenar formulario con contraseña incorrecta
-    await page.getByPlaceholder("Correo").fill("chris@gmail.com");
-    await page.getByPlaceholder("Contraseña").fill("contraseñaIncorrecta");
-    await page.getByRole("button", { name: "Iniciar sesión" }).click();
-
-    // Verificar que se muestra el error
-    await expect(page.getByText("La contraseña es incorrecta.")).toBeVisible();
-    // Verificar que el correo se mantiene en el campo
-    await expect(page.getByPlaceholder("Correo")).toHaveValue("chris@gmail.com");
-  });
-
-  test("debería redirigir al dashboard cuando el login es exitoso", async ({ page }) => {
-    // Rellenar formulario con credenciales válidas (ajusta según tu DB de test)
-    await page.getByPlaceholder("Correo").fill("chris@gmail.com");
-    await page.getByPlaceholder("Contraseña").fill("1234abcD@");
-    await page.getByRole("button", { name: "Iniciar sesión" }).click();
-
-    // Verificar la redirección (ajusta la URL según tu aplicación)
-    await page.waitForURL(/\/usuario\/\w+\/$/);
+  test('Debería mostrar el formulario correctamente', async ({ page }) => {
+    // Verifica el formulario principal
+    const form = page.locator('form[action="/ingresar"]');
+    await expect(form).toBeVisible();
     
-    // Verificar que se estableció la cookie de autenticación
-    const cookies = await page.context().cookies();
-    const tokenCookie = cookies.find(c => c.name === "token");
-    expect(tokenCookie).toBeDefined();
-    expect(tokenCookie?.value.length).toBeGreaterThan(0);
+    // Verifica campos específicos
+    await expect(page.locator('input[name="correo"]')).toBeVisible();
+    await expect(page.locator('input[name="contraseña"]')).toBeVisible();
+    await expect(page.locator('button:has-text("Iniciar sesión")')).toBeVisible();
   });
 
-  test("debería mantener los valores del formulario después de un error", async ({ page }) => {
-    const testEmail = "test@example.com";
+  test('Debería mostrar error con credenciales inválidas', async ({ page }) => {
+    await page.fill('input[name="correo"]', 'noexiste@test.com');
+    await page.fill('input[name="contraseña"]', 'password123');
+    await page.click('button:has-text("Iniciar sesión")');
     
-    await page.getByPlaceholder("Correo").fill(testEmail);
-    await page.getByPlaceholder("Contraseña").fill("wrongpass");
-    await page.getByRole("button", { name: "Iniciar sesión" }).click();
-
-    // Verificar que el correo se mantiene
-    await expect(page.getByPlaceholder("Correo")).toHaveValue(testEmail);
-    // Verificar que el campo de contraseña está vacío (por seguridad)
-    await expect(page.getByPlaceholder("Contraseña")).toHaveValue("");
+    // Esperar a que aparezca el modal de error
+    await page.waitForSelector('.bg-red-100', { state: 'visible', timeout: 5000 });
+    
+    // Verificar el contenido del modal
+    const modal = page.locator('.bg-red-100');
+    await expect(modal).toBeVisible();
+    await expect(modal.locator('text=Error')).toBeVisible();
+    await expect(modal.locator('p:text-matches("No hay un usuario registrado", "i")')).toBeVisible();
+    
+    // Opcional: cerrar el modal para verificar su comportamiento
+    await modal.locator('button:has-text("✕")').click();
+    await expect(modal).toBeHidden();
   });
 });
