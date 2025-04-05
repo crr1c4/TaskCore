@@ -17,7 +17,9 @@ import * as $usuario_miembro_configuracion from './routes/usuario/miembro/config
 import * as $usuario_miembro_index from './routes/usuario/miembro/index.tsx'
 import * as $Counter from './islands/Counter.tsx'
 import * as $Modal from './islands/Modal.tsx'
+import * as $ProjectSection from './islands/ProjectSection.tsx'
 import * as $SideMenu from './islands/SideMenu.tsx'
+import * as $UserConfiguration from './islands/UserConfiguration.tsx'
 import type { Manifest } from '$fresh/server.ts'
 
 const manifest = {
@@ -39,7 +41,9 @@ const manifest = {
   islands: {
     './islands/Counter.tsx': $Counter,
     './islands/Modal.tsx': $Modal,
+    './islands/ProjectSection.tsx': $ProjectSection,
     './islands/SideMenu.tsx': $SideMenu,
+    './islands/UserConfiguration.tsx': $UserConfiguration,
   },
   baseUrl: import.meta.url,
 } satisfies Manifest
