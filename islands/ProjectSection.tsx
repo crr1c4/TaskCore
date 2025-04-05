@@ -73,13 +73,11 @@ export default function ProjectsSection({ rol }: Props) {
             onClick={() => handleCardClick(project.id)}
             class='bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-300 hover:-translate-y-1 hover:shadow-lg relative cursor-pointer'
           >
-            {/* Encabezado de la tarjeta */}
             <div class={`${project.color} px-4 py-3 flex justify-between items-center`}>
               <h3 class='text-white font-semibold text-lg flex items-center'>
                 <i class={`fas ${project.icon} mr-2`}></i> {project.title}
               </h3>
 
-              {/* Botón de tres puntos */}
               <div class='relative'>
                 <button
                   onClick={(e) => toggleMenu(project.id, e)}
@@ -98,7 +96,6 @@ export default function ProjectsSection({ rol }: Props) {
                   </svg>
                 </button>
 
-                {/* Menú desplegable condicional por rol */}
                 {openMenuId === project.id && (
                   <div class='absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10 border border-gray-200'>
                     <div class='py-1'>
@@ -133,7 +130,6 @@ export default function ProjectsSection({ rol }: Props) {
               </div>
             </div>
 
-            {/* Contenido de la tarjeta */}
             <div class='p-4'>
               <p class='text-gray-600 mb-4'>{project.description}</p>
               <div class='flex justify-between items-center'>
