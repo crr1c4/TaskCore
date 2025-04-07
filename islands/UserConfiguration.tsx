@@ -1,4 +1,5 @@
 import { useState } from 'preact/hooks'
+import Fondo from '../components/Fondo.tsx'
 
 export default function Configuracion() {
   // Estados para manejar los datos del formulario

@@ -14,7 +14,7 @@ export default function Bienvenida() {
       <section className='h-screen w-full z-10 flex flex-col items-center justify-center text-center px-6 bg-slate-900 lg:row-start-1'>
         <h1 className='text-6xl font-bold mb-4 text-sky-400'>Bienvenido a TaskCore</h1>
         <img
-          src='/iconoTransaparente.png'
+          src='/iconoTransparente.png'
           alt='Vista previa de TaskCore'
           className='mt-10 w-3/4 sm:w-1/6 max-w-4xl rounded-lg'
         />

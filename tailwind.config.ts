@@ -1,7 +1,8 @@
-import { type Config } from "tailwindcss";
+import { type Config } from 'tailwindcss'
 
 export default {
+  darkMode: 'selector',
   content: [
-    "{routes,islands,components}/**/*.{ts,tsx,js,jsx}",
+    '{routes,islands,components}/**/*.{ts,tsx,js,jsx}',
   ],
-} satisfies Config;
+} satisfies Config

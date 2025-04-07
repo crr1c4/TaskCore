@@ -15,9 +15,9 @@ import * as $usuario_configuracion from './routes/usuario/configuracion.tsx'
 import * as $usuario_miembro_middleware from './routes/usuario/miembro/_middleware.ts'
 import * as $usuario_miembro_index from './routes/usuario/miembro/index.tsx'
 import * as $Counter from './islands/Counter.tsx'
+import * as $EncabezadoPrincipal from './islands/EncabezadoPrincipal.tsx'
 import * as $Modal from './islands/Modal.tsx'
-import * as $ProjectSection from './islands/ProjectSection.tsx'
-import * as $SideMenu from './islands/SideMenu.tsx'
+import * as $Proyecto from './islands/Proyecto.tsx'
 import * as $UserConfiguration from './islands/UserConfiguration.tsx'
 import type { Manifest } from '$fresh/server.ts'
 
@@ -38,9 +38,9 @@ const manifest = {
   },
   islands: {
     './islands/Counter.tsx': $Counter,
+    './islands/EncabezadoPrincipal.tsx': $EncabezadoPrincipal,
     './islands/Modal.tsx': $Modal,
-    './islands/ProjectSection.tsx': $ProjectSection,
-    './islands/SideMenu.tsx': $SideMenu,
+    './islands/Proyecto.tsx': $Proyecto,
     './islands/UserConfiguration.tsx': $UserConfiguration,
   },
   baseUrl: import.meta.url,
