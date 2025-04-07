@@ -14,7 +14,7 @@ const backgroundColors = {
 }
 
 // Componente ButtonIngresar: Botón estilizado con colores dinámicos y efecto hover cambiando su color de fondo.
-export function BotonPrincipal(props: Props) {
+export function BotonIngresar(props: Props) {
   return (
     <button
       class={`px-4 py-2 bg-${props.color} hover:bg-gray-300 text-white hover:text-black transition-colors duration-100 uppercase
