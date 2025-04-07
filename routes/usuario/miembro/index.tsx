@@ -1,4 +1,4 @@
-import SideMenu from '../../../islands/SideMenu.tsx'
+import Menu from '../../../islands/SideMenu.tsx'
 import Footer from '../../../components/FooterWelcome.tsx'
 import ProjectsSection from '../../../islands/ProjectSection.tsx'
 
@@ -6,7 +6,7 @@ export default function Home() {
   return (
     <div class='relative min-h-screen pt-16'>
       {/* Añade padding-top para la top bar */}
-      <SideMenu rol='miembro' />
+      <Menu rol='miembro' />
 
       <main class='md:ml-64 p-6'>
         <div class='bg-white p-6 rounded-lg shadow'>

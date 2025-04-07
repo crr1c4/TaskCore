@@ -1,4 +1,4 @@
-import { BotonIngresar } from '../components/Button.tsx'
+import { BotonPrincipal } from '../components/Boton.tsx'
 import Fondo from '../components/Fondo.tsx'
 import Footer from '../components/Footer.tsx'
 
@@ -24,15 +24,15 @@ export default function Bienvenida() {
         </p>
         <div className='mt-6 flex gap-4'>
           <a href='/ingresar'>
-            <BotonIngresar color='green-400'>
+            <BotonPrincipal color='green'>
               Iniciar sesión
-            </BotonIngresar>
+            </BotonPrincipal>
           </a>
 
           <a href='/registro'>
-            <BotonIngresar color='sky-500'>
+            <BotonPrincipal color='blue'>
               Crear cuenta
-            </BotonIngresar>
+            </BotonPrincipal>
           </a>
         </div>
       </section>

@@ -10,10 +10,9 @@ import * as $registro from './routes/registro.tsx'
 import * as $salir from './routes/salir.ts'
 import * as $usuario_middleware from './routes/usuario/_middleware.ts'
 import * as $usuario_admin_middleware from './routes/usuario/admin/_middleware.ts'
-import * as $usuario_admin_configuracion from './routes/usuario/admin/configuracion.tsx'
 import * as $usuario_admin_index from './routes/usuario/admin/index.tsx'
+import * as $usuario_configuracion from './routes/usuario/configuracion.tsx'
 import * as $usuario_miembro_middleware from './routes/usuario/miembro/_middleware.ts'
-import * as $usuario_miembro_configuracion from './routes/usuario/miembro/configuracion.tsx'
 import * as $usuario_miembro_index from './routes/usuario/miembro/index.tsx'
 import * as $Counter from './islands/Counter.tsx'
 import * as $Modal from './islands/Modal.tsx'
@@ -32,10 +31,9 @@ const manifest = {
     './routes/salir.ts': $salir,
     './routes/usuario/_middleware.ts': $usuario_middleware,
     './routes/usuario/admin/_middleware.ts': $usuario_admin_middleware,
-    './routes/usuario/admin/configuracion.tsx': $usuario_admin_configuracion,
     './routes/usuario/admin/index.tsx': $usuario_admin_index,
+    './routes/usuario/configuracion.tsx': $usuario_configuracion,
     './routes/usuario/miembro/_middleware.ts': $usuario_miembro_middleware,
-    './routes/usuario/miembro/configuracion.tsx': $usuario_miembro_configuracion,
     './routes/usuario/miembro/index.tsx': $usuario_miembro_index,
   },
   islands: {

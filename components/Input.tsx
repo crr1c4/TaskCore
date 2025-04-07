@@ -6,7 +6,7 @@ interface Props extends JSX.HTMLAttributes<HTMLInputElement> {
 }
 
 // Componente InputBusqueda: un input estilizado con animaciones y sombras dinámicas según el color recibido en las props.
-export function InputBusqueda(props: Props) {
+export function Entrada(props: Props) {
   const { color } = props
   return (
     <input
