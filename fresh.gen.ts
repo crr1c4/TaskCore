@@ -12,13 +12,15 @@ import * as $usuario_middleware from './routes/usuario/_middleware.ts'
 import * as $usuario_admin_middleware from './routes/usuario/admin/_middleware.ts'
 import * as $usuario_admin_index from './routes/usuario/admin/index.tsx'
 import * as $usuario_configuracion from './routes/usuario/configuracion.tsx'
+import * as $usuario_editar_contrasena from './routes/usuario/editar/contrasena.ts'
+import * as $usuario_editar_nombre from './routes/usuario/editar/nombre.ts'
+import * as $usuario_editar_tema from './routes/usuario/editar/tema.ts'
 import * as $usuario_miembro_middleware from './routes/usuario/miembro/_middleware.ts'
 import * as $usuario_miembro_index from './routes/usuario/miembro/index.tsx'
 import * as $Counter from './islands/Counter.tsx'
 import * as $EncabezadoPrincipal from './islands/EncabezadoPrincipal.tsx'
 import * as $Modal from './islands/Modal.tsx'
 import * as $Proyecto from './islands/Proyecto.tsx'
-import * as $UserConfiguration from './islands/UserConfiguration.tsx'
 import type { Manifest } from '$fresh/server.ts'
 
 const manifest = {
@@ -33,6 +35,9 @@ const manifest = {
     './routes/usuario/admin/_middleware.ts': $usuario_admin_middleware,
     './routes/usuario/admin/index.tsx': $usuario_admin_index,
     './routes/usuario/configuracion.tsx': $usuario_configuracion,
+    './routes/usuario/editar/contrasena.ts': $usuario_editar_contrasena,
+    './routes/usuario/editar/nombre.ts': $usuario_editar_nombre,
+    './routes/usuario/editar/tema.ts': $usuario_editar_tema,
     './routes/usuario/miembro/_middleware.ts': $usuario_miembro_middleware,
     './routes/usuario/miembro/index.tsx': $usuario_miembro_index,
   },
@@ -41,7 +46,6 @@ const manifest = {
     './islands/EncabezadoPrincipal.tsx': $EncabezadoPrincipal,
     './islands/Modal.tsx': $Modal,
     './islands/Proyecto.tsx': $Proyecto,
-    './islands/UserConfiguration.tsx': $UserConfiguration,
   },
   baseUrl: import.meta.url,
 } satisfies Manifest

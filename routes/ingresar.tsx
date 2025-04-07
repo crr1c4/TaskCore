@@ -57,6 +57,7 @@ export const handler: Handlers = {
         correo: usuario.correo,
         nombre: usuario.nombre,
         rol: usuario.rol,
+        tema: usuario.tema
       })
 
       const headers = new Headers()
@@ -128,7 +129,7 @@ export default function Ingresar(req: Request) {
         method='post'
         class='p-4 flex flex-col w-full gap-2 bg-white h-auto sm:w-2/3 lg:w-1/3 xl:w-1/4 shadow-lg z-20 rounded-md'
       >
-        <img src='/iconoTransparente.jpeg' alt='Logo TaskCore' class='w-12 h-12 self-center' />
+        <img src='/iconoTransparente.png' alt='Logo TaskCore' class='w-12 h-12 self-center' />
         <EncabezadoPrincipal>Inicio de sesión</EncabezadoPrincipal>
         <CampoIngreso
           color='sky-500'

@@ -81,6 +81,7 @@ export const handler: Handlers = {
 
       // Creación e inserción del usuario.
       const usuario: Usuario = {
+        tema: '',
         nombre,
         correo,
         contraseña,
@@ -170,7 +171,7 @@ export default function Registro(req: Request) {
         method='post'
         class='p-4 flex flex-col w-full gap-2 bg-white z-20 sm:w-2/3 xl:w-1/3 rounded-md'
       >
-        <img src='/iconoTransparente.jpeg' alt='Logo TaskCore' class='w-12 h-12 self-center' />
+        <img src='/iconoTransparente.png' alt='Logo TaskCore' class='w-12 h-12 self-center' />
         <EncabezadoPrincipal>Registro de usuario</EncabezadoPrincipal>
 
         <CampoIngreso

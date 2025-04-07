@@ -11,6 +11,7 @@ export interface Usuario {
   correo: string
   contraseña: string
   rol: "admin" | "miembro"
+  tema: "dark" | ""
 }
 
 /**

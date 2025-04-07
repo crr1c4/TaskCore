@@ -1,8 +1,14 @@
+import { FreshContext } from '$fresh/src/server/mod.ts'
 import Encabezado from '../../../islands/EncabezadoPrincipal.tsx'
+import { ModalLink } from '../../../islands/Modal.tsx'
 import { ComponenteProyecto } from '../../../islands/Proyecto.tsx'
 import { Proyecto } from '../../../utils/db/modelos/proyecto.ts'
+import { EstadoUsuario } from '../_middleware.ts'
 
-export default function Home() {
+export default function Home(ctx: FreshContext<EstadoUsuario>) {
+  // Obtiene la URL actual y extrae los parámetros 'error', 'nombre' y 'correo' (si existen).
+  const url = ctx.url
+  const resultado = url.searchParams.get('resultado')?.replaceAll('"', '') || ''
   // Datos de ejemplo
   const proyectosEjemplo: Proyecto[] = [
     {
@@ -68,7 +74,17 @@ export default function Home() {
   ]
 
   return (
-    <div class='h-screen dark '>
+    <div class={`h-screen ${ctx.state.tema}`}>
+      {resultado === 'ok'
+        ? (
+          <ModalLink
+            mensaje='Configuración guardada.'
+            enlace='/usuario/miembro'
+            textoEnlace='Ok'
+          />
+        )
+        : ''}
+
       <Encabezado rol='miembro' />
 
       <main class='px-6 md:px-20 pt-24 dark:bg-slate-800 h-screen'>

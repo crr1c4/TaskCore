@@ -9,6 +9,7 @@ export interface EstadoUsuario {
   nombre: string
   correo: string
   rol: string
+  tema: string
 }
 
 /**

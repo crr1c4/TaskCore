@@ -15,7 +15,7 @@ export function BotonPrincipal(props: Props) {
 
   return (
     <button
-      class={`px-4 py-2 ${colors[props.color]} hover:bg-gray-300 text-white hover:text-black transition-colors duration-100 uppercase
+      class={`px-4 py-2 ${colors[props.color]} hover:bg-gray-300 dark:hover:bg-slate-600 text-white hover:text-black transition-colors duration-100 uppercase
         font-sans font-semibold rounded-lg shadow-md cursor-pointer`}
     >
       {props.children}
