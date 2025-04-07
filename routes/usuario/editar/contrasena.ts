@@ -24,8 +24,6 @@ export const handler: Handlers = {
       const nueva = formulario.get('nuevaContrasena')?.toString().trim()
       const confirmacion = formulario.get('confirmacionNuevaContrasena')?.toString().trim()
 
-      console.log(actual)
-
       // Verificación de que los datos no sean indefinidos o vacíos.
       if (!actual || !nueva || !confirmacion || !correo) {
         throw new Error('Error en el envío del formulario.')

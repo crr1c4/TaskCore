@@ -32,7 +32,7 @@ export default function EncabezadoPrincipal({ rol }: Props) {
       <div class='flex gap-2'>
         {rol === 'admin' && (
           <div class='p-2 rounded-full hover:bg-gray-300 dark:hover:bg-slate-700 transition-colors hover:cursor-pointer'>
-            <a href='/usurio/admin/crear-proyecto/'>
+            <a href='/usuario/admin/crear-proyecto/'>
               <IconoAgregarProyecto />
             </a>
           </div>

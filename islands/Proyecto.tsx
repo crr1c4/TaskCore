@@ -37,7 +37,7 @@ export function ComponenteProyecto({ rol, proyecto }: Props) {
             </div>
 
             {mostrarMenu.value && (
-              <div class='absolute right-0 w-48 rounded-md shadow-lg z-10 dark:bg-slate-900 dark:text-white'>
+              <div class='absolute right-0 w-48 rounded-md shadow-lg z-10 dark:bg-slate-900 dark:text-white bg-white'>
                 {rol === 'admin'
                   ? (
                     <>

@@ -10,6 +10,7 @@ import * as $registro from './routes/registro.tsx'
 import * as $salir from './routes/salir.ts'
 import * as $usuario_middleware from './routes/usuario/_middleware.ts'
 import * as $usuario_admin_middleware from './routes/usuario/admin/_middleware.ts'
+import * as $usuario_admin_crear_proyecto from './routes/usuario/admin/crear-proyecto.tsx'
 import * as $usuario_admin_index from './routes/usuario/admin/index.tsx'
 import * as $usuario_configuracion from './routes/usuario/configuracion.tsx'
 import * as $usuario_editar_contrasena from './routes/usuario/editar/contrasena.ts'
@@ -33,6 +34,7 @@ const manifest = {
     './routes/salir.ts': $salir,
     './routes/usuario/_middleware.ts': $usuario_middleware,
     './routes/usuario/admin/_middleware.ts': $usuario_admin_middleware,
+    './routes/usuario/admin/crear-proyecto.tsx': $usuario_admin_crear_proyecto,
     './routes/usuario/admin/index.tsx': $usuario_admin_index,
     './routes/usuario/configuracion.tsx': $usuario_configuracion,
     './routes/usuario/editar/contrasena.ts': $usuario_editar_contrasena,
