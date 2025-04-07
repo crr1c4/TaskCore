@@ -1,62 +1,64 @@
-/* Importación de librerías y componentes necesarios para la aplicación.
- Se incluyen señales de estado, inputs, botones, áreas de texto, encabezados y otros componentes visuales.*/
-// import { useSignal } from '@preact/signals'
-// import { TextArea } from '../components/TextArea.tsx'
-// import { CampoIngreso, InputBusqueda } from '../components/Input.tsx'
-// import { DivTareas } from '../components/Div.tsx'
-// import { EncabezadoPrincipal, Header2, Header3 } from '../components/Headers.tsx'
-// import { DetallesProyecto } from '../components/Proyectos.tsx'
-// import { BotonIngresar, ButtonAcciones, ButtonTareaCompletada } from '../components/Button.tsx'
+import { BotonIngresar } from '../components/Button.tsx'
+import Fondo from '../components/Fondo.tsx'
+import Footer from '../components/Footer.tsx'
 
 /* Componente principal Home: Renderiza la estructura de la página principal con distintos componentes.
  Muestra encabezados, botones, inputs, listas de tareas y detalles de proyectos.*/
-export default function Home() {
+export default function Bienvenida() {
   // const count = useSignal(3)
   return (
-    <div class='text-4xl'>
-      PAGINA PRINCIPAL
-    </div>
-    // <div class='pl-10 pb-7'>
-    //   <h2>Tipos de encabezados</h2>
-    //   <EncabezadoPrincipal></EncabezadoPrincipal>
-    //   <Header2></Header2>
-    //   <Header3></Header3>
-    //   <h2>Tipos de botones</h2>
-    //   <ButtonIngresar color='sky-500' />
-    //   <ButtonAcciones color='sky-500' />
-    //   <ButtonTareaCompletada color='sky-500' />
-    //   <ButtonIngresar color='green-400' />
-    //   <ButtonAcciones color='green-400' />
-    //   <ButtonTareaCompletada color='green-400' />
-    //   <ButtonIngresar color='orange-400' />
-    //   <ButtonAcciones color='orange-400' />
-    //   <ButtonTareaCompletada color='orange-400' />
-    //   <h2>Tipos de TextArea</h2>
-    //   <TextArea color='sky-500' />
-    //   <TextArea color='green-400' />
-    //   <TextArea color='orange-400' />
-    //   <h2>Tipos de Input</h2>
-    //   <div class='pr-10'>
-    //     <InputBusqueda color='sky-500' />
-    //     <CampoIngreso color='sky-500' />
-    //     <InputBusqueda color='green-400' />
-    //     <CampoIngreso color='green-400' />
-    //     <InputBusqueda color='orange-400' />
-    //     <CampoIngreso color='orange-400' />
-    //   </div>
-    //
-    //   <h2>Lista de tareas</h2>
-    //   <div class='flex gap-x-4 items-start'>
-    //     <DivTareas color='sky-500' />
-    //     <DivTareas color='green-400' />
-    //     <DivTareas color='orange-400' />
-    //   </div>
-    //   <h2>Detalles Proyecto</h2>
-    //   <div class='pb-5 flex gap-x-4 items-start'>
-    //     <DetallesProyecto color='sky-500' />
-    //     <DetallesProyecto color='green-400' />
-    //     <DetallesProyecto color='orange-400' />
-    //   </div>
-    // </div>
+    <main className='text-white select-none grid grid-cols-1 grid-rows-2 lg:grid-cols-2 lg:grid-rows-1'>
+      <Fondo ruta='/fondo3.gif' />
+
+      {/* Sección Principal */}
+      <section className='h-screen w-full z-10 flex flex-col items-center justify-center text-center px-6 bg-slate-900 lg:row-start-1'>
+        <h1 className='text-6xl font-bold mb-4 text-sky-400'>Bienvenido a TaskCore</h1>
+        <img
+          src='/iconoTransaparente.png'
+          alt='Vista previa de TaskCore'
+          className='mt-10 w-3/4 sm:w-1/6 max-w-4xl rounded-lg'
+        />
+
+        <p className='text-lg max-w-2xl text-gray-300'>
+          La mejor plataforma para gestionar tus proyectos y tareas de manera sencilla, eficiente y colaborativa.
+        </p>
+        <div className='mt-6 flex gap-4'>
+          <a href='/ingresar'>
+            <BotonIngresar color='green-400'>
+              Iniciar sesión
+            </BotonIngresar>
+          </a>
+
+          <a href='/registro'>
+            <BotonIngresar color='sky-500'>
+              Crear cuenta
+            </BotonIngresar>
+          </a>
+        </div>
+      </section>
+
+      {/* Sección de Ventajas */}
+      <section className='h-screen w-full z-10 flex flex-col items-center justify-center text-center px-6 bg-slate-800 lg:row-start-1 lg:col-start-2 lg:bg-transparent'>
+        <h2 className='text-5xl font-bold text-sky-400 mb-6'>¿Por qué elegirnos?</h2>
+        <p className='text-lg max-w-3xl text-gray-300 mb-6'>
+          TaskCore está diseñado para potenciar la productividad y la colaboración. Estas son algunas de sus ventajas:
+        </p>
+        <ul className='text-lg max-w-2xl text-black space-y-4'>
+          <li class='bg-white/50 py-2 px-4 rounded-md shadow-md hover:bg-white/90 transition-colors duration-100'>
+            ✅ <span className='font-semibold'>Interfaz intuitiva:</span> Diseño limpio y fácil de usar.
+          </li>
+          <li class='bg-white/50 py-2 px-4 rounded-md shadow-md hover:bg-white/90 transition-colors duration-100'>
+            ✅ <span className='font-semibold'>Gestión de tareas eficiente:</span>{' '}
+            Asigna y sigue el progreso de las tareas de tus proyectos.
+          </li>
+          <li class='bg-white/50 py-2 px-4 rounded-md shadow-md hover:bg-white/90 transition-colors duration-100'>
+            ✅ <span className='font-semibold'>Notificaciones inteligentes:</span>{' '}
+            Mantente siempre al tanto de lo importante.
+          </li>
+        </ul>
+      </section>
+
+      <Footer />
+    </main>
   )
 }
