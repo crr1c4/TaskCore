@@ -8,7 +8,7 @@ import { verificarToken } from '../../utils/autenticacion.ts'
 export interface EstadoUsuario {
   nombre: string
   correo: string
-  rol: string
+  rol: "admin" | "miembro"
   tema: string
 }
 

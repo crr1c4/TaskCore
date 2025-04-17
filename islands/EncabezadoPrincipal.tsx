@@ -1,4 +1,11 @@
-import { IconoAgregarProyecto, IconoCerrarSesion, IconoConfiguracion, IconoUsuario } from '../components/Iconos.tsx'
+import {
+  IconoAgregarProyecto,
+  IconoCerrarSesion,
+  IconoConfiguracion,
+  IconoInicio,
+  IconoNotificaciones,
+  IconoUsuario,
+} from '../components/Iconos.tsx'
 
 import { useSignal } from '@preact/signals'
 
@@ -38,6 +45,12 @@ export default function EncabezadoPrincipal({ rol }: Props) {
           </div>
         )}
 
+        <div class='p-2 rounded-full hover:bg-gray-300 dark:hover:bg-slate-700 transition-colors hover:cursor-pointer'>
+          <a href={`/usuario/${rol}`}>
+            <IconoInicio />
+          </a>
+        </div>
+
         <div
           class='p-2 rounded-full hover:bg-gray-300 dark:hover:bg-slate-700 transition-colors hover:cursor-pointer'
           onClick={() => mostrarMenu.value = !mostrarMenu.value}
@@ -48,13 +61,19 @@ export default function EncabezadoPrincipal({ rol }: Props) {
         {mostrarMenu.value && (
           <div class='absolute right-0 top-14 w-48 bg-white dark:bg-slate-900 rounded-md shadow-lg z-50 select-none'>
             <a
+              href='/usuario/notificaciones'
+              class='w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-slate-800 flex items-center gap-2 rounded-b-md'
+            >
+              <IconoNotificaciones />
+              Notificaciones
+            </a>
+            <a
               href='/usuario/configuracion'
               class='w-full px-4 text-left py-2 text-sm hover:bg-gray-100 dark:hover:bg-slate-800 flex items-center gap-2 rounded-t-md'
             >
               <IconoConfiguracion />
               Configuración
             </a>
-
             <a
               href='/salir'
               class='w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-slate-800 flex items-center gap-2 rounded-b-md'

@@ -18,6 +18,7 @@ import * as $usuario_editar_nombre from './routes/usuario/editar/nombre.ts'
 import * as $usuario_editar_tema from './routes/usuario/editar/tema.ts'
 import * as $usuario_miembro_middleware from './routes/usuario/miembro/_middleware.ts'
 import * as $usuario_miembro_index from './routes/usuario/miembro/index.tsx'
+import * as $usuario_notificaciones from './routes/usuario/notificaciones.tsx'
 import * as $Counter from './islands/Counter.tsx'
 import * as $EncabezadoPrincipal from './islands/EncabezadoPrincipal.tsx'
 import * as $Modal from './islands/Modal.tsx'
@@ -42,6 +43,7 @@ const manifest = {
     './routes/usuario/editar/tema.ts': $usuario_editar_tema,
     './routes/usuario/miembro/_middleware.ts': $usuario_miembro_middleware,
     './routes/usuario/miembro/index.tsx': $usuario_miembro_index,
+    './routes/usuario/notificaciones.tsx': $usuario_notificaciones,
   },
   islands: {
     './islands/Counter.tsx': $Counter,
