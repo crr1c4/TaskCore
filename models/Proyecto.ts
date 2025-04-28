@@ -3,145 +3,77 @@
  * @author Christian Venegas
  * @description este archivo contiene las funciones de los proyectos para la BD.
  */
-import { DB, PROYECTOS } from '../mod.ts'
-import { obtenerUsuario } from './usuario.ts'
+import { DB } from './mod.ts'
+import Usuario from './Usuario.ts'
 
-// TODO: Añadir verificacion para correos no existentes.
-/**
- * Representa un proyecto en la base de datos.
- */
-export interface Proyecto {
-  id: string
+export default class Proyecto {
+  readonly id: string
   nombre: string
   descripcion: string
-  fechaCreacion: Date
-  correoAdmin: string
-  correosIntegrantesEquipo: string[]
-}
+  readonly fechaCreacion: Date
 
-/**
- * Crea un nuevo proyecto y lo guarda en la base de datos.
- * @param {Object} datosInicialesProyecto - Datos iniciales del proyecto.
- * @param {string} datosInicialesProyecto.nombre - Nombre del proyecto.
- * @param {string} datosInicialesProyecto.descripcion - Descripción del proyecto.
- * @param {string[]} datosInicialesProyecto.correosIntegrantesEquipo - Correos de los integrantes del equipo.
- * @param {string} datosIniciales.correoAdmin - Correo del administrador que crea el proyecto.
- * @returns {Promise<boolean>} `true` si el proyecto se creó con éxito, `false` en caso contrario.
- */
-export async function crearProyecto(
-  datosInicialesProyecto: {
-    nombre: string
-    descripcion: string
-    correosIntegrantesEquipo: string[]
-    correoAdmin: string
-  },
-): Promise<string | null> {
-  // Creacion del proyecto
-  for (const correo of datosInicialesProyecto.correosIntegrantesEquipo) {
-    const usuario = await obtenerUsuario(correo) 
-    if (!usuario) return null
+  constructor(nombre: string, descripcion: string) {
+    this.id = crypto.randomUUID()
+    this.nombre = nombre
+    this.descripcion = descripcion
+    this.fechaCreacion = new Date()
   }
 
-  const proyecto: Proyecto = {
-    id: crypto.randomUUID(),
-    nombre: datosInicialesProyecto.nombre,
-    descripcion: datosInicialesProyecto.descripcion,
-    fechaCreacion: new Date(),
-    correoAdmin: datosInicialesProyecto.correoAdmin,
-    correosIntegrantesEquipo: datosInicialesProyecto.correosIntegrantesEquipo,
+  async guardar() {
+    const resultado = await DB.atomic()
+      .check({ key: ['proyectos', this.id], versionstamp: null })
+      .set(['proyectos', this.id], this)
+      .commit()
+
+    if (!resultado.ok) throw new Error('Ya existe un proyecto con el mismo ID.')
   }
 
-  const llave = [PROYECTOS, proyecto.id]
+  static async obtener(id: string): Promise<Proyecto> {
+    const resultado = await DB.get<Proyecto>(['proyectos', id])
+    if (!resultado.value) throw new Error('No existe un proyecto con el id: ' + id)
+    return resultado.value
+  }
 
-  const resultado = await DB.atomic()
-    .check({ key: llave, versionstamp: null })
-    .set(llave, proyecto)
-    .commit()
+  async asignarAdministrador(administrador: Usuario) {
+    const resultado = await DB.atomic()
+      .check({ key: ['proyectos', this.id, 'admin'], versionstamp: null })
+      .set(['proyectos', this.id, 'admin'], administrador)
+      .commit()
 
-  return resultado.ok ? proyecto.id : null
-}
+    if (!resultado.ok) throw new Error('Ya existe un administrador asignado al proyeco.')
+  }
 
-/**
- * Elimina un proyecto de la base de datos.
- * @param {string} id - Identificador del proyecto a eliminar.
- */
-export async function eliminarProyecto(id: string) {
-  await DB.delete([PROYECTOS, id])
-}
+  async obtenerAdministrador(): Promise<Usuario> {
+    const resultado = await DB.get<Usuario>(['proyectos', this.id, 'admin'])
+    if (!resultado.versionstamp || !resultado.value) throw new Error('Usuario no encontrado.')
+    return resultado.value
+  }
 
-/**
- * Obtiene la lista de proyectos de un administrador.
- * @param {string} correoAdmin - Correo del administrador.
- * @returns {Promise<Proyecto[]>} Lista de proyectos asociados al administrador.
- */
-export async function obtenerListaProyectosAdmin(
-  correoAdmin: string,
-): Promise<Proyecto[]> {
-  const proyectos = DB.list<Proyecto>({ prefix: [PROYECTOS] })
-  const proyectos_admin = []
-  for await (const proyecto of proyectos) {
-    if (proyecto.value.correoAdmin === correoAdmin) {
-      proyectos_admin.push(proyecto.value)
+  async agregarMiembro(miembro: Usuario) {
+    const resultado = await DB.atomic()
+      .check({ key: ['proyectos', this.id, 'miembro', miembro.correo], versionstamp: null })
+      .set(['proyectos', this.id, 'admin'], miembro)
+      .commit()
+
+    if (!resultado.ok) throw new Error('El miembro ya esta registrado en el proyeco.')
+  }
+
+  async eliminar() {
+    await Proyecto.eliminar(this.id)
+  }
+
+  static async eliminar(id: string) {
+    const datosProyecto = DB.list({ prefix: ['proyectos', id] })
+    for await (const registro of datosProyecto) {
+      await DB.delete(registro.key)
     }
   }
 
-  return proyectos_admin
-}
-
-/**
- * Obtiene la lista de proyectos en los que un miembro participa.
- * @param {string} correoMiembro - Correo del miembro del equipo.
- * @returns {Promise<Proyecto[]>} Lista de proyectos en los que el miembro participa.
- */
-export async function obtenerListaProyectosMiembro(
-  correoMiembro: string,
-): Promise<Proyecto[]> {
-  const proyectos = DB.list<Proyecto>({ prefix: [PROYECTOS] })
-  const proyectos_miembro = []
-  for await (const proyecto of proyectos) {
-    if (proyecto.value.correosIntegrantesEquipo.includes(correoMiembro)) {
-      proyectos_miembro.push(proyecto.value)
-    }
+  public async editar(datosNuevos: Partial<Proyecto>) {
+    Object.assign(this, datosNuevos)
+    const resultado = await DB.atomic()
+      .set(['proyectos', this.id], this)
+      .commit()
+    if (!resultado.ok) throw new Error('Hubo un error al editar al proyecto')
   }
-
-  return proyectos_miembro
-}
-
-/**
- * Obtiene un proyecto específico de un administrador.
- * @param {string} id - Identificador del proyecto.
- * @returns {Promise<Proyecto | null>} El proyecto si existe, de lo contrario `null`.
- */
-export async function obtenerProyecto(
-  id: string,
-): Promise<Proyecto | null> {
-  return (await DB.get<Proyecto>([PROYECTOS, id])).value
-}
-
-/**
- * Edita los datos de un proyecto existente.
- * @param {string} id - Identificador del proyecto.
- * @param {Partial<Proyecto>} datosNuevos - Datos nuevos del proyecto.
- * @returns {Promise<boolean>} `true` si la edición fue exitosa, `false` en caso contrario.
- */
-export async function editarProyecto(
-  id: string,
-  datosNuevos: Partial<Proyecto>,
-): Promise<boolean> {
-  const proyecto = await obtenerProyecto(id)
-  if (!proyecto) return false
-
-  const proyectoActualizado: Proyecto = {
-    ...proyecto,
-    correosIntegrantesEquipo: datosNuevos.correosIntegrantesEquipo ??
-      proyecto.correosIntegrantesEquipo,
-    nombre: datosNuevos.nombre ?? proyecto.nombre,
-    descripcion: datosNuevos.descripcion ?? proyecto.descripcion,
-  }
-
-  // Inserción de los nuevos datos.
-  const resultado = await DB.atomic()
-    .set([PROYECTOS, id], proyectoActualizado)
-    .commit()
-  return resultado.ok
 }

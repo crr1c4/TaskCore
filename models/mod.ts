@@ -1,5 +1,5 @@
 export const DB = await Deno.openKv()
-export const USUARIOS = "usuarios"
+export const LLAVE_USUARIOS = "usuarios"
 export const TAREAS = "tareas";
 export const PROYECTOS = "proyectos"
 export const ANUNCIOS = "anuncios"
@@ -16,3 +16,4 @@ export async function eliminarBaseDatos() {
     await DB.delete(registro.key)
   }
 }
+
