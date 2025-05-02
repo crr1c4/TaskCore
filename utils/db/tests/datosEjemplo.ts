@@ -9,6 +9,7 @@ export const admin: Usuario = {
   correo: "christian.venegas@correo.com",
   contraseña: "odyperrofeliz",
   rol: "admin",
+  tema: ""
 }
 
 export const miembro1: Usuario = {
@@ -16,6 +17,7 @@ export const miembro1: Usuario = {
   correo: "javier.rodriguez@correo.com",
   contraseña: "tareaSegura123",
   rol: "miembro",
+  tema: ""
 }
 
 export const miembro2: Usuario = {
@@ -23,6 +25,7 @@ export const miembro2: Usuario = {
   correo: "sofia.mendez@correo.com",
   contraseña: "colaboracion2024",
   rol: "miembro",
+  tema: ""
 }
 
 export const miembro3: Usuario = {
@@ -30,6 +33,7 @@ export const miembro3: Usuario = {
   correo: "diego.fernandez@correo.com",
   contraseña: "proyectoListo99",
   rol: "miembro",
+  tema: ""
 }
 
 export const miembro4: Usuario = {
@@ -37,6 +41,7 @@ export const miembro4: Usuario = {
   correo: "valeria.castillo@correo.com",
   contraseña: "equipoFuerte77",
   rol: "miembro",
+  tema: ""
 }
 
 export const miembro5: Usuario = {
@@ -44,6 +49,7 @@ export const miembro5: Usuario = {
   correo: "luis.ramirez@correo.com",
   contraseña: "avanceConstante88",
   rol: "miembro",
+  tema: ""
 }
 
 /**

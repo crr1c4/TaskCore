@@ -4,6 +4,7 @@
  * @description este archivo contiene las funciones de los proyectos para la BD.
  */
 import { DB } from './mod.ts'
+import Tarea from './Tarea.ts'
 import Usuario from './Usuario.ts'
 
 export default class Proyecto {
@@ -11,12 +12,14 @@ export default class Proyecto {
   nombre: string
   descripcion: string
   readonly fechaCreacion: Date
+  readonly administrador: Usuario
 
-  constructor(nombre: string, descripcion: string) {
+  constructor(nombre: string, descripcion: string, administrador: Usuario) {
     this.id = crypto.randomUUID()
     this.nombre = nombre
     this.descripcion = descripcion
     this.fechaCreacion = new Date()
+    this.administrador = administrador
   }
 
   async guardar() {
@@ -34,25 +37,10 @@ export default class Proyecto {
     return resultado.value
   }
 
-  async asignarAdministrador(administrador: Usuario) {
-    const resultado = await DB.atomic()
-      .check({ key: ['proyectos', this.id, 'admin'], versionstamp: null })
-      .set(['proyectos', this.id, 'admin'], administrador)
-      .commit()
-
-    if (!resultado.ok) throw new Error('Ya existe un administrador asignado al proyeco.')
-  }
-
-  async obtenerAdministrador(): Promise<Usuario> {
-    const resultado = await DB.get<Usuario>(['proyectos', this.id, 'admin'])
-    if (!resultado.versionstamp || !resultado.value) throw new Error('Usuario no encontrado.')
-    return resultado.value
-  }
-
   async agregarMiembro(miembro: Usuario) {
     const resultado = await DB.atomic()
-      .check({ key: ['proyectos', this.id, 'miembro', miembro.correo], versionstamp: null })
-      .set(['proyectos', this.id, 'admin'], miembro)
+      .check({ key: ['proyectos', this.id, 'miembro', miembro.nombre], versionstamp: null })
+      .set(['proyectos', this.id, 'miembro', miembro.nombre], ["usuarios", miembro.nombre])
       .commit()
 
     if (!resultado.ok) throw new Error('El miembro ya esta registrado en el proyeco.')
@@ -75,5 +63,23 @@ export default class Proyecto {
       .set(['proyectos', this.id], this)
       .commit()
     if (!resultado.ok) throw new Error('Hubo un error al editar al proyecto')
+  }
+
+  /******************************************+ TAREAS *********************************************/
+  public async guardarTarea(tarea: Tarea, correoEncargado: string) {
+    const llave = ['proyectos', this.id, 'tareas', correoEncargado, tarea.id]
+    const resultado = await DB.atomic()
+      .check({ key: llave, versionstamp: null })
+      .set(llave, tarea)
+      .commit()
+
+    if (!resultado.ok) throw new Error('Ya existe una tarea con el mismo ID.')
+  }
+
+  public async eliminarTarea(idTarea: string) {
+    const datosProyecto = DB.list({ prefix: ['proyectos', this.id, 'miembro'] })
+    for await (const registro of datosProyecto) {
+      await DB.delete(registro.key)
+    }
   }
 }

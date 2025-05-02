@@ -7,6 +7,7 @@ import { hash as encriptar } from '@felix/bcrypt'
 import { DB } from './mod.ts'
 import { z as esquema } from 'zod'
 import Proyecto from './Proyecto.ts'
+import Tarea from './Tarea.ts'
 
 /**
  * @description Esquema para validar la complejidad de la contraseña.
@@ -29,7 +30,11 @@ const esquemaContraseña = esquema
  * @description Esquema de validación para nombres.
  * - Debe ser una cadena de texto con al menos 1 carácter.
  */
-const esquemaNombre = esquema.string().min(1)
+const esquemaNombre = esquema.string()
+  .min(5)
+  .refine((val) => /[A-Z]/.test(val))
+  .refine((val) => /[a-z]/.test(val))
+  .refine((val) => /[0-9]/.test(val))
 
 /**
  * @description Esquema de validación para correos electrónicos.
@@ -41,101 +46,212 @@ export type Rol = 'admin' | 'miembro'
 export type Tema = 'dark' | ''
 
 export default class Usuario {
-  nombre: string
-  readonly correo: string
-  contraseña: string
-  readonly rol: Rol
-  tema: Tema
+  #nombre: string
+  #correo: string
+  #contraseña: string
+  readonly #rol: Rol
+  #tema: Tema
 
-  constructor(nombre: string, correo: string, contraseña: string, rol: Rol, tema: Tema) {
-    this.nombre = nombre
-    this.correo = correo
-    this.rol = rol
-    this.tema = tema
-    this.contraseña = contraseña
+  public constructor(nombre: string, correo: string, contraseña: string, rol: Rol, tema: Tema) {
+    this.#nombre = nombre
+    this.#correo = correo
+    this.#rol = rol
+    this.#tema = tema
+    this.#contraseña = contraseña
   }
 
-  async guardar() {
-    if (!esquemaCorreo.safeParse(this.correo).success) throw new Error('El correo electronico no es valido.')
-    if (!esquemaNombre.safeParse(this.nombre).success) throw new Error('El nombre de usuario no es valido.')
-    if (!esquemaContraseña.safeParse(this.contraseña).success) {
+  /* GETTERS */
+  public get nombre() {
+    return this.#nombre
+  }
+
+  public get correo() {
+    return this.#correo
+  }
+
+  public get contraseña() {
+    return this.#contraseña
+  }
+
+  public get rol() {
+    return this.#rol
+  }
+
+  public get tema() {
+    return this.#tema
+  }
+
+  public async guardar() {
+    if (!esquemaCorreo.safeParse(this.#correo).success) throw new Error('El correo electronico no es valido.')
+    if (!esquemaNombre.safeParse(this.#nombre).success) {
+      throw new Error('El nombre de usuario no es valido, debe contar con mínimo 5 caracteres.') // TODO: Completar el mensaje
+    }
+    if (!esquemaContraseña.safeParse(this.#contraseña).success) {
       throw new Error(
         'Las contraseñas deben ser mayor de 8 caracteres, debe contar con mayúsculas, minúsculas, números y carácteres especiales.',
       )
     }
 
-    this.contraseña = await encriptar(this.contraseña)
+    this.#contraseña = await encriptar(this.#contraseña)
 
-    const llave = ["usuarios", this.correo]
+    const llaveCorreo = ['usuarios.correo', this.#correo]
+    const llaveNombre = ['usuarios.nombre', this.#nombre]
+
     const resultado = await DB.atomic()
-      .check({ key: llave, versionstamp: null })
-      .set(llave, this)
+      .check({ key: llaveNombre, versionstamp: null })
+      .check({ key: llaveCorreo, versionstamp: null })
+      .set(llaveNombre, this)
+      .set(llaveCorreo, this)
       .commit()
 
-    if (!resultado.ok) throw new Error('El usuario ya está registrado.')
+    if (!resultado.ok) {
+      throw new Error(
+        'Los datos ya están registrados en la aplicación. Prueba a cambiar el nombre de usuario o el correo electrónico.',
+      )
+    }
   }
 
-  static async obtener(correo: string): Promise<Usuario> {
-    const resultado = await DB.get<Usuario>(["usuarios", correo])
+  public static async obtenerPorCorreo(correo: string): Promise<Usuario> {
+    const resultado = await DB.get<Usuario>(['usuarios.correo', correo])
     if (!resultado.versionstamp || !resultado.value) throw new Error('Usuario no encontrado.')
     return resultado.value
   }
 
-  static async eliminar(correo: string) {
-    await DB.delete(["usuarios", correo])
+  public static async obtenerPorNombre(nombre: string): Promise<Usuario> {
+    const resultado = await DB.get<Usuario>(['usuarios.nombre', nombre])
+    if (!resultado.versionstamp || !resultado.value) throw new Error('Usuario no encontrado.')
+    return resultado.value
   }
 
-  async eliminar() {
-    await Usuario.eliminar(this.correo)
-  }
-
-  async editar(nuevosDatos: Partial<Usuario>) {
-    if (nuevosDatos.nombre) {
-      if (!esquemaNombre.safeParse(nuevosDatos.nombre).success) {
-        throw new Error('El nombre de usuario no es válido.')
-      }
-      this.nombre = nuevosDatos.nombre
+  public async cambiarNombre(nombre: string) {
+    if (!esquemaNombre.safeParse(nombre).success) {
+      throw new Error('El nombre de usuario no es válido.')
     }
 
-    if (nuevosDatos.tema) {
-      this.tema = nuevosDatos.tema
+    const usuarioExistente = await Usuario.obtenerPorNombre(nombre)
+
+    if (usuarioExistente) {
+      throw new Error('Ya existe un usuario con ese nombre.')
     }
 
-    if (nuevosDatos.contraseña) {
-      if (!esquemaContraseña.safeParse(nuevosDatos.contraseña).success) {
-        throw new Error(
-          'Las contraseñas deben ser mayor de 8 caracteres, debe contar con mayúsculas, minúsculas, números y carácteres especiales.',
-        )
-      }
-      this.contraseña = await encriptar(nuevosDatos.contraseña)
-    }
+    const nombreAntiguo = this.#nombre
+    this.#nombre = nombre
 
     const resultado = await DB.atomic()
-      .set(["usuarios", this.correo], this)
+      .check({ key: ['usuarios.nombre', this.#nombre], versionstamp: null })
+      .delete(['usuarios.nombre', nombreAntiguo])
+      .set(['usuarios.nombre', this.#nombre], this)
+      .set(['usuarios.correo', this.#correo], this)
       .commit()
 
-    if (!resultado.ok) throw new Error('Hubo un error al actualizar los datos.')
+    if (!resultado.ok) throw new Error('No se pudo cambiar el nombre de usuario.')
   }
 
+  public async cambiarCorreo(correo: string) {
+    if (!esquemaCorreo.safeParse(correo).success) {
+      throw new Error('El correo no es válido.')
+    }
+
+    const usuarioExistente = await Usuario.obtenerPorCorreo(correo)
+
+    if (usuarioExistente) {
+      throw new Error('Ya existe un usuario con ese correo.')
+    }
+
+    const correoAntiguo = this.#correo
+    this.#correo = correo
+
+    const resultado = await DB.atomic()
+      .check({ key: ['usuarios.correo', this.#correo], versionstamp: null })
+      .delete(['usuarios.correo', correoAntiguo])
+      .set(['usuarios.nombre', this.#nombre], this)
+      .set(['usuarios.correo', this.#correo], this)
+      .commit()
+
+    if (!resultado.ok) throw new Error('No se pudo cambiar el correo electronico.')
+  }
+
+  public async cambiarTema() {
+    this.#tema = this.#tema === '' ? 'dark' : ''
+
+    const resultado = await DB.atomic()
+      .check({ key: ['usuarios.nombre', this.#correo], versionstamp: null })
+      .check({ key: ['usuarios.correo', this.#correo], versionstamp: null })
+      .set(['usuarios.nombre', this.#nombre], this)
+      .set(['usuarios.correo', this.#correo], this)
+      .commit()
+
+    if (!resultado.ok) throw new Error('No se pudo cambiar el tema de la aplicación.')
+  }
+
+  public async cambiarContraseña(contraseña: string) {
+    if (!esquemaContraseña.safeParse(contraseña).success) {
+      throw new Error(
+        'Las contraseñas deben ser mayor de 8 caracteres, debe contar con mayúsculas, minúsculas, números y carácteres especiales.',
+      )
+    }
+
+    this.#contraseña = await encriptar(contraseña)
+
+    const resultado = await DB.atomic()
+      .check({ key: ['usuarios.nombre', this.#correo], versionstamp: null })
+      .check({ key: ['usuarios.correo', this.#correo], versionstamp: null })
+      .set(['usuarios.nombre', this.#nombre], this)
+      .set(['usuarios.correo', this.#correo], this)
+      .commit()
+
+    if (!resultado.ok) throw new Error('No se pudo cambiar la contraseña.')
+  }
+
+  /* MÉTODOS PARA PROYECTOS */
   public async obtenerProyectos(): Promise<Proyecto[]> {
+  }
+
+  private async proyectosAdministrador(): Promise<Proyecto[]> {
     const proyectos: Proyecto[] = []
 
-    for await (const entrada of DB.list<Usuario>({ prefix: ['proyectos'] })) {
-      const [_, idProyecto, rol, correoMiembro] = entrada.key as [string, string, string, string?]
-
-      if (rol === 'admin' && entrada.value.correo === this.correo) {
-        const entradaProyecto = await DB.get<Proyecto>(['proyectos', idProyecto])
-        if (entradaProyecto.value) {
-          proyectos.push(entradaProyecto.value)
-        }
-      } else if (rol === 'miembro' && correoMiembro === this.correo) {
-        const entradaProyecto = await DB.get<Proyecto>(['proyectos', idProyecto])
-        if (entradaProyecto.value) {
-          proyectos.push(entradaProyecto.value)
-        }
+    for await (const entrada of DB.list<Proyecto>({ prefix: ['proyectos'] })) {
+      if (
+        entrada.value.administrador.#correo === this.#correo && entrada.value.administrador.#nombre === this.#nombre
+      ) {
+        proyectos.push(entrada.value)
       }
     }
 
     return proyectos
+  }
+
+  private async obtenerProyectosMiembro() {
+    const proyectos: Proyecto[] = []
+
+    for await (const entrada of DB.list<Usuario>({ prefix: ['proyectos'] })) {
+      const [_, idProyecto, _, nombreMiembro] = entrada.key as [string, string, string, string?]
+     
+      if (nombreMiembro === this.nombre) {
+        proyectos.push(await Proyecto.obtener(idProyecto))
+      }
+      // if (rol === 'admin' && entrada.value.#correo === this.#correo) {
+      //   const entradaProyecto = await DB.get<Proyecto>(['proyectos', idProyecto])
+      //   if (entradaProyecto.value) {
+      //     proyectos.push(entradaProyecto.value)
+      //   }
+      // } else if (rol === 'miembro' && correoMiembro === this.#correo) {
+      //   const entradaProyecto = await DB.get<Proyecto>(['proyectos', idProyecto])
+      //   if (entradaProyecto.value) {
+      //     proyectos.push(entradaProyecto.value)
+      //   }
+      // }
+    }
+
+    return proyectos
+  }
+
+  public async obtenerTareas(idProyecto: string): Promise<Tarea[]> {
+    const tareas: Tarea[] = []
+
+    for await (const entrada of DB.list<Usuario>({ prefix: ['proyectos', idProyecto, 'tareas', this.#correo] })) {
+    }
+
+    return tareas
   }
 }
