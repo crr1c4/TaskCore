@@ -6,6 +6,9 @@ import * as $_404 from './routes/_404.tsx'
 import * as $_app from './routes/_app.tsx'
 import * as $index from './routes/index.tsx'
 import * as $ingresar from './routes/ingresar.tsx'
+import * as $proyectos_id_editar from './routes/proyectos/[id]/editar.tsx'
+import * as $proyectos_id_index from './routes/proyectos/[id]/index.tsx'
+import * as $proyectos_id_miembro from './routes/proyectos/[id]/miembro.tsx'
 import * as $registro from './routes/registro.tsx'
 import * as $salir from './routes/salir.ts'
 import * as $usuario_middleware from './routes/usuario/_middleware.ts'
@@ -31,6 +34,9 @@ const manifest = {
     './routes/_app.tsx': $_app,
     './routes/index.tsx': $index,
     './routes/ingresar.tsx': $ingresar,
+    './routes/proyectos/[id]/editar.tsx': $proyectos_id_editar,
+    './routes/proyectos/[id]/index.tsx': $proyectos_id_index,
+    './routes/proyectos/[id]/miembro.tsx': $proyectos_id_miembro,
     './routes/registro.tsx': $registro,
     './routes/salir.ts': $salir,
     './routes/usuario/_middleware.ts': $usuario_middleware,
