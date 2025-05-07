@@ -3,7 +3,6 @@ import { ComponentChildren } from 'preact'
 
 interface Props {
   children: ComponentChildren
-  color: 'blue' | 'yellow' | 'green'
 }
 
 export function BotonPrincipal(props: Props) {

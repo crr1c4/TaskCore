@@ -73,7 +73,7 @@ export default function Configuracion(ctx: FreshContext<Usuario>) {
                       />
                       <input type='hidden' value={ctx.state.correo} name='correo' />
                       <div class='flex justify-end'>
-                        <BotonPrincipal color='blue'>Guardar cambios</BotonPrincipal>
+                        <BotonPrincipal >Guardar cambios</BotonPrincipal>
                       </div>
                     </form>
                   </div>
@@ -118,7 +118,7 @@ export default function Configuracion(ctx: FreshContext<Usuario>) {
                         minLength={8}
                       />
                       <div class='flex justify-end'>
-                        <BotonPrincipal color='blue'>Actualizar contraseña</BotonPrincipal>
+                        <BotonPrincipal >Actualizar contraseña</BotonPrincipal>
                       </div>
                     </form>
                   </div>
@@ -146,7 +146,7 @@ export default function Configuracion(ctx: FreshContext<Usuario>) {
                             Cambia entre modo claro y oscuro
                           </p>
                         </div>
-                        <BotonPrincipal color='blue'>Cambiar tema</BotonPrincipal>
+                        <BotonPrincipal >Cambiar tema</BotonPrincipal>
                       </div>
                     </form>
                   </div>
@@ -155,7 +155,7 @@ export default function Configuracion(ctx: FreshContext<Usuario>) {
 
               <div class='flex justify-end'>
                 <a href='/usuario/miembro' class='inline-flex'>
-                  <BotonPrincipal color='green'>Volver al inicio</BotonPrincipal>
+                  <BotonPrincipal>Volver al inicio</BotonPrincipal>
                 </a>
               </div>
             </div>

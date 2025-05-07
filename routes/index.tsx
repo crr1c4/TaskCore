@@ -24,13 +24,13 @@ export default function Bienvenida() {
         </p>
         <div className='mt-6 flex gap-4'>
           <a href='/ingresar'>
-            <BotonPrincipal color='green'>
+            <BotonPrincipal>
               Iniciar sesión
             </BotonPrincipal>
           </a>
 
           <a href='/registro'>
-            <BotonPrincipal color='blue'>
+            <BotonPrincipal>
               Crear cuenta
             </BotonPrincipal>
           </a>

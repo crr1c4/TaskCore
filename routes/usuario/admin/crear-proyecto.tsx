@@ -7,37 +7,80 @@ import Usuario from '../../../models/Usuario.ts'
 
 export default function PaginaCrearProyecto(ctx: FreshContext<Usuario>) {
   return (
-    <div class={`h-screen ${ctx.state.tema} dark:bg-slate-800`}>
+    <div class={`min-h-screen ${ctx.state.tema} dark:bg-gray-900 bg-gray-50`}>
       {/* Panel principal */}
       <NavBar rol={ctx.state.rol} />
-      <main class='px-6 md:px-20 pt-24 flex flex-col justify-center items-center gap-2 dark:text-white'>
-        <h1 class='text-4xl'>Crear un nuevo proyecto</h1>
-
-        <div class='p-4 w-full shadow-md lg:w-1/2 grid grid-cols-4 gap-2 items-center dark:shadow-none dark:bg-slate-900 rounded-md'>
-          <h2 class='text-2xl col-span-1 hidden md:block'>Agregar miembro:</h2>
-          <div class='w-full flex gap-2 col-span-4 md:col-span-3'>
-            <CampoIngreso label='Correo de miembro' />
-            <BotonPrincipal color='blue'>Agregar</BotonPrincipal>
-          </div>
+      <main class='px-4 sm:px-6 lg:px-8 py-24 max-w-7xl mx-auto'>
+        <div class='text-center mb-12'>
+          <h1 class='text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-2'>
+            Crear nuevo proyecto
+          </h1>
+          <p class='text-lg text-gray-600 dark:text-gray-300'>
+            Configura los detalles de tu nuevo proyecto y agrega miembros
+          </p>
         </div>
 
-        <div class='p-4 w-full shadow-md lg:w-1/2 flex flex-col gap-4 items-center dark:shadow-none dark:bg-slate-900 rounded-md'>
-          <h2 class='text-2xl'>Resumen de creación del proyecto:</h2>
-          <div class='w-full flex gap-2'>
-            <IconoEquipo />
-            <h2 class='text-xl'>Miembros agregados:</h2>
+        <div class='space-y-8 max-w-3xl mx-auto'>
+          {/* Sección de agregar miembros */}
+          <div class='bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 border border-gray-200 dark:border-gray-700'>
+            <div class='flex flex-col sm:flex-row items-start sm:items-center gap-4'>
+              <div class='w-full sm:w-auto'>
+                <h2 class='text-xl font-semibold text-gray-800 dark:text-gray-200'>
+                  Agregar miembro
+                </h2>
+                <p class='text-sm text-gray-500 dark:text-gray-400 mt-1'>
+                  Ingresa el correo del usuario
+                </p>
+              </div>
+              <div class='flex-1 w-full flex gap-3'>
+                <CampoIngreso 
+                  label='Correo electrónico' 
+                  class='flex-1'
+                  placeholder='usuario@ejemplo.com'
+                />
+                <BotonPrincipal >
+                  Agregar
+                </BotonPrincipal>
+              </div>
+            </div>
           </div>
-          <div class="w-full flex flex-wrap gap-2 text-xs">
-            <div class="rounded-full bg-sky-400 py-2 px-4 cursor-pointer hover:bg-sky-500 transition-colors">miembro@correo.com</div>
-            <div class="rounded-full bg-sky-400 py-2 px-4 cursor-pointer hover:bg-sky-500 transition-colors">miembro_correo_largo@correo.com</div>
-            <div class="rounded-full bg-sky-400 py-2 px-4 cursor-pointer hover:bg-sky-500 transition-colors">otro.miembro@correo.com</div>
-            <div class="rounded-full bg-sky-400 py-2 px-4 cursor-pointer hover:bg-sky-500 transition-colors">miembro_correo_largo@correo.com</div>
-            <div class="rounded-full bg-sky-400 py-2 px-4 cursor-pointer hover:bg-sky-500 transition-colors">miembro_correo_largo@correo.com</div>
-            <div class="rounded-full bg-sky-400 py-2 px-4 cursor-pointer hover:bg-sky-500 transition-colors">miembro@correo.com</div>
-            <div class="rounded-full bg-sky-400 py-2 px-4 cursor-pointer hover:bg-sky-500 transition-colors">otro.miembro@correo.com</div>
-          </div>        
+
+          {/* Sección de resumen */}
+          <div class='bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 border border-gray-200 dark:border-gray-700'>
+            <div class='flex items-center gap-3 mb-6'>
+              <IconoEquipo />
+              <h2 class='text-xl font-semibold text-gray-800 dark:text-gray-200'>
+                Miembros del proyecto
+              </h2>
+            </div>
+            
+            <div class='flex flex-wrap gap-2'>
+              {[
+                'miembro@correo.com',
+                'miembro_correo_largo@correo.com',
+                'otro.miembro@correo.com',
+                'miembro_correo_largo@correo.com',
+                'miembro_correo_largo@correo.com',
+                'miembro@correo.com',
+                'otro.miembro@correo.com'
+              ].map((email) => (
+                <div class='rounded-full bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-200 py-1.5 px-4 text-sm flex items-center gap-2'>
+                  {email}
+                  <button class='text-blue-500 hover:text-blue-700 dark:hover:text-blue-400'>
+                    &times;
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Botón de creación */}
+          <div class='flex justify-center pt-4'>
+            <BotonPrincipal>
+              Crear proyecto
+            </BotonPrincipal>
+          </div>
         </div>
-        <BotonPrincipal color='green'>Crear un nuevo proyecto</BotonPrincipal>
       </main>
     </div>
   )

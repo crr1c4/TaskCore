@@ -13,6 +13,9 @@ export default class Proyecto {
   descripcion: string
   readonly fechaCreacion: Date
   readonly administrador: Usuario
+  miembros: ["usuarios.nombre", string][]
+  tareas: ["tareas", string][]
+  anuncios: ["anuncios", string][]
 
   constructor(nombre: string, descripcion: string, administrador: Usuario) {
     this.id = crypto.randomUUID()
@@ -20,6 +23,9 @@ export default class Proyecto {
     this.descripcion = descripcion
     this.fechaCreacion = new Date()
     this.administrador = administrador
+    this.miembros = []
+    this.tareas = []
+    this.anuncios = []
   }
 
   async guardar() {

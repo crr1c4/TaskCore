@@ -134,7 +134,7 @@ export default function Ingresar(req: Request) {
           autoComplete='off'
         />
 
-        <BotonPrincipal color='blue'>Iniciar sesión</BotonPrincipal>
+        <BotonPrincipal >Iniciar sesión</BotonPrincipal>
         <Enlace direccion='/' texto='Regresar al inicio' />
         <Enlace direccion='/registro' texto='Crear una nueva cuenta' />
       </form>

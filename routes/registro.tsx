@@ -122,7 +122,7 @@ export default function Registro(req: Request) {
           minLength={8}
         />
 
-        <BotonPrincipal color='blue'>Registrar</BotonPrincipal>
+        <BotonPrincipal>Registrar</BotonPrincipal>
         <Enlace direccion='/' texto='Regresar al inicio' />
         <Enlace direccion='/ingresar' texto='Iniciar sesión' />
 
