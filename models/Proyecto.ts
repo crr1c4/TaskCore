@@ -13,9 +13,11 @@ export default class Proyecto {
   public descripcion: string
   public fechaCreacion: Date
   public administrador: Usuario
-  public miembros: ['usuarios.nombre', string][]
-  public tareas: ['tareas', string][]
-  public anuncios: ['anuncios', string][]
+
+  // Van a ser arreglos de IDs
+  public miembros: string[]
+  public tareas: string[]
+  public anuncios: string[]
 
   public constructor(nombre: string, descripcion: string, administrador: Usuario) {
     this.id = crypto.randomUUID()

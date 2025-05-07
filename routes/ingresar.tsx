@@ -36,8 +36,6 @@ export const handler: Handlers = {
 
       const usuario = await Usuario.obtenerPorCorreo(correo) 
 
-      console.log(usuario)
-
       if (!(await usuario.verificarContraseña(contraseña))) {
         throw new Error('La contraseña es incorrecta.')
       }

@@ -65,7 +65,7 @@ export function ComponenteProyecto({ rol, proyecto }: Props) {
         </div>
 
         {/* Contenido */}
-        <a href={`/proyectos/${proyecto.id}`} class='p-4 flex flex-col flex-grow'>
+        <a href={`/proyecto/${proyecto.id}`} class='p-4 flex flex-col flex-grow'>
           <p class='text-gray-600 dark:text-gray-300 mb-4 line-clamp-3'>
             {proyecto.descripcion || 'Sin descripción'}
           </p>

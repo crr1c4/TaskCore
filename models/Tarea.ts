@@ -1,16 +1,47 @@
-export default class Tarea {
-  readonly id: string
-  nombre: string
-  estado: boolean
-  descripcion: string
-  fechaExpiracion: Date
+import { throwDeprecation } from 'node:process'
+import { DB } from './mod.ts'
 
-  constructor(nombre: string, descripcion: string, fechaExpiracion: Date) {
+export default class Tarea {
+  public id: string
+  public nombre: string
+  public estado: boolean
+  public descripcion: string
+  public fechaExpiracion: Date
+
+  public constructor(nombre: string, descripcion: string, fechaExpiracion: Date) {
     this.id = crypto.randomUUID()
     this.nombre = nombre
     this.descripcion = descripcion
     this.estado = false
     this.fechaExpiracion = fechaExpiracion
+  }
+
+  public haExpirado(): boolean {
+    const fechaActual = new Date()
+    return this.fechaExpiracion < fechaActual
+  }
+
+  public async eliminar() {
+    await DB.delete(['tareas', this.id])
+  }
+
+  private static deserializar(tareaSerializado: Deno.KvEntry<Tarea>) {
+    const tarea = new Tarea(
+      tareaSerializado.value.nombre,
+      tareaSerializado.value.descripcion,
+      tareaSerializado.value.fechaExpiracion
+    )
+
+    tarea.id = tareaSerializado.value.id
+    tarea.estado = tareaSerializado.value.estado
+
+    return tarea
+  }
+
+  public static async obtener(id: string): Promise<Tarea> {
+    const resultado = await DB.get<Tarea>(['tareas', id])
+    if (!resultado.value) throw new Error('No se ha encontrado una tarea con el id proporcionado.')
+    return Tarea.deserializar(resultado)
   }
 }
 
@@ -55,10 +86,6 @@ export default class Tarea {
 //  * @param {string} idTarea - Identificador de la tarea a eliminar.
 //  * @returns {Promise<void>}
 //  */
-// export async function eliminarTarea(idProyecto: string, correoMiembro: string, idTarea: string): Promise<void> {
-//   const llave = [PROYECTOS, idProyecto, TAREAS, correoMiembro, idTarea]
-//   await DB.delete(llave)
-// }
 //
 // /**
 //  * Obtiene una tarea específica de un proyecto.
