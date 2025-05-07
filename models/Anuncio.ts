@@ -3,7 +3,7 @@
  * @author Christian Venegas
  * @description Este archivo contiene las funciones de los anuncios para la base de datos.
  */
-import { ANUNCIOS, DB, PROYECTOS } from '../mod.ts'
+import { ANUNCIOS, DB, PROYECTOS } from './mod.ts'
 
 /**
  * Interfaz que define la estructura de un anuncio.

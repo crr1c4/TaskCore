@@ -1,7 +1,7 @@
 import { FreshContext } from '$fresh/server.ts'
 import { Handlers } from '$fresh/server.ts'
 import { crearToken } from '../../../utils/autenticacion.ts'
-import { editarUsuario, obtenerUsuario } from '../../../utils/db/modelos/usuario.ts'
+import Usuario from '../../../models/Usuario.ts'
 import { setCookie } from 'jsr:@std/http/cookie'
 import { deleteCookie } from 'jsr:@std/http/cookie'
 // import { crearToken } from '../../../utils/autenticacion.ts'
@@ -29,12 +29,15 @@ export const handler: Handlers = {
       }
 
       // Obtención del usuario desde la base de datos.
-      if (!await editarUsuario(correo, { nombre })) {
-        throw new Error('No existe un usuario con ese nombre en la base de datos')
-      }
+      const usuario = await Usuario.obtenerPorCorreo(correo)
+      usuario.cambiarNombre(nombre)
 
-     const usuario = await obtenerUsuario(correo)
-      if (!usuario) throw new Error('NO existe un usuario registrado con ese correo.')
+      // if (!await editarUsuario(correo, { nombre })) {
+        // throw new Error('No existe un usuario con ese nombre en la base de datos')
+      // }
+
+     // const usuario = await obtenerUsuario(correo)
+      // if (!usuario) throw new Error('NO existe un usuario registrado con ese correo.')
 
       // Generación del token JWT con la información del usuario.
       const token = await crearToken({
@@ -65,6 +68,7 @@ export const handler: Handlers = {
 
       const params = new URLSearchParams({
         resultado: 'ok',
+        mensaje: 'El nombre se ha cambiado correctamente.',
       })
 
       headers.set('Location', `/usuario/${usuario.rol}/?${params.toString()}`)

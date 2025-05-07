@@ -3,11 +3,11 @@
  * @description Modelo de Usuario, con los metodos para manejarlo en la BD.
  * @license MIT
  */
-import { hash as encriptar } from '@felix/bcrypt'
+import { hash as encriptar, verify as verificarContraseña } from '@felix/bcrypt'
 import { DB } from './mod.ts'
 import { z as esquema } from 'zod'
 import Proyecto from './Proyecto.ts'
-import Tarea from './Tarea.ts'
+// import Tarea from './Tarea.ts'
 
 /**
  * @description Esquema para validar la complejidad de la contraseña.
@@ -32,9 +32,7 @@ const esquemaContraseña = esquema
  */
 const esquemaNombre = esquema.string()
   .min(5)
-  .refine((val) => /[A-Z]/.test(val))
-  .refine((val) => /[a-z]/.test(val))
-  .refine((val) => /[0-9]/.test(val))
+  .regex(/^[a-zA-Z0-9]+$/)
 
 /**
  * @description Esquema de validación para correos electrónicos.
@@ -46,56 +44,35 @@ export type Rol = 'admin' | 'miembro'
 export type Tema = 'dark' | ''
 
 export default class Usuario {
-  #nombre: string
-  #correo: string
-  #contraseña: string
-  readonly #rol: Rol
-  #tema: Tema
+  public nombre: string
+  public correo: string
+  private contraseña: string
+  public readonly rol: Rol
+  public tema: Tema
 
-  public constructor(nombre: string, correo: string, contraseña: string, rol: Rol, tema: Tema) {
-    this.#nombre = nombre
-    this.#correo = correo
-    this.#rol = rol
-    this.#tema = tema
-    this.#contraseña = contraseña
-  }
-
-  /* GETTERS */
-  public get nombre() {
-    return this.#nombre
-  }
-
-  public get correo() {
-    return this.#correo
-  }
-
-  public get contraseña() {
-    return this.#contraseña
-  }
-
-  public get rol() {
-    return this.#rol
-  }
-
-  public get tema() {
-    return this.#tema
+  public constructor(nombre: string, correo: string, contraseña: string, rol: Rol) {
+    this.nombre = nombre
+    this.correo = correo
+    this.rol = rol
+    this.tema = ''
+    this.contraseña = contraseña
   }
 
   public async guardar() {
-    if (!esquemaCorreo.safeParse(this.#correo).success) throw new Error('El correo electronico no es valido.')
-    if (!esquemaNombre.safeParse(this.#nombre).success) {
+    if (!esquemaCorreo.safeParse(this.correo).success) throw new Error('El correo electronico no es valido.')
+    if (!esquemaNombre.safeParse(this.nombre).success) {
       throw new Error('El nombre de usuario no es valido, debe contar con mínimo 5 caracteres.') // TODO: Completar el mensaje
     }
-    if (!esquemaContraseña.safeParse(this.#contraseña).success) {
+    if (!esquemaContraseña.safeParse(this.contraseña).success) {
       throw new Error(
         'Las contraseñas deben ser mayor de 8 caracteres, debe contar con mayúsculas, minúsculas, números y carácteres especiales.',
       )
     }
 
-    this.#contraseña = await encriptar(this.#contraseña)
+    this.contraseña = await encriptar(this.contraseña)
 
-    const llaveCorreo = ['usuarios.correo', this.#correo]
-    const llaveNombre = ['usuarios.nombre', this.#nombre]
+    const llaveCorreo = ['usuarios.correo', this.correo]
+    const llaveNombre = ['usuarios.nombre', this.nombre]
 
     const resultado = await DB.atomic()
       .check({ key: llaveNombre, versionstamp: null })
@@ -109,6 +86,10 @@ export default class Usuario {
         'Los datos ya están registrados en la aplicación. Prueba a cambiar el nombre de usuario o el correo electrónico.',
       )
     }
+  }
+
+  public async verificarContraseña(contraseña: string) {
+    return await verificarContraseña(contraseña, this.contraseña)
   }
 
   public static async obtenerPorCorreo(correo: string): Promise<Usuario> {
@@ -134,14 +115,14 @@ export default class Usuario {
       throw new Error('Ya existe un usuario con ese nombre.')
     }
 
-    const nombreAntiguo = this.#nombre
-    this.#nombre = nombre
+    const nombreAntiguo = this.nombre
+    this.nombre = nombre
 
     const resultado = await DB.atomic()
-      .check({ key: ['usuarios.nombre', this.#nombre], versionstamp: null })
+      .check({ key: ['usuarios.nombre', this.nombre], versionstamp: null })
       .delete(['usuarios.nombre', nombreAntiguo])
-      .set(['usuarios.nombre', this.#nombre], this)
-      .set(['usuarios.correo', this.#correo], this)
+      .set(['usuarios.nombre', this.nombre], this)
+      .set(['usuarios.correo', this.correo], this)
       .commit()
 
     if (!resultado.ok) throw new Error('No se pudo cambiar el nombre de usuario.')
@@ -158,27 +139,27 @@ export default class Usuario {
       throw new Error('Ya existe un usuario con ese correo.')
     }
 
-    const correoAntiguo = this.#correo
-    this.#correo = correo
+    const correoAntiguo = this.correo
+    this.correo = correo
 
     const resultado = await DB.atomic()
-      .check({ key: ['usuarios.correo', this.#correo], versionstamp: null })
+      .check({ key: ['usuarios.correo', this.correo], versionstamp: null })
       .delete(['usuarios.correo', correoAntiguo])
-      .set(['usuarios.nombre', this.#nombre], this)
-      .set(['usuarios.correo', this.#correo], this)
+      .set(['usuarios.nombre', this.nombre], this)
+      .set(['usuarios.correo', this.correo], this)
       .commit()
 
     if (!resultado.ok) throw new Error('No se pudo cambiar el correo electronico.')
   }
 
   public async cambiarTema() {
-    this.#tema = this.#tema === '' ? 'dark' : ''
+    this.tema = this.tema === '' ? 'dark' : ''
 
     const resultado = await DB.atomic()
-      .check({ key: ['usuarios.nombre', this.#correo], versionstamp: null })
-      .check({ key: ['usuarios.correo', this.#correo], versionstamp: null })
-      .set(['usuarios.nombre', this.#nombre], this)
-      .set(['usuarios.correo', this.#correo], this)
+      .check({ key: ['usuarios.nombre', this.correo], versionstamp: null })
+      .check({ key: ['usuarios.correo', this.correo], versionstamp: null })
+      .set(['usuarios.nombre', this.nombre], this)
+      .set(['usuarios.correo', this.correo], this)
       .commit()
 
     if (!resultado.ok) throw new Error('No se pudo cambiar el tema de la aplicación.')
@@ -191,20 +172,21 @@ export default class Usuario {
       )
     }
 
-    this.#contraseña = await encriptar(contraseña)
+    this.contraseña = await encriptar(contraseña)
 
     const resultado = await DB.atomic()
-      .check({ key: ['usuarios.nombre', this.#correo], versionstamp: null })
-      .check({ key: ['usuarios.correo', this.#correo], versionstamp: null })
-      .set(['usuarios.nombre', this.#nombre], this)
-      .set(['usuarios.correo', this.#correo], this)
+      .check({ key: ['usuarios.nombre', this.correo], versionstamp: null })
+      .check({ key: ['usuarios.correo', this.correo], versionstamp: null })
+      .set(['usuarios.nombre', this.nombre], this)
+      .set(['usuarios.correo', this.correo], this)
       .commit()
 
     if (!resultado.ok) throw new Error('No se pudo cambiar la contraseña.')
   }
 
   /* MÉTODOS PARA PROYECTOS */
-  public async obtenerProyectos(): Promise<Proyecto[]> {
+  public async obtenerProyectos() {
+    return this.rol === 'admin' ? await this.proyectosAdministrador() : await this.obtenerProyectosMiembro()
   }
 
   private async proyectosAdministrador(): Promise<Proyecto[]> {
@@ -212,7 +194,7 @@ export default class Usuario {
 
     for await (const entrada of DB.list<Proyecto>({ prefix: ['proyectos'] })) {
       if (
-        entrada.value.administrador.#correo === this.#correo && entrada.value.administrador.#nombre === this.#nombre
+        entrada.value.administrador.correo === this.correo && entrada.value.administrador.nombre === this.nombre
       ) {
         proyectos.push(entrada.value)
       }
@@ -225,8 +207,13 @@ export default class Usuario {
     const proyectos: Proyecto[] = []
 
     for await (const entrada of DB.list<Usuario>({ prefix: ['proyectos'] })) {
-      const [_, idProyecto, _, nombreMiembro] = entrada.key as [string, string, string, string?]
-     
+      const [_cadenaProyecto, idProyecto, _cadenaMiembro, nombreMiembro] = entrada.key as [
+        string,
+        string,
+        string,
+        string?,
+      ]
+
       if (nombreMiembro === this.nombre) {
         proyectos.push(await Proyecto.obtener(idProyecto))
       }
@@ -246,12 +233,12 @@ export default class Usuario {
     return proyectos
   }
 
-  public async obtenerTareas(idProyecto: string): Promise<Tarea[]> {
-    const tareas: Tarea[] = []
-
-    for await (const entrada of DB.list<Usuario>({ prefix: ['proyectos', idProyecto, 'tareas', this.#correo] })) {
-    }
-
-    return tareas
-  }
+  // public async obtenerTareas(idProyecto: string): Promise<Tarea[]> {
+  //   const tareas: Tarea[] = []
+  //
+  //   for await (const entrada of DB.list<Usuario>({ prefix: ['proyectos', idProyecto, 'tareas', this.#correo] })) {
+  //   }
+  //
+  //   return tareas
+  // }
 }

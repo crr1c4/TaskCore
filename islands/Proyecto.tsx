@@ -1,6 +1,9 @@
 import { IconoAbrirMenu, IconoEditar, IconoEliminar, IconoEquipo, IconoTarea } from '../components/Iconos.tsx'
 import { useSignal } from '@preact/signals'
-import { Proyecto } from '../utils/db/modelos/proyecto.ts'
+// import { Proyecto } from '../utils/db/modelos/proyecto.ts'
+
+import Proyecto from '../models/Proyecto.ts'
+
 
 interface Props {
   proyecto: Proyecto
@@ -67,7 +70,7 @@ export function ComponenteProyecto({ rol, proyecto }: Props) {
           <p>{proyecto.descripcion}</p>
           <div class='flex w-full justify-end items-center gap-4'>
             <div class='text-sm flex items-center justify-center flex-col'>
-              <IconoEquipo /> {proyecto.correosIntegrantesEquipo.length}
+              <IconoEquipo /> {/*proyecto.correosIntegrantesEquipo.length*/}
             </div>
 
             <div class='text-sm flex items-center justify-center flex-col'>

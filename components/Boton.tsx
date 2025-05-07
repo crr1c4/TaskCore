@@ -11,12 +11,13 @@ export function BotonPrincipal(props: Props) {
     'blue': 'bg-sky-500',
     'yellow': 'bg-yellow-300',
     'green': 'bg-emerald-400',
-  }
 
+  }
   return (
     <button
-      class={`px-4 py-2 ${colors[props.color]} hover:bg-gray-300 dark:hover:bg-slate-600 text-white hover:text-black transition-colors duration-100 uppercase
-        font-sans font-semibold rounded-lg shadow-md cursor-pointer`}
+  className="inline-block rounded-sm border border-indigo-600 bg-indigo-600 px-12 py-3 text-sm font-medium text-white hover:bg-indigo-700 focus:ring-3 focus:outline-hidden"
+  
+  
     >
       {props.children}
     </button>

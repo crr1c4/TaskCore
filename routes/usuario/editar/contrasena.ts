@@ -1,9 +1,6 @@
 import { FreshContext } from '$fresh/server.ts'
 import { Handlers } from '$fresh/server.ts'
-import { editarUsuario, obtenerUsuario } from '../../../utils/db/modelos/usuario.ts'
-import { esquemaContraseña } from '../../../utils/esquemas.ts'
-import * as bcrypt from 'jsr:@felix/bcrypt'
-// import { crearToken } from '../../../utils/autenticacion.ts'
+import Usuario from '../../../models/Usuario.ts'
 
 /**
  * Manejador de la autenticación de usuarios mediante formulario.
@@ -32,27 +29,14 @@ export const handler: Handlers = {
       if (nueva !== confirmacion) {
         throw new Error('Las contraseñas nuevas no coinciden.')
       }
+      const usuario = await Usuario.obtenerPorCorreo(correo)
 
-      const verificacionEsquemaContraseña = esquemaContraseña.safeParse(nueva)
-
-      if (!verificacionEsquemaContraseña.success) {
-        throw new Error(
-          'Las contraseñas deben ser mayor de 8 caracteres, debe contar con mayúsculas, minúsculas, números y carácteres especiales.',
-        )
-      }
-
-      const usuario = await obtenerUsuario(correo)!
-
-      if (!usuario) throw new Error('NO existe un usuario registrado con ese correo.')
-      if (!await bcrypt.verify(actual, usuario.contraseña)) throw new Error('La contraseña actual no es correcta.')
-
-      // Obtención del usuario desde la base de datos.
-      if (!await editarUsuario(correo, { contraseña: nueva })) {
-        throw new Error('No existe un usuario con ese nombre en la base de datos')
-      }
+      if (!await usuario.verificarContraseña(actual)) throw new Error('La contraseña actual no es correcta.')
+      await usuario.cambiarContraseña(nueva)
 
       const params = new URLSearchParams({
         resultado: 'ok',
+        mensaje: 'La contraseña se ha cambiado correctamente.',
       })
 
       return new Response(null, {
@@ -62,7 +46,6 @@ export const handler: Handlers = {
         },
       })
     } catch (error) {
-      // En caso de error, se redirige al formulario de inicio de sesión con el mensaje de error.
       const objetoErrores = error as Error
       const params = new URLSearchParams({
         error: objetoErrores.message,

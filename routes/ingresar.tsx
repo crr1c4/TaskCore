@@ -1,6 +1,8 @@
 import { FreshContext } from '$fresh/server.ts'
 import { Handlers } from '$fresh/server.ts'
-import { obtenerUsuario } from '../utils/db/modelos/usuario.ts'
+
+import Usuario from '../models/Usuario.ts'
+
 import { crearToken } from '../utils/autenticacion.ts'
 import * as bcrypt from 'jsr:@felix/bcrypt'
 import { setCookie } from 'jsr:@std/http/cookie'
@@ -40,15 +42,10 @@ export const handler: Handlers = {
       }
 
       // Obtención del usuario desde la base de datos.
-      const usuario = await obtenerUsuario(correo)
-
-      // Verificación de la existencia del usuario.
-      if (!usuario) {
-        throw { correo, error: 'No hay un usuario registrado con el correo ingresado.' }
-      }
+      const usuario = await Usuario.obtenerPorCorreo(correo)
 
       // Verificación de la contraseña con la almacenada en la base de datos.
-      if (!(await bcrypt.verify(contraseña, usuario.contraseña))) {
+      if (!(await usuario.verificarContraseña(contraseña))) {
         throw { correo, error: 'La contraseña es incorrecta.' }
       }
 
@@ -57,7 +54,7 @@ export const handler: Handlers = {
         correo: usuario.correo,
         nombre: usuario.nombre,
         rol: usuario.rol,
-        tema: usuario.tema
+        tema: usuario.tema,
       })
 
       const headers = new Headers()
@@ -132,8 +129,8 @@ export default function Ingresar(req: Request) {
         <img src='/iconoTransparente.png' alt='Logo TaskCore' class='w-12 h-12 self-center' />
         <EncabezadoPrincipal>Inicio de sesión</EncabezadoPrincipal>
         <CampoIngreso
-          color='sky-500'
           type='email'
+          label='Correo electrónico'
           name='correo'
           placeholder='Correo'
           required
@@ -141,8 +138,8 @@ export default function Ingresar(req: Request) {
           value={correo}
         />
         <CampoIngreso
-          color='sky-500'
           type='password'
+          label='Contraseña'
           name='contraseña'
           placeholder='Contraseña'
           required
@@ -159,5 +156,3 @@ export default function Ingresar(req: Request) {
   )
 }
 
-// value={'chris@gmail.com'}
-// value={'1234abcD@'}

@@ -4,5 +4,5 @@ interface Props {
 }
 
 export default function Enlace({ direccion, texto }: Props) { 
-  return <a href={direccion} class='mx-auto text-center text-sky-500 underline text-sm hover:text-blue-600'>{ texto }</a>
+  return <a href={direccion} class='mx-auto text-center text-indigo-600 underline text-sm hover:text-indigo-700'>{ texto }</a>
 }
