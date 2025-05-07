@@ -1,5 +1,5 @@
 import { CampoIngreso } from '../../components/Input.tsx'
-import { BotonPrincipal } from '../../components/Boton.tsx'
+import { Boton } from '../../components/Boton.tsx'
 import { FreshContext } from '$fresh/server.ts'
 import { ModalError } from '../../islands/Modal.tsx'
 import BarraNavegacion from '../../islands/NavBar.tsx'
@@ -73,7 +73,7 @@ export default function Configuracion(ctx: FreshContext<Usuario>) {
                       />
                       <input type='hidden' value={ctx.state.correo} name='correo' />
                       <div class='flex justify-end'>
-                        <BotonPrincipal >Guardar cambios</BotonPrincipal>
+                        <Boton >Guardar cambios</Boton>
                       </div>
                     </form>
                   </div>
@@ -118,7 +118,7 @@ export default function Configuracion(ctx: FreshContext<Usuario>) {
                         minLength={8}
                       />
                       <div class='flex justify-end'>
-                        <BotonPrincipal >Actualizar contraseña</BotonPrincipal>
+                        <Boton >Actualizar contraseña</Boton>
                       </div>
                     </form>
                   </div>
@@ -146,7 +146,7 @@ export default function Configuracion(ctx: FreshContext<Usuario>) {
                             Cambia entre modo claro y oscuro
                           </p>
                         </div>
-                        <BotonPrincipal >Cambiar tema</BotonPrincipal>
+                        <Boton >Cambiar tema</Boton>
                       </div>
                     </form>
                   </div>
@@ -155,7 +155,7 @@ export default function Configuracion(ctx: FreshContext<Usuario>) {
 
               <div class='flex justify-end'>
                 <a href='/usuario/miembro' class='inline-flex'>
-                  <BotonPrincipal>Volver al inicio</BotonPrincipal>
+                  <Boton>Volver al inicio</Boton>
                 </a>
               </div>
             </div>

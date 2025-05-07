@@ -2,7 +2,7 @@ import { Handlers } from '$fresh/server.ts'
 import Usuario from '../models/Usuario.ts'
 import { EncabezadoPrincipal } from '../components/Headers.tsx'
 import { CampoIngreso } from '../components/Input.tsx'
-import { BotonPrincipal } from '../components/Boton.tsx'
+import { Boton } from '../components/Boton.tsx'
 import { ModalError, ModalLink } from '../islands/Modal.tsx'
 import Fondo from '../components/Fondo.tsx'
 import Enlace from '../components/Enlace.tsx'
@@ -122,7 +122,7 @@ export default function Registro(req: Request) {
           minLength={8}
         />
 
-        <BotonPrincipal>Registrar</BotonPrincipal>
+        <Boton>Registrar</Boton>
         <Enlace direccion='/' texto='Regresar al inicio' />
         <Enlace direccion='/ingresar' texto='Iniciar sesión' />
 

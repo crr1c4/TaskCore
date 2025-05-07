@@ -7,7 +7,7 @@ import { crearToken } from '../utils/autenticacion.ts'
 import { setCookie } from 'jsr:@std/http/cookie'
 import { CampoIngreso } from '../components/Input.tsx'
 import { EncabezadoPrincipal } from '../components/Headers.tsx'
-import { BotonPrincipal } from '../components/Boton.tsx'
+import { Boton } from '../components/Boton.tsx'
 import { ModalError } from '../islands/Modal.tsx'
 import Fondo from '../components/Fondo.tsx'
 import Enlace from '../components/Enlace.tsx'
@@ -132,7 +132,7 @@ export default function Ingresar(req: Request) {
           autoComplete='off'
         />
 
-        <BotonPrincipal >Iniciar sesión</BotonPrincipal>
+        <Boton >Iniciar sesión</Boton>
         <Enlace direccion='/' texto='Regresar al inicio' />
         <Enlace direccion='/registro' texto='Crear una nueva cuenta' />
       </form>

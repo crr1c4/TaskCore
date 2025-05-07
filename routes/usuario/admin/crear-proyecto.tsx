@@ -1,5 +1,5 @@
 import { FreshContext, Handlers } from '$fresh/server.ts'
-import { BotonPrincipal } from '../../../components/Boton.tsx'
+import { Boton } from '../../../components/Boton.tsx'
 import { CampoIngreso } from '../../../components/Input.tsx'
 import { ModalError } from '../../../islands/Modal.tsx'
 import NavBar from '../../../islands/NavBar.tsx'
@@ -93,9 +93,9 @@ export default function PaginaCrearProyecto(ctx: FreshContext<Usuario>) {
 
           {/* Botón de creación */}
           <div class='flex justify-center pt-4'>
-            <BotonPrincipal>
+            <Boton>
               Crear proyecto
-            </BotonPrincipal>
+            </Boton>
           </div>
         </form>
       </main>

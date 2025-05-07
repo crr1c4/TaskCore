@@ -1,4 +1,5 @@
 import { FreshContext } from '$fresh/server.ts'
+import { Boton } from '../../../components/Boton.tsx'
 import NavBar from '../../../islands/NavBar.tsx'
 import Anuncio from '../../../models/Anuncio.ts'
 import Proyecto from '../../../models/Proyecto.ts'
@@ -23,6 +24,8 @@ export default async function PaginaProyecto(_request: Request, ctx: FreshContex
     expirado: tareas.filter((tarea) => !tarea.estado && tarea.haExpirado()).length,
   }
 
+  console.log(estados)
+
   const porcentajes = {
     completado: Math.round((estados.completado / totalTareas) * 100),
     enProgreso: Math.round((estados.enProgreso / totalTareas) * 100),
@@ -44,10 +47,26 @@ export default async function PaginaProyecto(_request: Request, ctx: FreshContex
                 Creado el {formatearFecha(proyecto.fechaCreacion)}
               </p>
             </div>
+
+            {/* Botón de editar */}
+            <a
+              href={`/proyectos/editar/${proyecto.id}`}
+            >
+              <Boton>
+                <svg class='w-5 h-5 mr-2' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
+                  <path
+                    stroke-linecap='round'
+                    stroke-linejoin='round'
+                    stroke-width='2'
+                    d='M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z'
+                  />
+                </svg>
+                Editar proyecto
+              </Boton>
+            </a>
           </div>
         </div>
       </header>
-
       {/* Contenido principal */}
       <main class='max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8'>
         <div class='grid grid-cols-1 lg:grid-cols-3 gap-8'>
@@ -123,21 +142,21 @@ export default async function PaginaProyecto(_request: Request, ctx: FreshContex
                     <div class='w-3 h-3 bg-green-500 rounded-full mr-2'></div>
                     <span class='text-sm dark:text-gray-300'>Completado</span>
                   </div>
-                  <span class='text-sm font-medium dark:text-gray-300'>{porcentajes.completado}%</span>
+                  <span class='text-sm font-medium dark:text-gray-300'>{porcentajes.completado || "0.0"}%</span>
                 </div>
                 <div class='flex items-center justify-between'>
                   <div class='flex items-center'>
                     <div class='w-3 h-3 bg-blue-500 rounded-full mr-2'></div>
                     <span class='text-sm dark:text-gray-300'>En Progreso</span>
                   </div>
-                  <span class='text-sm font-medium dark:text-gray-300'>{porcentajes.enProgreso}%</span>
+                  <span class='text-sm font-medium dark:text-gray-300'>{porcentajes.enProgreso || "0.0"}%</span>
                 </div>
                 <div class='flex items-center justify-between'>
                   <div class='flex items-center'>
                     <div class='w-3 h-3 bg-red-500 rounded-full mr-2'></div>
                     <span class='text-sm dark:text-gray-300'>Expirado</span>
                   </div>
-                  <span class='text-sm font-medium dark:text-gray-300'>{porcentajes.expirado}%</span>
+                  <span class='text-sm font-medium dark:text-gray-300'>{porcentajes.expirado || "0.0"}%</span>
                 </div>
               </div>
             </section>
@@ -165,7 +184,9 @@ export default async function PaginaProyecto(_request: Request, ctx: FreshContex
                   <div class='p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg transition-colors duration-200'>
                     <h3 class='text-lg font-medium text-blue-800 dark:text-blue-200'>{anuncio.titulo}</h3>
                     <p class='mt-1 text-blue-700 dark:text-blue-300'>{anuncio.descripcion}</p>
-                    <time class='mt-2 block text-sm text-blue-600 dark:text-blue-400'>{formatearFecha(anuncio.fechaPublicacion)}</time>
+                    <time class='mt-2 block text-sm text-blue-600 dark:text-blue-400'>
+                      {formatearFecha(anuncio.fechaPublicacion)}
+                    </time>
                   </div>
                 ))}
               </div>
