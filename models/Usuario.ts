@@ -3,11 +3,10 @@
  * @description Modelo de Usuario, con los metodos para manejarlo en la BD.
  * @license MIT
  */
-import { hash as encriptar, verify as verificarContraseña } from '@felix/bcrypt'
+import { hash as encriptar, verify as verificarContraseñaHasheada } from '@felix/bcrypt'
 import { DB } from './mod.ts'
 import { z as esquema } from 'zod'
 import Proyecto from './Proyecto.ts'
-// import Tarea from './Tarea.ts'
 
 /**
  * @description Esquema para validar la complejidad de la contraseña.
@@ -89,19 +88,30 @@ export default class Usuario {
   }
 
   public async verificarContraseña(contraseña: string) {
-    return await verificarContraseña(contraseña, this.contraseña)
+    return await verificarContraseñaHasheada(contraseña, this.contraseña)
+  }
+
+  private static deserializar(usuarioSerializado: Deno.KvEntry<Usuario>) {
+    const usuario = new Usuario(
+      usuarioSerializado.value.nombre,
+      usuarioSerializado.value.correo,
+      usuarioSerializado.value.contraseña,
+      usuarioSerializado.value.rol,
+    )
+    usuario.tema = usuarioSerializado.value.tema
+    return usuario
   }
 
   public static async obtenerPorCorreo(correo: string): Promise<Usuario> {
     const resultado = await DB.get<Usuario>(['usuarios.correo', correo])
     if (!resultado.versionstamp || !resultado.value) throw new Error('Usuario no encontrado.')
-    return resultado.value
+    return Usuario.deserializar(resultado)
   }
 
   public static async obtenerPorNombre(nombre: string): Promise<Usuario> {
     const resultado = await DB.get<Usuario>(['usuarios.nombre', nombre])
     if (!resultado.versionstamp || !resultado.value) throw new Error('Usuario no encontrado.')
-    return resultado.value
+    return Usuario.deserializar(resultado)
   }
 
   public async cambiarNombre(nombre: string) {

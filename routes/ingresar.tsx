@@ -4,7 +4,6 @@ import { Handlers } from '$fresh/server.ts'
 import Usuario from '../models/Usuario.ts'
 
 import { crearToken } from '../utils/autenticacion.ts'
-import * as bcrypt from 'jsr:@felix/bcrypt'
 import { setCookie } from 'jsr:@std/http/cookie'
 import { CampoIngreso } from '../components/Input.tsx'
 import { EncabezadoPrincipal } from '../components/Headers.tsx'
@@ -13,11 +12,6 @@ import { ModalError } from '../islands/Modal.tsx'
 import Fondo from '../components/Fondo.tsx'
 import Enlace from '../components/Enlace.tsx'
 import Footer from '../components/Footer.tsx'
-
-interface DatosErrorInicioSesion {
-  correo: string
-  error: string
-}
 
 /**
  * Manejador de la autenticación de usuarios mediante formulario.
@@ -30,26 +24,24 @@ export const handler: Handlers = {
    * @param {FreshContext} _ctx - El contexto de Fresh (no se usa en este caso).
    */
   async POST(req: Request, _ctx: FreshContext) {
+    const formulario = await req.formData()
+
     try {
-      // Obtención de los datos del formulario enviado por el usuario.
-      const formulario = await req.formData()
       const correo = formulario.get('correo')?.toString().trim()
       const contraseña = formulario.get('contraseña')?.toString().trim()
 
-      // Verificación de que los datos no sean indefinidos o vacíos.
       if (!correo || !contraseña) {
-        throw 'Error en el envío del formulario.'
+        throw new Error('Error en el envío del formulario.')
       }
 
-      // Obtención del usuario desde la base de datos.
-      const usuario = await Usuario.obtenerPorCorreo(correo)
+      const usuario = await Usuario.obtenerPorCorreo(correo) 
 
-      // Verificación de la contraseña con la almacenada en la base de datos.
+      console.log(usuario)
+
       if (!(await usuario.verificarContraseña(contraseña))) {
-        throw { correo, error: 'La contraseña es incorrecta.' }
+        throw new Error('La contraseña es incorrecta.')
       }
 
-      // Generación del token JWT con la información del usuario.
       const token = await crearToken({
         correo: usuario.correo,
         nombre: usuario.nombre,
@@ -59,7 +51,6 @@ export const handler: Handlers = {
 
       const headers = new Headers()
 
-      // Inserción del token en una cookie segura.
       setCookie(headers, {
         name: 'token',
         value: token,
@@ -73,18 +64,17 @@ export const handler: Handlers = {
         // secure: true, // Solo se envía en conexiones HTTPS.
       })
 
-      // Redirección al área de usuario según su rol.
       headers.set('Location', `/usuario/${usuario.rol}/`)
       return new Response(null, {
         status: 303,
         headers,
       })
     } catch (error) {
-      // En caso de error, se redirige al formulario de inicio de sesión con el mensaje de error.
-      const objetoErrores = error as DatosErrorInicioSesion
+      const objetoErrores = error as Error
+      const correo = formulario.get('correo')?.toString().trim() || ''
       const params = new URLSearchParams({
-        correo: objetoErrores.correo,
-        error: objetoErrores.error,
+        correo,
+        mensaje: objetoErrores.message,
       })
 
       return new Response(null, {
@@ -112,7 +102,7 @@ export const handler: Handlers = {
 export default function Ingresar(req: Request) {
   // Obtiene la URL actual y extrae los parámetros 'error' y 'correo' si existe
   const url = new URL(req.url)
-  const error = url.searchParams.get('error')?.replaceAll('"', '')
+  const error = url.searchParams.get('mensaje')?.replaceAll('"', '')
   const correo = url.searchParams.get('correo')?.replaceAll('"', '')
 
   return (
@@ -155,4 +145,3 @@ export default function Ingresar(req: Request) {
     </div>
   )
 }
-
