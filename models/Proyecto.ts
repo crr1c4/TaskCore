@@ -13,9 +13,9 @@ export default class Proyecto {
   public descripcion: string
   public fechaCreacion: Date
   public administrador: Usuario
-  public miembros: ["usuarios.nombre", string][]
-  public tareas: ["tareas", string][]
-  public anuncios: ["anuncios", string][]
+  public miembros: ['usuarios.nombre', string][]
+  public tareas: ['tareas', string][]
+  public anuncios: ['anuncios', string][]
 
   public constructor(nombre: string, descripcion: string, administrador: Usuario) {
     this.id = crypto.randomUUID()
@@ -27,7 +27,6 @@ export default class Proyecto {
     this.tareas = []
     this.anuncios = []
   }
-
 
   private static async deserializar(proyectoSerializado: Deno.KvEntry<Proyecto>) {
     const proyecto = new Proyecto(
@@ -57,13 +56,13 @@ export default class Proyecto {
   static async obtener(id: string): Promise<Proyecto> {
     const resultado = await DB.get<Proyecto>(['proyectos', id])
     if (!resultado.value) throw new Error('No existe un proyecto con el id: ' + id)
-    return resultado.value
+    return Proyecto.deserializar(resultado)
   }
 
   async agregarMiembro(miembro: Usuario) {
     const resultado = await DB.atomic()
       .check({ key: ['proyectos', this.id, 'miembro', miembro.nombre], versionstamp: null })
-      .set(['proyectos', this.id, 'miembro', miembro.nombre], ["usuarios", miembro.nombre])
+      .set(['proyectos', this.id, 'miembro', miembro.nombre], ['usuarios', miembro.nombre])
       .commit()
 
     if (!resultado.ok) throw new Error('El miembro ya esta registrado en el proyeco.')

@@ -59,6 +59,7 @@ export const handler: Handlers = {
 
       const params = new URLSearchParams({
         resultado: 'ok',
+        mensaje: "El tema se ha cambiado correctamente."
       })
 
       headers.set('Location', `/usuario/${usuario.rol}/?${params.toString()}`)
