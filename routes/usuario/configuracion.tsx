@@ -22,7 +22,7 @@ export default function Configuracion(ctx: FreshContext<Usuario>) {
             <nav class='space-y-1'>
               <a
                 href='#personal'
-                class='group flex items-center px-3 py-2 text-sm font-medium rounded-md bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white'
+                class='group flex items-center px-3 py-2 text-sm font-medium rounded-md text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
               >
                 Información personal
               </a>
@@ -66,7 +66,7 @@ export default function Configuracion(ctx: FreshContext<Usuario>) {
                     <form action='/usuario/editar/nombre' method='POST' class='space-y-6'>
                       <CampoIngreso
                         name='nombre'
-                        label='Nombre completo'
+                        label='Nombre de usuario'
                         autoComplete='off'
                         required
                         value={ctx.state.nombre}
@@ -107,6 +107,7 @@ export default function Configuracion(ctx: FreshContext<Usuario>) {
                         autoComplete='new-password'
                         required
                         name='nuevaContrasena'
+                        minLength={8}
                       />
                       <CampoIngreso
                         type='password'
@@ -114,6 +115,7 @@ export default function Configuracion(ctx: FreshContext<Usuario>) {
                         autoComplete='new-password'
                         name='confirmacionNuevaContrasena'
                         required
+                        minLength={8}
                       />
                       <div class='flex justify-end'>
                         <BotonPrincipal color='blue'>Actualizar contraseña</BotonPrincipal>
@@ -137,7 +139,7 @@ export default function Configuracion(ctx: FreshContext<Usuario>) {
                   <div class='px-4 py-5 sm:p-6'>
                     <form action='/usuario/editar/tema' method='POST' class='space-y-6'>
                       <input type='hidden' value={ctx.state.correo} name='correo' />
-                      <div class='flex items-center justify-between max-w-md'>
+                      <div class='flex items-center justify-between'>
                         <div>
                           <h3 class='text-base font-medium text-gray-900 dark:text-white'>Tema</h3>
                           <p class='text-sm text-gray-500 dark:text-gray-400'>

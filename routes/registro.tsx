@@ -110,6 +110,7 @@ export default function Registro(req: Request) {
           name='contraseña'
           required
           autoComplete='off'
+          minLength={8}
         />
 
         <CampoIngreso
@@ -118,19 +119,8 @@ export default function Registro(req: Request) {
           name='verificacionContraseña'
           required
           autoComplete='off'
+          minLength={8}
         />
-
-        <div class='flex items-center space-x-2'>
-          <input
-            id='rol-admin'
-            type='checkbox'
-            name='rol'
-            value='admin'
-            class='w-5 h-5 text-sky-600 bg-gray-100 border-gray-300 rounded focus:ring-sky-500'
-            checked={rol === 'admin'}
-          />
-          <label for='rol-admin' class='text-sm font-medium text-gray-900'>Registrar como administrador</label>
-        </div>
 
         <BotonPrincipal color='blue'>Registrar</BotonPrincipal>
         <Enlace direccion='/' texto='Regresar al inicio' />

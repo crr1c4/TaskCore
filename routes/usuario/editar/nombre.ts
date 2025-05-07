@@ -30,14 +30,8 @@ export const handler: Handlers = {
 
       // Obtención del usuario desde la base de datos.
       const usuario = await Usuario.obtenerPorCorreo(correo)
+
       await usuario.cambiarNombre(nombre)
-
-      // if (!await editarUsuario(correo, { nombre })) {
-        // throw new Error('No existe un usuario con ese nombre en la base de datos')
-      // }
-
-     // const usuario = await obtenerUsuario(correo)
-      // if (!usuario) throw new Error('NO existe un usuario registrado con ese correo.')
 
       // Generación del token JWT con la información del usuario.
       const token = await crearToken({
@@ -64,8 +58,6 @@ export const handler: Handlers = {
         // secure: true, // Solo se envía en conexiones HTTPS.
       })
 
-
-
       const params = new URLSearchParams({
         resultado: 'ok',
         mensaje: 'El nombre se ha cambiado correctamente.',
@@ -77,13 +69,16 @@ export const handler: Handlers = {
         status: 303,
         headers,
       })
-    } catch (_error) {
-      // En caso de error, se redirige al formulario de inicio de sesión con el mensaje de error.
+    } catch (error) {
+      const objetoErrores = error as Error
+      const params = new URLSearchParams({
+        error: objetoErrores.message,
+      })
 
       return new Response(null, {
         status: 303,
         headers: {
-          'Location': `/ingresar?`,
+          'Location': `/usuario/configuracion?${params.toString()}`,
         },
       })
     }

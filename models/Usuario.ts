@@ -60,7 +60,9 @@ export default class Usuario {
   public async guardar() {
     if (!esquemaCorreo.safeParse(this.correo).success) throw new Error('El correo electronico no es valido.')
     if (!esquemaNombre.safeParse(this.nombre).success) {
-      throw new Error('El nombre de usuario no es valido, debe contar con mínimo 5 caracteres.') // TODO: Completar el mensaje
+      throw new Error(
+        'El nombre de usuario no es válido. Debe contar con un mínimo de 5 caracteres y solo puede contener caracteres alfanuméricos.',
+      )
     }
     if (!esquemaContraseña.safeParse(this.contraseña).success) {
       throw new Error(
@@ -114,14 +116,17 @@ export default class Usuario {
     return Usuario.deserializar(resultado)
   }
 
+  public static async verificarExistenciaNombre(nombre: string) {
+    const resultado = await DB.get(['usuarios.nombre', nombre])
+    return resultado.versionstamp && resultado.value
+  }
+
   public async cambiarNombre(nombre: string) {
     if (!esquemaNombre.safeParse(nombre).success) {
       throw new Error('El nombre de usuario no es válido.')
     }
 
-    const usuarioExistente = await Usuario.obtenerPorNombre(nombre)
-
-    if (usuarioExistente) {
+    if (await Usuario.verificarExistenciaNombre(nombre)) {
       throw new Error('Ya existe un usuario con ese nombre.')
     }
 
@@ -129,7 +134,7 @@ export default class Usuario {
     this.nombre = nombre
 
     const resultado = await DB.atomic()
-      .check({ key: ['usuarios.nombre', this.nombre], versionstamp: null })
+      // .check({ key: ['usuarios.nombre', this.nombre], versionstamp: null })
       .delete(['usuarios.nombre', nombreAntiguo])
       .set(['usuarios.nombre', this.nombre], this)
       .set(['usuarios.correo', this.correo], this)
@@ -153,7 +158,7 @@ export default class Usuario {
     this.correo = correo
 
     const resultado = await DB.atomic()
-      .check({ key: ['usuarios.correo', this.correo], versionstamp: null })
+      // .check({ key: ['usuarios.correo', this.correo], versionstamp: null })
       .delete(['usuarios.correo', correoAntiguo])
       .set(['usuarios.nombre', this.nombre], this)
       .set(['usuarios.correo', this.correo], this)

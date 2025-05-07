@@ -15,8 +15,11 @@ export function ModalError({ mensaje }: Props) {
   if (!mostrar.value) return null
 
   return (
-    <div class="fixed inset-0 flex items-center justify-center bg-black/30 z-50">
-      <div role="alert" class="rounded-md border border-red-200 bg-white p-4 shadow-sm max-w-md mx-4">
+    <div class="fixed inset-0 flex items-center justify-center bg-black/30 dark:bg-black/50 z-50">
+      <div 
+        role="alert" 
+        class="rounded-md border border-red-200 dark:border-red-800 bg-white dark:bg-gray-900 p-4 shadow-sm dark:shadow-md dark:shadow-gray-800/50 max-w-md mx-4"
+      >
         <div class="flex items-start gap-3">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -24,7 +27,7 @@ export function ModalError({ mensaje }: Props) {
             viewBox="0 0 24 24"
             stroke-width="1.5"
             stroke="currentColor"
-            class="size-6 text-red-600"
+            class="size-6 text-red-600 dark:text-red-500"
           >
             <path
               stroke-linecap="round"
@@ -34,13 +37,13 @@ export function ModalError({ mensaje }: Props) {
           </svg>
 
           <div class="flex-1">
-            <strong class="font-medium text-gray-900">Error</strong>
-            <p class="mt-1 text-sm text-gray-700">{mensaje}</p>
+            <strong class="font-medium text-gray-900 dark:text-gray-100">Error</strong>
+            <p class="mt-1 text-sm text-gray-700 dark:text-gray-300">{mensaje}</p>
           </div>
 
           <button
             onClick={() => (mostrar.value = false)}
-            class="-m-2 rounded-full p-1.5 text-gray-500 hover:bg-gray-100"
+            class="-m-2 rounded-full p-1.5 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 dark:text-gray-400 dark:hover:text-gray-200 transition-colors"
             type="button"
             aria-label="Cerrar"
           >
@@ -67,8 +70,8 @@ export function ModalLink({ mensaje, enlace, textoEnlace }: LinkProps) {
   if (!mostrar.value) return null
 
   return (
-    <div class="fixed inset-0 flex items-center justify-center bg-black/30 z-50">
-      <div class="rounded-md border border-gray-200 bg-white p-4 shadow-sm max-w-md mx-4">
+    <div class="fixed inset-0 flex items-center justify-center bg-black/30 dark:bg-black/50 z-50">
+      <div class="rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-4 shadow-sm dark:shadow-md dark:shadow-gray-800/50 max-w-md mx-4">
         <div class="flex items-start gap-3">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -76,7 +79,7 @@ export function ModalLink({ mensaje, enlace, textoEnlace }: LinkProps) {
             viewBox="0 0 24 24"
             stroke-width="1.5"
             stroke="currentColor"
-            class="size-6 text-green-600"
+            class="size-6 text-green-600 dark:text-green-500"
           >
             <path
               stroke-linecap="round"
@@ -86,19 +89,19 @@ export function ModalLink({ mensaje, enlace, textoEnlace }: LinkProps) {
           </svg>
 
           <div class="flex-1">
-            <strong class="font-medium text-gray-900">Aviso</strong>
-            <p class="mt-1 text-sm text-gray-700">{mensaje}</p>
+            <strong class="font-medium text-gray-900 dark:text-gray-100">Aviso</strong>
+            <p class="mt-1 text-sm text-gray-700 dark:text-gray-300">{mensaje}</p>
             
             <div class="mt-3 flex gap-2">
               <button
                 onClick={() => (mostrar.value = false)}
-                class="rounded border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                class="rounded border border-gray-300 dark:border-gray-600 px-3 py-1.5 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
               >
                 Cancelar
               </button>
               <a
                 href={enlace}
-                class="rounded bg-green-600 px-3 py-1.5 text-sm font-medium text-white shadow-sm hover:bg-green-700"
+                class="rounded bg-green-600 hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-800 px-3 py-1.5 text-sm font-medium text-white shadow-sm transition-colors"
               >
                 {textoEnlace}
               </a>
@@ -107,7 +110,7 @@ export function ModalLink({ mensaje, enlace, textoEnlace }: LinkProps) {
 
           <button
             onClick={() => (mostrar.value = false)}
-            class="-m-2 rounded-full p-1.5 text-gray-500 hover:bg-gray-100"
+            class="-m-2 rounded-full p-1.5 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 dark:text-gray-400 dark:hover:text-gray-200 transition-colors"
             type="button"
             aria-label="Cerrar"
           >
