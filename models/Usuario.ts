@@ -166,8 +166,6 @@ export default class Usuario {
     this.tema = this.tema === '' ? 'dark' : ''
 
     const resultado = await DB.atomic()
-      .check({ key: ['usuarios.nombre', this.correo], versionstamp: null })
-      .check({ key: ['usuarios.correo', this.correo], versionstamp: null })
       .set(['usuarios.nombre', this.nombre], this)
       .set(['usuarios.correo', this.correo], this)
       .commit()
@@ -185,8 +183,6 @@ export default class Usuario {
     this.contraseña = await encriptar(contraseña)
 
     const resultado = await DB.atomic()
-      .check({ key: ['usuarios.nombre', this.correo], versionstamp: null })
-      .check({ key: ['usuarios.correo', this.correo], versionstamp: null })
       .set(['usuarios.nombre', this.nombre], this)
       .set(['usuarios.correo', this.correo], this)
       .commit()

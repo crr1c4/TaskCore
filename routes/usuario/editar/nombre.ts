@@ -30,7 +30,7 @@ export const handler: Handlers = {
 
       // Obtención del usuario desde la base de datos.
       const usuario = await Usuario.obtenerPorCorreo(correo)
-      usuario.cambiarNombre(nombre)
+      await usuario.cambiarNombre(nombre)
 
       // if (!await editarUsuario(correo, { nombre })) {
         // throw new Error('No existe un usuario con ese nombre en la base de datos')

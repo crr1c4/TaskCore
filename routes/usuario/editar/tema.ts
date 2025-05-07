@@ -22,13 +22,17 @@ export const handler: Handlers = {
       const formulario = await req.formData()
       const correo = formulario.get('correo')?.toString().trim()
 
-
       if (!correo) {
         throw new Error('Error en el envío del formulario.')
       }
 
       const usuario = await Usuario.obtenerPorCorreo(correo)
-      usuario.cambiarTema()
+
+      console.log(usuario)
+
+      await usuario.cambiarTema()
+
+      // console.log(await Usuario.obtenerPorCorreo(correo))
 
       const token = await crearToken({
         correo: usuario.correo,
@@ -63,7 +67,11 @@ export const handler: Handlers = {
         status: 303,
         headers,
       })
+
     } catch (_error) {
+
+      console.log(_error)
+
       return new Response(null, {
         status: 303,
         headers: {

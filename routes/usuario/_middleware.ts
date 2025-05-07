@@ -1,16 +1,7 @@
 import { FreshContext } from '$fresh/server.ts'
 import { getCookies } from 'jsr:@std/http/cookie'
 import { verificarToken } from '../../utils/autenticacion.ts'
-
-/**
- * Representa el estado del usuario autenticado.
- */
-export interface EstadoUsuario {
-  nombre: string
-  correo: string
-  rol: "admin" | "miembro"
-  tema: string
-}
+import Usuario from '../../models/Usuario.ts'
 
 /**
  * Middleware para autenticar usuarios mediante JWT almacenado en cookies.
@@ -26,22 +17,27 @@ export interface EstadoUsuario {
  */
 export async function handler(
   req: Request,
-  ctx: FreshContext<EstadoUsuario>,
+  ctx: FreshContext<Usuario>,
 ): Promise<Response> {
   // Obtención las cookies del request
   const cookies = getCookies(req.headers)
 
   // Verificación el token de autenticación
+  if (!cookies.token) {
+    const params = new URLSearchParams({ mensaje: 'Error de autenticación, vuelva a iniciar sesion.' })
+    return Response.redirect(`/ingresar?${params.toString()}`, 201)
+  }
+
   const datos = await verificarToken(cookies.token)
 
   // Si el token no es válido, redirigir a la página de inicio de sesión
   if (!datos) {
-    const params = new URLSearchParams({ error: 'Error de autenticación, vuelva a iniciar sesion.' })
+    const params = new URLSearchParams({ mensaje: 'Error de autenticación, vuelva a iniciar sesion.' })
     return Response.redirect(`/ingresar?${params.toString()}`, 201)
   }
 
   // Almacenar los datos del usuario autenticado en el contexto
-  ctx.state = datos as unknown as EstadoUsuario
+  ctx.state = datos as unknown as Usuario
 
   // Continuar con la siguiente función en la cadena de middleware
   return await ctx.next()

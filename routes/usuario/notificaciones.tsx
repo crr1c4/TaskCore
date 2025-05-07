@@ -1,13 +1,13 @@
 import { FreshContext } from '$fresh/server.ts'
-import { EstadoUsuario } from './_middleware.ts'
-import EncabezadoPrincipal from '../../islands/EncabezadoPrincipal.tsx'
 import Notificacion from '../../components/Notificacion.tsx'
+import NavBar from '../../islands/NavBar.tsx'
+import Usuario from '../../models/Usuario.ts'
 
-export default function PaginaNotificaciones(ctx: FreshContext<EstadoUsuario>) {
+export default function PaginaNotificaciones(ctx: FreshContext<Usuario>) {
   return (
     <div class={`h-screen ${ctx.state.tema} dark:bg-slate-800`}>
       {/* Panel principal */}
-      <EncabezadoPrincipal rol={ctx.state.rol} />
+      <NavBar rol={ctx.state.rol} />
       <main class='px-6 md:px-20 pt-24 flex flex-col justify-center items-center gap-2 dark:text-white'>
         <h1 class='text-4xl'>Notificaciones</h1>
         <Notificacion descripcion='Ejemplo de una descripcion' titulo='Notificacion 1' tipo='comentario' />

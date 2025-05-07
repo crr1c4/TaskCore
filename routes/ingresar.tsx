@@ -122,7 +122,6 @@ export default function Ingresar(req: Request) {
           type='email'
           label='Correo electrónico'
           name='correo'
-          placeholder='Correo'
           required
           autoComplete='off'
           value={correo}
@@ -131,7 +130,6 @@ export default function Ingresar(req: Request) {
           type='password'
           label='Contraseña'
           name='contraseña'
-          placeholder='Contraseña'
           required
           autoComplete='off'
         />

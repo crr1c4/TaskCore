@@ -1,5 +1,5 @@
 import { FreshContext } from "$fresh/server.ts";
-import { EstadoUsuario } from "../_middleware.ts";
+import Usuario from '../../../models/Usuario.ts'
 
 /**
  * Middleware para verificar si el usuario tiene el rol de "admin".
@@ -8,7 +8,7 @@ import { EstadoUsuario } from "../_middleware.ts";
  * @param {Request} _req - La solicitud HTTP entrante (no se usa en este middleware).
  * @param {FreshContext<EstadoUsuario>} ctx - Contexto de Fresh, que incluye el estado del usuario.
  */
-export function handler(_req: Request, ctx: FreshContext<EstadoUsuario>) {
+export function handler(_req: Request, ctx: FreshContext<Usuario>) {
   // Si el usuario es administrador, se permite continuar con la petición.
   if (ctx.state.rol === "admin") return ctx.next();
 
