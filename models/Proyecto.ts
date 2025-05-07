@@ -8,16 +8,16 @@ import Tarea from './Tarea.ts'
 import Usuario from './Usuario.ts'
 
 export default class Proyecto {
-  readonly id: string
-  nombre: string
-  descripcion: string
-  readonly fechaCreacion: Date
-  readonly administrador: Usuario
-  miembros: ["usuarios.nombre", string][]
-  tareas: ["tareas", string][]
-  anuncios: ["anuncios", string][]
+  public id: string
+  public nombre: string
+  public descripcion: string
+  public fechaCreacion: Date
+  public administrador: Usuario
+  public miembros: ["usuarios.nombre", string][]
+  public tareas: ["tareas", string][]
+  public anuncios: ["anuncios", string][]
 
-  constructor(nombre: string, descripcion: string, administrador: Usuario) {
+  public constructor(nombre: string, descripcion: string, administrador: Usuario) {
     this.id = crypto.randomUUID()
     this.nombre = nombre
     this.descripcion = descripcion
@@ -28,7 +28,24 @@ export default class Proyecto {
     this.anuncios = []
   }
 
-  async guardar() {
+
+  private static async deserializar(proyectoSerializado: Deno.KvEntry<Proyecto>) {
+    const proyecto = new Proyecto(
+      proyectoSerializado.value.nombre,
+      proyectoSerializado.value.descripcion,
+      await Usuario.obtenerPorCorreo(proyectoSerializado.value.administrador.correo),
+    )
+
+    proyecto.id = proyectoSerializado.value.id
+    proyecto.fechaCreacion = proyectoSerializado.value.fechaCreacion
+    proyecto.miembros = proyectoSerializado.value.miembros
+    proyecto.tareas = proyectoSerializado.value.tareas
+    proyecto.anuncios = proyectoSerializado.value.anuncios
+
+    return proyecto
+  }
+
+  public async guardar() {
     const resultado = await DB.atomic()
       .check({ key: ['proyectos', this.id], versionstamp: null })
       .set(['proyectos', this.id], this)

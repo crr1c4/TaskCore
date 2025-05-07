@@ -1,78 +1,95 @@
-import { FreshContext } from '$fresh/server.ts'
+import { FreshContext, Handlers } from '$fresh/server.ts'
 import { BotonPrincipal } from '../../../components/Boton.tsx'
-import { IconoEquipo } from '../../../components/Iconos.tsx'
 import { CampoIngreso } from '../../../components/Input.tsx'
+import { ModalError } from '../../../islands/Modal.tsx'
 import NavBar from '../../../islands/NavBar.tsx'
+import Proyecto from '../../../models/Proyecto.ts'
 import Usuario from '../../../models/Usuario.ts'
 
+export const handler: Handlers = {
+  async POST(req, _ctx) {
+    const formulario = await req.formData()
+    try {
+      const nombre = formulario.get('nombre')?.toString()
+      const descripcion = formulario.get('descripcion')?.toString()
+      const correoAdministrador = formulario.get('administrador')?.toString()
+
+      if (!nombre || !descripcion || !correoAdministrador) {
+        throw new Error('Datos invalidos.')
+      }
+
+      const proyecto = new Proyecto(nombre, descripcion, await Usuario.obtenerPorCorreo(correoAdministrador))
+      await proyecto.guardar()
+
+      const params = new URLSearchParams({
+        resultado: 'ok',
+        mensaje: 'El proyecto se ha creado correctamente.',
+      })
+
+      return new Response(null, {
+        status: 303,
+        headers: {
+          'Location': `/usuario/admin?${params.toString()}`,
+        },
+      })
+    } catch (error) {
+      const objetoErrores = error as Error
+      const params = new URLSearchParams({
+        error: objetoErrores.message,
+      })
+
+      return new Response(null, {
+        status: 303,
+        headers: {
+          'Location': `/usuario/admin/crear-proyecto?${params.toString()}`,
+        },
+      })
+    }
+  },
+}
+
 export default function PaginaCrearProyecto(ctx: FreshContext<Usuario>) {
+  const error = ctx.url.searchParams.get('error')
+
   return (
     <div class={`min-h-screen ${ctx.state.tema} dark:bg-gray-900 bg-gray-50`}>
-      {/* Panel principal */}
       <NavBar rol={ctx.state.rol} />
+
       <main class='px-4 sm:px-6 lg:px-8 py-24 max-w-7xl mx-auto'>
-        <div class='text-center mb-12'>
-          <h1 class='text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-2'>
-            Crear nuevo proyecto
-          </h1>
-          <p class='text-lg text-gray-600 dark:text-gray-300'>
-            Configura los detalles de tu nuevo proyecto y agrega miembros
-          </p>
-        </div>
+        <form method='POST' action='/usuario/admin/crear-proyecto' class='space-y-8 max-w-4xl mx-auto'>
+          {/* Encabezado */}
+          <div class='text-center mb-12'>
+            <h1 class='text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-2'>
+              Crear nuevo proyecto
+            </h1>
 
-        <div class='space-y-8 max-w-3xl mx-auto'>
-          {/* Sección de agregar miembros */}
+            {error && <ModalError mensaje={error} />}
+          </div>
+
+          {/* Información básica del proyecto */}
           <div class='bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 border border-gray-200 dark:border-gray-700'>
-            <div class='flex flex-col sm:flex-row items-start sm:items-center gap-4'>
-              <div class='w-full sm:w-auto'>
-                <h2 class='text-xl font-semibold text-gray-800 dark:text-gray-200'>
-                  Agregar miembro
-                </h2>
-                <p class='text-sm text-gray-500 dark:text-gray-400 mt-1'>
-                  Ingresa el correo del usuario
-                </p>
-              </div>
-              <div class='flex-1 w-full flex gap-3'>
-                <CampoIngreso 
-                  label='Correo electrónico' 
-                  class='flex-1'
-                  placeholder='usuario@ejemplo.com'
-                />
-                <BotonPrincipal >
-                  Agregar
-                </BotonPrincipal>
-              </div>
+            <h2 class='text-xl font-semibold text-gray-800 dark:text-gray-200 mb-4'>
+              Información del proyecto
+            </h2>
+
+            <div class='space-y-4'>
+              <CampoIngreso
+                name='nombre'
+                label='Nombre del proyecto'
+                required
+                placeholder='Ej: Sistema de gestión de tareas'
+              />
+
+              <CampoIngreso
+                name='descripcion'
+                label='Descripción'
+                rows={3}
+                placeholder='Describe el propósito del proyecto...'
+              />
             </div>
           </div>
 
-          {/* Sección de resumen */}
-          <div class='bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 border border-gray-200 dark:border-gray-700'>
-            <div class='flex items-center gap-3 mb-6'>
-              <IconoEquipo />
-              <h2 class='text-xl font-semibold text-gray-800 dark:text-gray-200'>
-                Miembros del proyecto
-              </h2>
-            </div>
-            
-            <div class='flex flex-wrap gap-2'>
-              {[
-                'miembro@correo.com',
-                'miembro_correo_largo@correo.com',
-                'otro.miembro@correo.com',
-                'miembro_correo_largo@correo.com',
-                'miembro_correo_largo@correo.com',
-                'miembro@correo.com',
-                'otro.miembro@correo.com'
-              ].map((email) => (
-                <div class='rounded-full bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-200 py-1.5 px-4 text-sm flex items-center gap-2'>
-                  {email}
-                  <button class='text-blue-500 hover:text-blue-700 dark:hover:text-blue-400'>
-                    &times;
-                  </button>
-                </div>
-              ))}
-            </div>
-          </div>
+          <input type='hidden' name='administrador' value={ctx.state.correo} />
 
           {/* Botón de creación */}
           <div class='flex justify-center pt-4'>
@@ -80,7 +97,7 @@ export default function PaginaCrearProyecto(ctx: FreshContext<Usuario>) {
               Crear proyecto
             </BotonPrincipal>
           </div>
-        </div>
+        </form>
       </main>
     </div>
   )

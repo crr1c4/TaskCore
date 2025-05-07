@@ -93,12 +93,6 @@ export function ModalLink({ mensaje, enlace, textoEnlace }: LinkProps) {
             <p class="mt-1 text-sm text-gray-700 dark:text-gray-300">{mensaje}</p>
             
             <div class="mt-3 flex gap-2">
-              <button
-                onClick={() => (mostrar.value = false)}
-                class="rounded border border-gray-300 dark:border-gray-600 px-3 py-1.5 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
-              >
-                Cancelar
-              </button>
               <a
                 href={enlace}
                 class="rounded bg-green-600 hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-800 px-3 py-1.5 text-sm font-medium text-white shadow-sm transition-colors"
