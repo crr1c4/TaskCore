@@ -30,7 +30,11 @@ export default class Anuncio {
   }
 
   public async eliminar() {
-    const resultado = await DB.atomic().delete(['anuncios', this.id]).commit()
+    await Anuncio.eliminar(this.id)
+  }
+
+  public static async eliminar(id: string) {
+    const resultado = await DB.atomic().delete(['anuncios', id]).commit()
     if (!resultado.ok) throw new Error('Ocurrio un error al eliminar el anuncio.')
   }
 

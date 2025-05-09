@@ -118,4 +118,15 @@ export default class Proyecto {
 
     if (!resultado.ok) throw new Error('NO se puede actualizar el proyecto con el nuevo anuncio.')
   }
+
+  public async eliminarAnuncio(idAnuncio: string) {
+    await Anuncio.eliminar(idAnuncio)
+    this.anuncios = this.anuncios.filter(id => id !== idAnuncio)
+
+    const resultado = await DB.atomic()
+      .set(['proyectos', this.id], this)
+      .commit()
+
+    if (!resultado.ok) throw new Error('NO se puede eliminar anuncio.')
+  }
 }

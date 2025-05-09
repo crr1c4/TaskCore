@@ -7,9 +7,11 @@ import * as $_500 from './routes/_500.tsx'
 import * as $_app from './routes/_app.tsx'
 import * as $index from './routes/index.tsx'
 import * as $ingresar from './routes/ingresar.tsx'
-import * as $proyecto_id_crear_anuncio from './routes/proyecto/[id]/crear-anuncio.tsx'
-import * as $proyecto_id_editar from './routes/proyecto/[id]/editar.tsx'
-import * as $proyecto_id_index from './routes/proyecto/[id]/index.tsx'
+import * as $proyecto_idProyecto_anuncio_idAnuncio_eliminar from './routes/proyecto/[idProyecto]/anuncio/[idAnuncio]/eliminar.ts'
+import * as $proyecto_idProyecto_anuncio_middleware from './routes/proyecto/[idProyecto]/anuncio/_middleware.ts'
+import * as $proyecto_idProyecto_anuncio_crear from './routes/proyecto/[idProyecto]/anuncio/crear.tsx'
+import * as $proyecto_idProyecto_editar from './routes/proyecto/[idProyecto]/editar.tsx'
+import * as $proyecto_idProyecto_index from './routes/proyecto/[idProyecto]/index.tsx'
 import * as $proyecto_middleware from './routes/proyecto/_middleware.ts'
 import * as $registro from './routes/registro.tsx'
 import * as $salir from './routes/salir.ts'
@@ -37,9 +39,11 @@ const manifest = {
     './routes/_app.tsx': $_app,
     './routes/index.tsx': $index,
     './routes/ingresar.tsx': $ingresar,
-    './routes/proyecto/[id]/crear-anuncio.tsx': $proyecto_id_crear_anuncio,
-    './routes/proyecto/[id]/editar.tsx': $proyecto_id_editar,
-    './routes/proyecto/[id]/index.tsx': $proyecto_id_index,
+    './routes/proyecto/[idProyecto]/anuncio/[idAnuncio]/eliminar.ts': $proyecto_idProyecto_anuncio_idAnuncio_eliminar,
+    './routes/proyecto/[idProyecto]/anuncio/_middleware.ts': $proyecto_idProyecto_anuncio_middleware,
+    './routes/proyecto/[idProyecto]/anuncio/crear.tsx': $proyecto_idProyecto_anuncio_crear,
+    './routes/proyecto/[idProyecto]/editar.tsx': $proyecto_idProyecto_editar,
+    './routes/proyecto/[idProyecto]/index.tsx': $proyecto_idProyecto_index,
     './routes/proyecto/_middleware.ts': $proyecto_middleware,
     './routes/registro.tsx': $registro,
     './routes/salir.ts': $salir,
