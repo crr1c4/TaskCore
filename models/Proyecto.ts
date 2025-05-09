@@ -3,6 +3,7 @@
  * @author Christian Venegas
  * @description este archivo contiene las funciones de los proyectos para la BD.
  */
+import Anuncio from './Anuncio.ts'
 import { DB } from './mod.ts'
 import Tarea from './Tarea.ts'
 import Usuario from './Usuario.ts'
@@ -105,5 +106,16 @@ export default class Proyecto {
     for await (const registro of datosProyecto) {
       await DB.delete(registro.key)
     }
+  }
+
+  public async agregarAnuncio(anuncio: Anuncio) {
+    await anuncio.guardar()
+    this.anuncios.push(anuncio.id)
+
+    const resultado = await DB.atomic()
+      .set(['proyectos', this.id], this)
+      .commit()
+
+    if (!resultado.ok) throw new Error('NO se puede actualizar el proyecto con el nuevo anuncio.')
   }
 }

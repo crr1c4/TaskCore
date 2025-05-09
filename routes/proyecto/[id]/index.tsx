@@ -1,6 +1,7 @@
 import { FreshContext } from '$fresh/server.ts'
 import { Boton, BotonEmergencia } from '../../../components/Boton.tsx'
 import { IconoEliminar } from '../../../components/Iconos.tsx'
+import PanelAnuncio from '../../../components/proyectos/PanelAnuncio.tsx'
 import NavBar from '../../../islands/NavBar.tsx'
 import Anuncio from '../../../models/Anuncio.ts'
 import Proyecto from '../../../models/Proyecto.ts'
@@ -10,13 +11,13 @@ import { formatearFecha } from '../../../utils/formato.ts'
 
 export default async function PaginaProyecto(_request: Request, ctx: FreshContext<Usuario>) {
   const { id } = ctx.params
+  const error = ctx.url.searchParams.get('error')
+  const mensaje = ctx.url.searchParams.get('mensaje')
 
   const proyecto = await Proyecto.obtener(id)
   const tareas = await Promise.all(proyecto.tareas.map(async (idTarea) => await Tarea.obtener(idTarea)))
   const miembros = await Promise.all(proyecto.miembros.map(async (correo) => await Usuario.obtenerPorCorreo(correo)))
   const anuncios = await Promise.all(proyecto.anuncios.map(async (idAnuncio) => await Anuncio.obtener(idAnuncio)))
-
-  console.log({ tareas, miembros, anuncios })
 
   const totalTareas = proyecto.tareas.length
   const estados = {
@@ -24,8 +25,6 @@ export default async function PaginaProyecto(_request: Request, ctx: FreshContex
     enProgreso: tareas.filter((tarea) => !tarea.estado && !tarea.haExpirado()).length,
     expirado: tareas.filter((tarea) => !tarea.estado && tarea.haExpirado()).length,
   }
-
-  console.log(estados)
 
   const porcentajes = {
     completado: Math.round((estados.completado / totalTareas) * 100),
@@ -36,6 +35,31 @@ export default async function PaginaProyecto(_request: Request, ctx: FreshContex
   return (
     <div class={`${ctx.state.tema} min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-200`}>
       <NavBar rol='admin' />
+
+      {/* Mensajes de estado */}
+      {error && (
+        <div class='mb-6 p-4 bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded-md'>
+          {decodeURIComponent(error)}
+        </div>
+      )}
+
+      {mensaje && (
+        <div class='mb-6 p-4 bg-green-50 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded-md flex items-center gap-2'>
+          <svg
+            xmlns='http://www.w3.org/2000/svg'
+            class='h-5 w-5'
+            viewBox='0 0 20 20'
+            fill='currentColor'
+          >
+            <path
+              fill-rule='evenodd'
+              d='M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z'
+              clip-rule='evenodd'
+            />
+          </svg>
+          {decodeURIComponent(mensaje)}
+        </div>
+      )}
 
       {/* Header */}
       <header class='bg-white pt-20 dark:bg-gray-800 shadow-sm transition-colors duration-200'>
@@ -193,7 +217,10 @@ export default async function PaginaProyecto(_request: Request, ctx: FreshContex
             <section class='bg-white dark:bg-gray-800 rounded-lg shadow p-6 transition-colors duration-200'>
               <div class='flex justify-between items-center mb-4'>
                 <h2 class='text-xl font-semibold text-gray-900 dark:text-white'>Últimos anuncios</h2>
-                <a href={`/proyecto/${id}/crear-anuncio`} class='text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 p-2 rounded-full hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors duration-200'>
+                <a
+                  href={`/proyecto/${id}/crear-anuncio`}
+                  class='text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 p-2 rounded-full hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors duration-200'
+                >
                   <svg class='w-5 h-5' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
                     <path
                       stroke-linecap='round'
@@ -205,15 +232,7 @@ export default async function PaginaProyecto(_request: Request, ctx: FreshContex
                 </a>
               </div>
               <div class='space-y-4'>
-                {anuncios.map((anuncio) => (
-                  <div class='p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg transition-colors duration-200'>
-                    <h3 class='text-lg font-medium text-blue-800 dark:text-blue-200'>{anuncio.titulo}</h3>
-                    <p class='mt-1 text-blue-700 dark:text-blue-300'>{anuncio.descripcion}</p>
-                    <time class='mt-2 block text-sm text-blue-600 dark:text-blue-400'>
-                      {formatearFecha(anuncio.fechaPublicacion)}
-                    </time>
-                  </div>
-                ))}
+                {anuncios.map((anuncio) => <PanelAnuncio key={anuncio.id} anuncio={anuncio} />)}
               </div>
             </section>
 

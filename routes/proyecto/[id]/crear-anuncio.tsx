@@ -5,6 +5,8 @@ import NavBar from '../../../islands/NavBar.tsx'
 import Usuario from '../../../models/Usuario.ts'
 import { IconoAnuncio } from '../../../components/Iconos.tsx'
 import { Boton } from '../../../components/Boton.tsx'
+import Anuncio from '../../../models/Anuncio.ts'
+import Proyecto from '../../../models/Proyecto.ts'
 
 interface State {
   tema: string
@@ -14,28 +16,28 @@ interface State {
 export const handler: Handlers<unknown, State> = {
   async POST(req, ctx) {
     const formData = await req.formData()
+    const idProyecto = ctx.params.id
 
     const datosAnuncio = {
       titulo: formData.get('titulo')?.toString() || '',
       descripcion: formData.get('descripcion')?.toString() || '',
-      proyectoId: ctx.params.id,
     }
 
     // Validación básica
     if (!datosAnuncio.titulo || !datosAnuncio.descripcion) {
       return new Response(null, {
         status: 303,
-        headers: { 'Location': `/proyectos/${ctx.params.id}/crear-anuncio?error=Faltan+campos+obligatorios` },
+        headers: { 'Location': `/proyecto/${ctx.params.id}/crear-anuncio?error=Faltan+campos+obligatorios` },
       })
     }
 
-    // Aquí puedes agregar tu lógica para guardar el anuncio
-    // Ejemplo: await guardarAnuncio(datosAnuncio);
+    const anuncio = new Anuncio(datosAnuncio.titulo, datosAnuncio.descripcion, new Date())
+    const proyecto = Proyecto.obtener(idProyecto) 
+    ;(await proyecto).agregarAnuncio(anuncio)
 
-    // Redireccionar después de crear
     return new Response(null, {
       status: 303,
-      headers: { 'Location': `/proyectos/${ctx.params.id}?mensaje=Anuncio+creado+correctamente` },
+      headers: { 'Location': `/proyecto/${ctx.params.id}?mensaje=Anuncio+creado+correctamente` },
     })
   },
 }
@@ -92,7 +94,8 @@ export default function CrearAnuncio(ctx: FreshContext<Usuario>) {
                 id='descripcion'
                 rows={6}
                 required
-                maxLength={250}
+                maxLength={250}  
+                minLength={1}
                 autoComplete="off"
                 class='resize-none w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white'
               >

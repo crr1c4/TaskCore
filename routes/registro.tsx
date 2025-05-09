@@ -122,6 +122,24 @@ export default function Registro(req: Request) {
           minLength={8}
         />
 
+        {/* Checkbox para registro como admin */}
+        <div class='flex items-center mb-4'>
+          <input
+            type='checkbox'
+            id='registroAdmin'
+            name='rol'
+            value='admin'
+            checked={rol === 'admin'}
+            class='w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600'
+          />
+          <label
+            for='registroAdmin'
+            class='ml-2 text-sm font-medium text-gray-900 dark:text-gray-300'
+          >
+            Registrar como administrador
+          </label>
+        </div>
+
         <Boton>Registrar</Boton>
         <Enlace direccion='/' texto='Regresar al inicio' />
         <Enlace direccion='/ingresar' texto='Iniciar sesión' />
