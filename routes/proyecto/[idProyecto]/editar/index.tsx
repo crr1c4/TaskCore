@@ -52,14 +52,14 @@ export const handler: Handlers = {
   },
 }
 
-export default async function EditarProyecto(_req: Request, ctx: FreshContext) {
+export default async function EditarProyecto(_req: Request, ctx: FreshContext<Usuario>) {
   const { idProyecto } = ctx.params
   const error = ctx.url.searchParams.get('error') || ''
   const mensaje = ctx.url.searchParams.get('mensaje') || ''
   const proyecto = await Proyecto.obtener(idProyecto)
 
   return (
-    <div class='dark min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-200'>
+    <div class={`${ctx.state.tema} dark min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-200`}>
       {/* Mensajes de estado */}
       {error ? <ModalError mensaje={error} /> : ''}
       {mensaje

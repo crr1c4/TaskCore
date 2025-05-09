@@ -27,12 +27,7 @@ export const handler: Handlers = {
       }
 
       const usuario = await Usuario.obtenerPorCorreo(correo)
-
-      console.log(usuario)
-
       await usuario.cambiarTema()
-
-      // console.log(await Usuario.obtenerPorCorreo(correo))
 
       const token = await crearToken({
         correo: usuario.correo,
