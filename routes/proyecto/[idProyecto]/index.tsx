@@ -63,7 +63,7 @@ export default async function PaginaProyecto(_request: Request, ctx: FreshContex
             {/* Botón de editar */}
             <div class='flex items-center gap-2'>
               <a
-                href={`/proyectos/editar/${proyecto.id}`}
+                href={`/proyecto/${proyecto.id}/editar`}
               >
                 <Boton>
                   <svg class='w-5 h-5 mr-2' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
@@ -79,7 +79,7 @@ export default async function PaginaProyecto(_request: Request, ctx: FreshContex
               </a>
 
               <a
-                href={`/proyectos/eliminar/${proyecto.id}`}
+                href={`/proyecto/${proyecto.id}/eliminar`}
               >
                 <BotonEmergencia>
                   <svg

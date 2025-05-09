@@ -82,12 +82,20 @@ export default class Proyecto {
     }
   }
 
-  public async editar(datosNuevos: Partial<Proyecto>) {
-    Object.assign(this, datosNuevos)
+  public async cambiarNombre(nombre: string) {
+    this.nombre = nombre
     const resultado = await DB.atomic()
       .set(['proyectos', this.id], this)
       .commit()
-    if (!resultado.ok) throw new Error('Hubo un error al editar al proyecto')
+    if (!resultado.ok) throw new Error('Hubo un error al editar el titulo del proyecto')
+  }
+
+  public async cambiarDescripcion(descripcion: string) {
+    this.descripcion = descripcion
+    const resultado = await DB.atomic()
+      .set(['proyectos', this.id], this)
+      .commit()
+    if (!resultado.ok) throw new Error('Hubo un error al editar la descripción del proyecto')
   }
 
   /******************************************+ TAREAS *********************************************/
