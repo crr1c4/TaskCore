@@ -55,7 +55,7 @@ export default function CrearAnuncio(ctx: FreshContext<Usuario>) {
           {/* Encabezado */}
           <div class='mb-8 text-center'>
             <div class='mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-blue-100 dark:bg-blue-900/50 mb-4'>
-              <IconoAnuncio class='h-6 w-6 text-blue-600 dark:text-blue-400' />
+              <IconoAnuncio />
             </div>
             <h2 class='text-2xl font-bold text-gray-900 dark:text-white mb-2'>
               Crear nuevo anuncio
@@ -74,6 +74,7 @@ export default function CrearAnuncio(ctx: FreshContext<Usuario>) {
 
           {/* Formulario */}
           <form method='POST' class='space-y-6'>
+            <input type='hidden' name='proyectoId' value={idProyecto} />
 
             <Input
               type='text'

@@ -1,6 +1,8 @@
 import { FreshContext } from '$fresh/server.ts'
 import { Boton, BotonEmergencia, BotonIconoLink } from '../../../components/Boton.tsx'
+import { IconoEditar, IconoEliminar } from '../../../components/Iconos.tsx'
 import PanelAnuncio from '../../../components/proyectos/PanelAnuncio.tsx'
+import PanelUsuario from '../../../components/proyectos/PanelUsuario.tsx'
 import { ModalError, ModalLink } from '../../../islands/Modal.tsx'
 import NavBar from '../../../islands/NavBar.tsx'
 import Anuncio from '../../../models/Anuncio.ts'
@@ -68,14 +70,7 @@ export default async function PaginaProyecto(_request: Request, ctx: FreshContex
                     href={`/proyecto/${proyecto.id}/editar`}
                   >
                     <Boton>
-                      <svg class='w-5 h-5 mr-2' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
-                        <path
-                          stroke-linecap='round'
-                          stroke-linejoin='round'
-                          stroke-width='2'
-                          d='M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z'
-                        />
-                      </svg>
+                      <IconoEditar />
                       Editar
                     </Boton>
                   </a>
@@ -84,20 +79,7 @@ export default async function PaginaProyecto(_request: Request, ctx: FreshContex
                     href={`/proyecto/${proyecto.id}/eliminar`}
                   >
                     <BotonEmergencia>
-                      <svg
-                        xmlns='http://www.w3.org/2000/svg'
-                        fill='none'
-                        viewBox='0 0 24 24'
-                        stroke-width='1.5'
-                        stroke='currentColor'
-                        class='w-5 h-5'
-                      >
-                        <path
-                          stroke-linecap='round'
-                          stroke-linejoin='round'
-                          d='M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0'
-                        />
-                      </svg>
+                      <IconoEliminar />
                       Borrar
                     </BotonEmergencia>
                   </a>
@@ -118,24 +100,9 @@ export default async function PaginaProyecto(_request: Request, ctx: FreshContex
                 <h2 class='text-xl font-semibold text-gray-900 dark:text-white'>Equipo</h2>
                 {ctx.state.rol === 'admin' ? <BotonIconoLink link={`/proyecto/${idProyecto}/equipo`} /> : ''}
               </div>
-              <ul class='space-y-3'>
-                {miembros.map((miembro) => (
-                  <li
-                    key={miembro.correo}
-                    class='flex items-center space-x-3 p-3 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-colors duration-200'
-                  >
-                    <div class='flex-shrink-0 w-10 h-10 bg-blue-100 dark:bg-blue-900/20 rounded-full flex items-center justify-center'>
-                      <span class='text-blue-600 dark:text-blue-300 font-medium'>
-                        {miembro.nombre.charAt(0).toUpperCase()}
-                      </span>
-                    </div>
-                    <div class='min-w-0'>
-                      <p class='text-sm font-medium text-gray-900 dark:text-gray-100 truncate'>{miembro.correo}</p>
-                      <p class='text-sm text-gray-500 dark:text-gray-400'>{miembro.rol}</p>
-                    </div>
-                  </li>
-                ))}
-              </ul>
+              <div class='space-y-3'>
+                {miembros.map((miembro) => <PanelUsuario key={miembro.correo} miembro={miembro} />)}
+              </div>
             </section>
 
             {/* Sección Resumen con Gráfica */}

@@ -59,7 +59,7 @@ export default async function EditarProyecto(_req: Request, ctx: FreshContext<Us
   const proyecto = await Proyecto.obtener(idProyecto)
 
   return (
-    <div class={`${ctx.state.tema} dark min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-200`}>
+    <div class={`${ctx.state.tema} min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-200`}>
       {/* Mensajes de estado */}
       {error ? <ModalError mensaje={error} /> : ''}
       {mensaje
