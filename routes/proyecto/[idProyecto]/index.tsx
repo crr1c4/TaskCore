@@ -112,7 +112,7 @@ export default async function PaginaProyecto(_request: Request, ctx: FreshContex
             <section class='bg-white dark:bg-gray-800 rounded-lg shadow p-6 transition-colors duration-200'>
               <div class='flex justify-between items-center mb-4'>
                 <h2 class='text-xl font-semibold text-gray-900 dark:text-white'>Equipo</h2>
-                <button class='text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 p-2 rounded-full hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors duration-200'>
+                <a href={`/proyecto/${idProyecto}/miembros`} class='text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 p-2 rounded-full hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors duration-200'>
                   <svg class='w-5 h-5' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
                     <path
                       stroke-linecap='round'
@@ -121,7 +121,7 @@ export default async function PaginaProyecto(_request: Request, ctx: FreshContex
                       d='M12 6v6m0 0v6m0-6h6m-6 0H6'
                     />
                   </svg>
-                </button>
+                </a>
               </div>
               <ul class='space-y-3'>
                 {miembros.map((miembro) => (

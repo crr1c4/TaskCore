@@ -1,7 +1,7 @@
 // routes/proyectos/[idProyecto]/editar.tsx
 import { FreshContext, Handlers } from '$fresh/server.ts'
 import { AreaTexto } from '../../../../components/AreaTexto.tsx'
-import { Boton } from '../../../../components/Boton.tsx'
+import { Boton, BotonEmergencia } from '../../../../components/Boton.tsx'
 import { Input } from '../../../../components/Input.tsx'
 import { ModalError, ModalLink } from '../../../../islands/Modal.tsx'
 import NavBar from '../../../../islands/NavBar.tsx'
@@ -92,6 +92,12 @@ export default async function EditarProyecto(_req: Request, ctx: FreshContext) {
               {proyecto.descripcion}
             </p>
           </div>
+
+          <div className='w-full flex justify-end'>
+            <a href={`/proyecto/${idProyecto}`}>
+              <BotonEmergencia>Cancelar</BotonEmergencia>
+            </a>
+          </div>
         </div>
       </header>
 
@@ -109,7 +115,7 @@ export default async function EditarProyecto(_req: Request, ctx: FreshContext) {
             <Input
               label='Nombre'
               type='text'
-              name="nombre"
+              name='nombre'
               value={proyecto.nombre}
             />
             <AreaTexto

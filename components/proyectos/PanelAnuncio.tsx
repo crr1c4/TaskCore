@@ -17,16 +17,16 @@ export default function PanelAnuncio({ anuncio, idProyecto, rol }: Props) {
         ? (
           <a
             href={`/proyecto/${idProyecto}/anuncio/${anuncio.id}/eliminar`}
-            class='absolute top-2 right-2 p-1 rounded-full bg-rose-100 hover:bg-rose-200 dark:bg-rose-900/30 dark:hover:bg-rose-900/50 text-rose-500 hover:text-rose-700 dark:text-rose-400 dark:hover:text-rose-300 transition-colors duration-200 p-2'
+            class='absolute flex gap-2 text-xs items-center justify-center top-2 right-2 rounded-full bg-rose-100 hover:bg-rose-200 dark:bg-rose-900/30 dark:hover:bg-rose-900/50 text-rose-500 hover:text-rose-700 dark:text-rose-400 dark:hover:text-rose-300 transition-colors duration-200 py-2 px-4'
             title='Eliminar anuncio'
           >
-            <IconoEliminar />
+            <IconoEliminar /> Eliminar
           </a>
         )
         : ''}
       {/* Contenido del anuncio */}
       <h3 class='text-lg font-medium text-blue-800 dark:text-blue-200 pr-6'>{anuncio.titulo}</h3>
-      <p class='mt-1 text-blue-700 dark:text-blue-300'>{anuncio.descripcion}</p>
+      <p class='mt-1 text-blue-700 dark:text-blue-300 text-pretty'>{anuncio.descripcion}</p>
       <time class='mt-2 block text-sm text-blue-600 dark:text-blue-400'>
         {formatearFecha(anuncio.fechaPublicacion)}
       </time>

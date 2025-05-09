@@ -74,7 +74,6 @@ export default function CrearAnuncio(ctx: FreshContext<Usuario>) {
 
           {/* Formulario */}
           <form method='POST' class='space-y-6'>
-            <input type='hidden' name='proyectoId' value={idProyecto} />
 
             <Input
               type='text'

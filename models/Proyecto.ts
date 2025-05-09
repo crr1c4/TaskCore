@@ -76,10 +76,16 @@ export default class Proyecto {
   }
 
   static async eliminar(id: string) {
-    const datosProyecto = DB.list({ prefix: ['proyectos', id] })
-    for await (const registro of datosProyecto) {
-      await DB.delete(registro.key)
-    }
+    const proyecto = await Proyecto.obtener(id)
+
+    await Promise.all(
+      proyecto.anuncios.map((idAnuncio) => proyecto.eliminarAnuncio(idAnuncio)),
+    )
+
+    // TODO: Agregar las tareas
+
+    const resultado = await DB.atomic().delete(['proyectos', id]).commit()
+    if (!resultado.ok) throw new Error('Hubo un error al eliminar el proyecto.')
   }
 
   public async cambiarNombre(nombre: string) {
@@ -116,6 +122,8 @@ export default class Proyecto {
     }
   }
 
+  /* ******************************* ANUNCIOS ************************************* */
+
   public async agregarAnuncio(anuncio: Anuncio) {
     await anuncio.guardar()
     this.anuncios.push(anuncio.id)
@@ -129,7 +137,7 @@ export default class Proyecto {
 
   public async eliminarAnuncio(idAnuncio: string) {
     await Anuncio.eliminar(idAnuncio)
-    this.anuncios = this.anuncios.filter(id => id !== idAnuncio)
+    this.anuncios = this.anuncios.filter((id) => id !== idAnuncio)
 
     const resultado = await DB.atomic()
       .set(['proyectos', this.id], this)

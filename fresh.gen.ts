@@ -12,7 +12,10 @@ import * as $proyecto_idProyecto_anuncio_middleware from './routes/proyecto/[idP
 import * as $proyecto_idProyecto_anuncio_crear from './routes/proyecto/[idProyecto]/anuncio/crear.tsx'
 import * as $proyecto_idProyecto_editar_middleware from './routes/proyecto/[idProyecto]/editar/_middleware.ts'
 import * as $proyecto_idProyecto_editar_index from './routes/proyecto/[idProyecto]/editar/index.tsx'
+import * as $proyecto_idProyecto_eliminar_middleware from './routes/proyecto/[idProyecto]/eliminar/_middleware.ts'
+import * as $proyecto_idProyecto_eliminar_index from './routes/proyecto/[idProyecto]/eliminar/index.tsx'
 import * as $proyecto_idProyecto_index from './routes/proyecto/[idProyecto]/index.tsx'
+import * as $proyecto_idProyecto_miembros from './routes/proyecto/[idProyecto]/miembros.tsx'
 import * as $proyecto_middleware from './routes/proyecto/_middleware.ts'
 import * as $registro from './routes/registro.tsx'
 import * as $salir from './routes/salir.ts'
@@ -44,7 +47,10 @@ const manifest = {
     './routes/proyecto/[idProyecto]/anuncio/crear.tsx': $proyecto_idProyecto_anuncio_crear,
     './routes/proyecto/[idProyecto]/editar/_middleware.ts': $proyecto_idProyecto_editar_middleware,
     './routes/proyecto/[idProyecto]/editar/index.tsx': $proyecto_idProyecto_editar_index,
+    './routes/proyecto/[idProyecto]/eliminar/_middleware.ts': $proyecto_idProyecto_eliminar_middleware,
+    './routes/proyecto/[idProyecto]/eliminar/index.tsx': $proyecto_idProyecto_eliminar_index,
     './routes/proyecto/[idProyecto]/index.tsx': $proyecto_idProyecto_index,
+    './routes/proyecto/[idProyecto]/miembros.tsx': $proyecto_idProyecto_miembros,
     './routes/proyecto/_middleware.ts': $proyecto_middleware,
     './routes/registro.tsx': $registro,
     './routes/salir.ts': $salir,
