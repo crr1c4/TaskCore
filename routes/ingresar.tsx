@@ -5,7 +5,7 @@ import Usuario from '../models/Usuario.ts'
 
 import { crearToken } from '../utils/autenticacion.ts'
 import { setCookie } from 'jsr:@std/http/cookie'
-import { CampoIngreso } from '../components/Input.tsx'
+import { Input } from '../components/Input.tsx'
 import { EncabezadoPrincipal } from '../components/Headers.tsx'
 import { Boton } from '../components/Boton.tsx'
 import { ModalError } from '../islands/Modal.tsx'
@@ -116,7 +116,7 @@ export default function Ingresar(req: Request) {
       >
         <img src='/iconoTransparente.png' alt='Logo TaskCore' class='w-12 h-12 self-center' />
         <EncabezadoPrincipal>Inicio de sesión</EncabezadoPrincipal>
-        <CampoIngreso
+        <Input
           type='email'
           label='Correo electrónico'
           name='correo'
@@ -124,7 +124,7 @@ export default function Ingresar(req: Request) {
           autoComplete='off'
           value={correo}
         />
-        <CampoIngreso
+        <Input
           type='password'
           label='Contraseña'
           name='contraseña'

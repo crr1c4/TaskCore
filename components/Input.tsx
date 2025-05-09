@@ -4,7 +4,7 @@ interface Props extends JSX.HTMLAttributes<HTMLInputElement> {
   label: string
 }
 
-export const CampoIngreso = (props: Props) => (
+export const Input = (props: Props) => (
   <label htmlFor={props.name}>
     <span className='text-sm font-medium text-gray-700 dark:text-white'>{props.label}</span>
 

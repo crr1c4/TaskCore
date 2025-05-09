@@ -124,3 +124,4 @@ export function ModalLink({ mensaje, enlace, textoEnlace }: LinkProps) {
     </div>
   )
 }
+

@@ -1,6 +1,6 @@
 import { FreshContext, Handlers } from '$fresh/server.ts'
 import { Boton } from '../../../components/Boton.tsx'
-import { CampoIngreso } from '../../../components/Input.tsx'
+import { Input } from '../../../components/Input.tsx'
 import { ModalError } from '../../../islands/Modal.tsx'
 import NavBar from '../../../islands/NavBar.tsx'
 import Proyecto from '../../../models/Proyecto.ts'
@@ -73,14 +73,14 @@ export default function PaginaCrearProyecto(ctx: FreshContext<Usuario>) {
             </h2>
 
             <div class='space-y-4'>
-              <CampoIngreso
+              <Input
                 name='nombre'
                 label='Nombre del proyecto'
                 required
                 placeholder='Ej: Sistema de gestión de tareas'
               />
 
-              <CampoIngreso
+              <Input
                 name='descripcion'
                 label='Descripción'
                 rows={3}

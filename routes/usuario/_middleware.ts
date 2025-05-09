@@ -24,16 +24,20 @@ export async function handler(
 
   // Verificación el token de autenticación
   if (!cookies.token) {
+    const url = new URL(req.url)
+    url.pathname = '/ingresar'
     const params = new URLSearchParams({ mensaje: 'Error de autenticación, vuelva a iniciar sesion.' })
-    return Response.redirect(`/ingresar?${params.toString()}`, 201)
+    return Response.redirect(`${url.toString()}?${params.toString()}`, 303)
   }
 
   const datos = await verificarToken(cookies.token)
 
   // Si el token no es válido, redirigir a la página de inicio de sesión
   if (!datos) {
+    const url = new URL(req.url)
+    url.pathname = '/ingresar'
     const params = new URLSearchParams({ mensaje: 'Error de autenticación, vuelva a iniciar sesion.' })
-    return Response.redirect(`/ingresar?${params.toString()}`, 201)
+    return Response.redirect(`${url.toString()}?${params.toString()}`, 303)
   }
 
   // Almacenar los datos del usuario autenticado en el contexto

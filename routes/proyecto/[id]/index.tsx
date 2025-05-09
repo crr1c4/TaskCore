@@ -1,5 +1,6 @@
 import { FreshContext } from '$fresh/server.ts'
-import { Boton } from '../../../components/Boton.tsx'
+import { Boton, BotonEmergencia } from '../../../components/Boton.tsx'
+import { IconoEliminar } from '../../../components/Iconos.tsx'
 import NavBar from '../../../islands/NavBar.tsx'
 import Anuncio from '../../../models/Anuncio.ts'
 import Proyecto from '../../../models/Proyecto.ts'
@@ -49,21 +50,45 @@ export default async function PaginaProyecto(_request: Request, ctx: FreshContex
             </div>
 
             {/* Botón de editar */}
-            <a
-              href={`/proyectos/editar/${proyecto.id}`}
-            >
-              <Boton>
-                <svg class='w-5 h-5 mr-2' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
-                  <path
-                    stroke-linecap='round'
-                    stroke-linejoin='round'
-                    stroke-width='2'
-                    d='M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z'
-                  />
-                </svg>
-                Editar proyecto
-              </Boton>
-            </a>
+            <div class='flex items-center gap-2'>
+              <a
+                href={`/proyectos/editar/${proyecto.id}`}
+              >
+                <Boton>
+                  <svg class='w-5 h-5 mr-2' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
+                    <path
+                      stroke-linecap='round'
+                      stroke-linejoin='round'
+                      stroke-width='2'
+                      d='M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z'
+                    />
+                  </svg>
+                  Editar
+                </Boton>
+              </a>
+
+              <a
+                href={`/proyectos/eliminar/${proyecto.id}`}
+              >
+                <BotonEmergencia>
+                  <svg
+                    xmlns='http://www.w3.org/2000/svg'
+                    fill='none'
+                    viewBox='0 0 24 24'
+                    stroke-width='1.5'
+                    stroke='currentColor'
+                    class='w-5 h-5'
+                  >
+                    <path
+                      stroke-linecap='round'
+                      stroke-linejoin='round'
+                      d='M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0'
+                    />
+                  </svg>
+                  Borrar
+                </BotonEmergencia>
+              </a>
+            </div>
           </div>
         </div>
       </header>
@@ -142,21 +167,21 @@ export default async function PaginaProyecto(_request: Request, ctx: FreshContex
                     <div class='w-3 h-3 bg-green-500 rounded-full mr-2'></div>
                     <span class='text-sm dark:text-gray-300'>Completado</span>
                   </div>
-                  <span class='text-sm font-medium dark:text-gray-300'>{porcentajes.completado || "0.0"}%</span>
+                  <span class='text-sm font-medium dark:text-gray-300'>{porcentajes.completado || '0.0'}%</span>
                 </div>
                 <div class='flex items-center justify-between'>
                   <div class='flex items-center'>
                     <div class='w-3 h-3 bg-blue-500 rounded-full mr-2'></div>
                     <span class='text-sm dark:text-gray-300'>En Progreso</span>
                   </div>
-                  <span class='text-sm font-medium dark:text-gray-300'>{porcentajes.enProgreso || "0.0"}%</span>
+                  <span class='text-sm font-medium dark:text-gray-300'>{porcentajes.enProgreso || '0.0'}%</span>
                 </div>
                 <div class='flex items-center justify-between'>
                   <div class='flex items-center'>
                     <div class='w-3 h-3 bg-red-500 rounded-full mr-2'></div>
                     <span class='text-sm dark:text-gray-300'>Expirado</span>
                   </div>
-                  <span class='text-sm font-medium dark:text-gray-300'>{porcentajes.expirado || "0.0"}%</span>
+                  <span class='text-sm font-medium dark:text-gray-300'>{porcentajes.expirado || '0.0'}%</span>
                 </div>
               </div>
             </section>
@@ -168,7 +193,7 @@ export default async function PaginaProyecto(_request: Request, ctx: FreshContex
             <section class='bg-white dark:bg-gray-800 rounded-lg shadow p-6 transition-colors duration-200'>
               <div class='flex justify-between items-center mb-4'>
                 <h2 class='text-xl font-semibold text-gray-900 dark:text-white'>Últimos anuncios</h2>
-                <button class='text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 p-2 rounded-full hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors duration-200'>
+                <a href={`/proyecto/${id}/crear-anuncio`} class='text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 p-2 rounded-full hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors duration-200'>
                   <svg class='w-5 h-5' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
                     <path
                       stroke-linecap='round'
@@ -177,7 +202,7 @@ export default async function PaginaProyecto(_request: Request, ctx: FreshContex
                       d='M12 6v6m0 0v6m0-6h6m-6 0H6'
                     />
                   </svg>
-                </button>
+                </a>
               </div>
               <div class='space-y-4'>
                 {anuncios.map((anuncio) => (

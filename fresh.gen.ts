@@ -3,9 +3,11 @@
 // This file is automatically updated during development when running `dev.ts`.
 
 import * as $_404 from './routes/_404.tsx'
+import * as $_500 from './routes/_500.tsx'
 import * as $_app from './routes/_app.tsx'
 import * as $index from './routes/index.tsx'
 import * as $ingresar from './routes/ingresar.tsx'
+import * as $proyecto_id_crear_anuncio from './routes/proyecto/[id]/crear-anuncio.tsx'
 import * as $proyecto_id_editar from './routes/proyecto/[id]/editar.tsx'
 import * as $proyecto_id_index from './routes/proyecto/[id]/index.tsx'
 import * as $proyecto_middleware from './routes/proyecto/_middleware.ts'
@@ -31,9 +33,11 @@ import type { Manifest } from '$fresh/server.ts'
 const manifest = {
   routes: {
     './routes/_404.tsx': $_404,
+    './routes/_500.tsx': $_500,
     './routes/_app.tsx': $_app,
     './routes/index.tsx': $index,
     './routes/ingresar.tsx': $ingresar,
+    './routes/proyecto/[id]/crear-anuncio.tsx': $proyecto_id_crear_anuncio,
     './routes/proyecto/[id]/editar.tsx': $proyecto_id_editar,
     './routes/proyecto/[id]/index.tsx': $proyecto_id_index,
     './routes/proyecto/_middleware.ts': $proyecto_middleware,

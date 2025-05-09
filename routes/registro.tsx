@@ -1,7 +1,7 @@
 import { Handlers } from '$fresh/server.ts'
 import Usuario from '../models/Usuario.ts'
 import { EncabezadoPrincipal } from '../components/Headers.tsx'
-import { CampoIngreso } from '../components/Input.tsx'
+import { Input } from '../components/Input.tsx'
 import { Boton } from '../components/Boton.tsx'
 import { ModalError, ModalLink } from '../islands/Modal.tsx'
 import Fondo from '../components/Fondo.tsx'
@@ -86,7 +86,7 @@ export default function Registro(req: Request) {
         <img src='/iconoTransparente.png' alt='Logo TaskCore' class='w-12 h-12 self-center' />
         <EncabezadoPrincipal>Registro de usuario</EncabezadoPrincipal>
 
-        <CampoIngreso
+        <Input
           label='Nombre de usuario'
           type='text'
           name='nombre'
@@ -95,7 +95,7 @@ export default function Registro(req: Request) {
           value={nombre}
         />
 
-        <CampoIngreso
+        <Input
           label='Correo electrónico'
           type='email'
           name='correo'
@@ -104,7 +104,7 @@ export default function Registro(req: Request) {
           value={correo}
         />
 
-        <CampoIngreso
+        <Input
           label='Contraseña'
           type='password'
           name='contraseña'
@@ -113,7 +113,7 @@ export default function Registro(req: Request) {
           minLength={8}
         />
 
-        <CampoIngreso
+        <Input
           label='Confirmación de la contraseña'
           type='password'
           name='verificacionContraseña'

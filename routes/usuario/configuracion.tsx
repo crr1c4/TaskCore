@@ -1,4 +1,4 @@
-import { CampoIngreso } from '../../components/Input.tsx'
+import { Input } from '../../components/Input.tsx'
 import { Boton } from '../../components/Boton.tsx'
 import { FreshContext } from '$fresh/server.ts'
 import { ModalError } from '../../islands/Modal.tsx'
@@ -64,7 +64,7 @@ export default function Configuracion(ctx: FreshContext<Usuario>) {
                   </div>
                   <div class='px-4 py-5 sm:p-6'>
                     <form action='/usuario/editar/nombre' method='POST' class='space-y-6'>
-                      <CampoIngreso
+                      <Input
                         name='nombre'
                         label='Nombre de usuario'
                         autoComplete='off'
@@ -94,14 +94,14 @@ export default function Configuracion(ctx: FreshContext<Usuario>) {
                   <div class='px-4 py-5 sm:p-6'>
                     <form action='/usuario/editar/contrasena' method='POST' class='space-y-6'>
                       <input type='hidden' value={ctx.state.correo} name='correo' />
-                      <CampoIngreso
+                      <Input
                         type='password'
                         label='Contraseña actual'
                         autoComplete='current-password'
                         required
                         name='contrasenaActual'
                       />
-                      <CampoIngreso
+                      <Input
                         type='password'
                         label='Nueva contraseña'
                         autoComplete='new-password'
@@ -109,7 +109,7 @@ export default function Configuracion(ctx: FreshContext<Usuario>) {
                         name='nuevaContrasena'
                         minLength={8}
                       />
-                      <CampoIngreso
+                      <Input
                         type='password'
                         label='Confirmar nueva contraseña'
                         autoComplete='new-password'
