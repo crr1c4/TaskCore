@@ -32,6 +32,7 @@ export default class Proyecto {
   }
 
   private static async deserializar(proyectoSerializado: Deno.KvEntry<Proyecto>) {
+    console.log(proyectoSerializado.value.administrador)
     const proyecto = new Proyecto(
       proyectoSerializado.value.nombre,
       proyectoSerializado.value.descripcion,
@@ -139,7 +140,7 @@ export default class Proyecto {
 
   /* ******************************* MIEMBROS ************************************* */
 
-  async agregarMiembro(miembro: Usuario) {
+  async agregarIntegrante(miembro: Usuario) {
     if (this.miembros.includes(miembro.correo)) {
       throw new Error('El usuario ya esta registrado en el proyecto.')
     }
@@ -151,4 +152,17 @@ export default class Proyecto {
 
     if (!resultado.ok) throw new Error('NO se puede actualizar el proyecto con el nuevo integrante.')
   }
+
+  async eliminarIntegrante(correo: string) {
+    // TODO: AGREGAR LOGICA PARA TAREAS, NO OSE PUEDEN ELIMINAR USUARIOS CON TAREAS ASIGNADAS
+    this.miembros = this.miembros.filter((correoIntegrante) => correoIntegrante !== correo)
+
+    const resultado = await DB.atomic()
+      .set(['proyectos', this.id], this)
+      .commit()
+
+    if (!resultado.ok) throw new Error('NO se puede eliminar el integrante.')
+
+  }
 }
+

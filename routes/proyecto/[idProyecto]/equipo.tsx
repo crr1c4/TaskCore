@@ -24,10 +24,9 @@ export const handler: Handlers = {
 
       if (accion === 'agregar' && correo) {
         const miembro = await Usuario.obtenerPorCorreo(correo)
-        await proyecto.agregarMiembro(miembro)
+        await proyecto.agregarIntegrante(miembro)
       } else if (accion === 'eliminar' && correo) {
-        // Lógica para eliminar miembro
-        // proyecto.miembros = proyecto.miembros.filter(m => m.correo !== correo)
+        await proyecto.eliminarIntegrante(correo)
       }
 
       return new Response(null, {
@@ -46,7 +45,7 @@ export const handler: Handlers = {
   },
 }
 //
-export default async function GestionEquipo(req: Request, ctx: FreshContext<Usuario>) {
+export default async function GestionEquipo(_req: Request, ctx: FreshContext<Usuario>) {
   const { idProyecto } = ctx.params
   const proyecto = await Proyecto.obtener(idProyecto)
 
@@ -188,7 +187,7 @@ export default async function GestionEquipo(req: Request, ctx: FreshContext<Usua
                         </div>
                       </div>
                       <form method='POST'>
-                        <input type='hidden' name='action' value='eliminar' />
+                        <input type='hidden' name='accion' value='eliminar' />
                         <input type='hidden' name='correo' value={miembro} />
                         <button
                           type='submit'

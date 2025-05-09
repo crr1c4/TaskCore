@@ -13,6 +13,8 @@ export default async function Home(req: Request, ctx: FreshContext<Usuario>) {
   const usuario = await Usuario.obtenerPorCorreo(ctx.state.correo)
   const proyectos = await usuario.obtenerProyectos()
 
+  console.log(proyectos)
+
   return (
     <div class={`h-screen ${ctx.state.tema}`}>
       {resultado === 'ok'

@@ -217,28 +217,12 @@ export default class Usuario {
   private async obtenerProyectosMiembro() {
     const proyectos: Proyecto[] = []
 
-    for await (const entrada of DB.list<Usuario>({ prefix: ['proyectos'] })) {
-      const [_cadenaProyecto, idProyecto, _cadenaMiembro, nombreMiembro] = entrada.key as [
-        string,
-        string,
-        string,
-        string?,
-      ]
-
-      if (nombreMiembro === this.nombre) {
-        proyectos.push(await Proyecto.obtener(idProyecto))
+    for await (const entrada of DB.list<Proyecto>({ prefix: ['proyectos'] })) {
+      const [_cadenaProyecto, idProyecto] = entrada.key as [string, string]
+      const proyecto = await Proyecto.obtener(idProyecto)
+      if (proyecto.miembros.includes(this.correo)) {
+        proyectos.push(proyecto)
       }
-      // if (rol === 'admin' && entrada.value.#correo === this.#correo) {
-      //   const entradaProyecto = await DB.get<Proyecto>(['proyectos', idProyecto])
-      //   if (entradaProyecto.value) {
-      //     proyectos.push(entradaProyecto.value)
-      //   }
-      // } else if (rol === 'miembro' && correoMiembro === this.#correo) {
-      //   const entradaProyecto = await DB.get<Proyecto>(['proyectos', idProyecto])
-      //   if (entradaProyecto.value) {
-      //     proyectos.push(entradaProyecto.value)
-      //   }
-      // }
     }
 
     return proyectos
