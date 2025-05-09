@@ -62,15 +62,6 @@ export default class Proyecto {
     return Proyecto.deserializar(resultado)
   }
 
-  async agregarMiembro(miembro: Usuario) {
-    const resultado = await DB.atomic()
-      .check({ key: ['proyectos', this.id, 'miembro', miembro.nombre], versionstamp: null })
-      .set(['proyectos', this.id, 'miembro', miembro.nombre], ['usuarios', miembro.nombre])
-      .commit()
-
-    if (!resultado.ok) throw new Error('El miembro ya esta registrado en el proyeco.')
-  }
-
   async eliminar() {
     await Proyecto.eliminar(this.id)
   }
@@ -144,5 +135,20 @@ export default class Proyecto {
       .commit()
 
     if (!resultado.ok) throw new Error('NO se puede eliminar anuncio.')
+  }
+
+  /* ******************************* MIEMBROS ************************************* */
+
+  async agregarMiembro(miembro: Usuario) {
+    if (this.miembros.includes(miembro.correo)) {
+      throw new Error('El usuario ya esta registrado en el proyecto.')
+    }
+    this.miembros.push(miembro.correo)
+
+    const resultado = await DB.atomic()
+      .set(['proyectos', this.id], this)
+      .commit()
+
+    if (!resultado.ok) throw new Error('NO se puede actualizar el proyecto con el nuevo integrante.')
   }
 }
