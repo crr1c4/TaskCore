@@ -1,7 +1,7 @@
 import { FreshContext, Handlers } from '$fresh/server.ts'
 import { ModalLink } from '../../../islands/Modal.tsx'
 import NavBar from '../../../islands/NavBar.tsx'
-import { ComponenteProyecto } from '../../../islands/Proyecto.tsx'
+import { ComponenteProyecto } from '../../../components/proyectos/TarjetaProyecto.tsx'
 import Proyecto from '../../../models/Proyecto.ts'
 import Usuario, { Tema } from '../../../models/Usuario.ts'
 

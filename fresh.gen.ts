@@ -29,7 +29,6 @@ import * as $usuario_notificaciones from './routes/usuario/notificaciones.tsx'
 import * as $Counter from './islands/Counter.tsx'
 import * as $Modal from './islands/Modal.tsx'
 import * as $NavBar from './islands/NavBar.tsx'
-import * as $Proyecto from './islands/Proyecto.tsx'
 import type { Manifest } from '$fresh/server.ts'
 
 const manifest = {
@@ -63,7 +62,6 @@ const manifest = {
     './islands/Counter.tsx': $Counter,
     './islands/Modal.tsx': $Modal,
     './islands/NavBar.tsx': $NavBar,
-    './islands/Proyecto.tsx': $Proyecto,
   },
   baseUrl: import.meta.url,
 } satisfies Manifest

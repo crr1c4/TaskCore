@@ -1,6 +1,7 @@
 import { FreshContext } from '$fresh/server.ts'
 import { Boton, BotonEmergencia } from '../../../components/Boton.tsx'
 import PanelAnuncio from '../../../components/proyectos/PanelAnuncio.tsx'
+import { ModalError, ModalLink } from '../../../islands/Modal.tsx'
 import NavBar from '../../../islands/NavBar.tsx'
 import Anuncio from '../../../models/Anuncio.ts'
 import Proyecto from '../../../models/Proyecto.ts'
@@ -10,8 +11,8 @@ import { formatearFecha } from '../../../utils/formato.ts'
 
 export default async function PaginaProyecto(_request: Request, ctx: FreshContext<Usuario>) {
   const { idProyecto } = ctx.params
-  const error = ctx.url.searchParams.get('error')
-  const mensaje = ctx.url.searchParams.get('mensaje')
+  const error = ctx.url.searchParams.get('error') || ""
+  const mensaje = ctx.url.searchParams.get('mensaje') || ""
 
   const proyecto = await Proyecto.obtener(idProyecto)
   const tareas = await Promise.all(proyecto.tareas.map(async (idTarea) => await Tarea.obtener(idTarea)))
@@ -36,29 +37,16 @@ export default async function PaginaProyecto(_request: Request, ctx: FreshContex
       <NavBar rol='admin' />
 
       {/* Mensajes de estado */}
-      {error && (
-        <div class='mb-6 p-4 bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded-md'>
-          {decodeURIComponent(error)}
-        </div>
-      )}
-
-      {mensaje && (
-        <div class='mb-6 p-4 bg-green-50 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded-md flex items-center gap-2'>
-          <svg
-            xmlns='http://www.w3.org/2000/svg'
-            class='h-5 w-5'
-            viewBox='0 0 20 20'
-            fill='currentColor'
-          >
-            <path
-              fill-rule='evenodd'
-              d='M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z'
-              clip-rule='evenodd'
-            />
-          </svg>
-          {decodeURIComponent(mensaje)}
-        </div>
-      )}
+      {error ? <ModalError mensaje={error} /> : ''}
+      {mensaje
+        ? (
+          <ModalLink
+            mensaje={mensaje}
+            enlace={`/proyecto/${idProyecto}/`}
+            textoEnlace='Aceptar'
+          />
+        )
+        : ''}
 
       {/* Header */}
       <header class='bg-white pt-20 dark:bg-gray-800 shadow-sm transition-colors duration-200'>
