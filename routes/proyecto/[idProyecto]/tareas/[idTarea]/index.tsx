@@ -5,8 +5,9 @@ import Proyecto from '../../../../../models/Proyecto.ts'
 import NavBar from '../../../../../islands/NavBar.tsx'
 import { Boton, BotonEmergencia } from '../../../../../components/Boton.tsx'
 import { IconoEditar, IconoEliminar, IconoVolver } from '../../../../../components/Iconos.tsx'
-import { formatearFecha } from '../../../../../utils/formato.ts'
+import { formatearFecha, formatearFechaYHora, tiempoRestanteDetallado } from '../../../../../utils/formato.ts'
 import Usuario from '../../../../../models/Usuario.ts'
+import { AreaTexto } from '../../../../../components/AreaTexto.tsx'
 
 // export const handler: Handlers<Tarea> = {
 //   async GET(_, ctx) {
@@ -68,38 +69,50 @@ export default async function VisualizarTarea(_req: Request, ctx: FreshContext<U
       <NavBar rol='admin' />
 
       <div class='max-w-4xl mx-auto px-4 py-8'>
-      {/* Encabezado con botones de acción */}
-        <div class="mt-20 flex justify-between items-center mb-8">
-          <div>
-            <h1 class="text-3xl font-bold text-gray-900 dark:text-white">
-              Detalles de la Tarea
-            </h1>
-            <p class="text-gray-600 dark:text-gray-400 mt-2">
-              Información completa y gestión de comentarios
-            </p>
-          </div>
-          <div class="flex gap-2">
-            <a href={`/proyecto/${idProyecto}`}>
-              <Boton>
+        {/* Encabezado con botones de acción - Versión responsive mejorada */}
+
+        {/* Encabezado mejorado */}
+        {/* Encabezado mejorado */}
+        <div class='mt-20 mb-8'>
+          <div class='flex flex-col lg:flex-row justify-between gap-4'>
+            {/* Título */}
+            <div class='flex-grow'>
+              <h1 class='text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-2'>
+                Detalles de la Tarea
+              </h1>
+              <p class='text-gray-600 dark:text-gray-400 text-sm sm:text-base'>
+                Información completa y gestión de comentarios
+              </p>
+            </div>
+
+            {/* Botones TODO: Cambiar por Boton */}
+            <div class='flex flex-col xs:flex-row gap-2 flex-shrink-0'>
+              <a
+                href={`/proyecto/${idProyecto}`}
+                class=' inline-flex items-center justify-center px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-blue-700 transition-colors dark:bg-blue-700 dark:hover:bg-blue-600'
+              >
                 <IconoVolver />
                 Volver
-              </Boton>
-            </a>
-            <a href={`/proyecto/${idProyecto}/tareas/${idTarea}/editar`}>
-              <Boton>
+              </a>
+
+              <a
+                href={`/proyecto/${idProyecto}/tareas/${idTarea}/editar`}
+                class='inline-flex items-center justify-center px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition-colors dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600'
+              >
                 <IconoEditar />
                 Editar
-              </Boton>
-            </a>
-            <a href={`/proyecto/${idProyecto}/tareas/${idTarea}/eliminar`}>
-              <BotonEmergencia>
+              </a>
+
+              <a
+                href={`/proyecto/${idProyecto}/tareas/${idTarea}/eliminar`}
+                class='inline-flex items-center justify-center px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors dark:bg-red-700 dark:hover:bg-red-600'
+              >
                 <IconoEliminar />
                 Eliminar
-              </BotonEmergencia>
-            </a>
+              </a>
+            </div>
           </div>
         </div>
-         
 
         {/* Tarjeta de información de la tarea */}
         <div class='bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 mb-8 transition-colors duration-200'>
@@ -125,9 +138,23 @@ export default async function VisualizarTarea(_req: Request, ctx: FreshContext<U
                 </span>
               </div>
 
-              <div>
-                <h3 class='text-sm font-medium text-gray-500 dark:text-gray-400'>Fecha Límite</h3>
-                <p class='text-gray-900 dark:text-white'>{formatearFecha(tarea.fechaExpiracion)}</p>
+              <div class='space-y-2'>
+                <div>
+                  <h3 class='text-sm font-medium text-gray-500 dark:text-gray-400'>Fecha Límite</h3>
+                  <p class='text-gray-900 dark:text-white'>
+                    {formatearFechaYHora(tarea.fechaExpiracion)}
+                  </p>
+                </div>
+                <div>
+                  <h3 class='text-sm font-medium text-gray-500 dark:text-gray-400'>Tiempo Restante</h3>
+                  <p
+                    class={`font-medium ${
+                      tarea.haExpirado() ? 'text-red-600 dark:text-red-400' : 'text-gray-900 dark:text-white'
+                    }`}
+                  >
+                    {tiempoRestanteDetallado(tarea.fechaExpiracion)}
+                  </p>
+                </div>
               </div>
 
               <div>
@@ -142,7 +169,8 @@ export default async function VisualizarTarea(_req: Request, ctx: FreshContext<U
         <div class='bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 transition-colors duration-200'>
           <h2 class='text-xl font-semibold text-gray-900 dark:text-white mb-6'>Comentarios</h2>
 
-          {/*tarea.comentarios.length === 0
+          {
+            /*tarea.comentarios.length === 0
             ? <p class='text-gray-500 dark:text-gray-400 text-center py-4'>No hay comentarios aún</p>
             : (
               <div class='space-y-4'>
@@ -161,23 +189,19 @@ export default async function VisualizarTarea(_req: Request, ctx: FreshContext<U
                   </div>
                 ))}
               </div>
-            )*/}
+            )*/
+          }
 
           {/* Formulario para nuevo comentario */}
           <form method='POST' class='mt-8'>
             <div class='mb-4'>
-              <label for='comentario' class='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2'>
-                Agregar comentario
-              </label>
-              <textarea
-                id='comentario'
+              <AreaTexto
+                label='Agregar comentario'
                 name='comentario'
                 rows={3}
                 required
-                class='w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white'
                 placeholder='Escribe tu comentario aquí...'
-              >
-              </textarea>
+              />
             </div>
             <Boton>
               Publicar comentario

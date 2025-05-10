@@ -6,12 +6,24 @@ export function formatearFecha(fecha: string | Date): string {
   })
 }
 
+export function formatearFechaYHora(fecha: string | Date): string {
+  return new Date(fecha).toLocaleString('es-MX', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: true
+  });
+}
+
+// Función existente mejorada
 export function tiempoRestanteDetallado(fechaFutura: string | Date): string {
   const ahora = new Date();
   const fecha = new Date(fechaFutura);
   const diffMs = fecha.getTime() - ahora.getTime();
   
-  if (diffMs <= 0) return "La fecha ya pasó";
+  if (diffMs <= 0) return "Vencido";
 
   const diffDias = Math.floor(diffMs / (1000 * 60 * 60 * 24));
   const diffHoras = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));

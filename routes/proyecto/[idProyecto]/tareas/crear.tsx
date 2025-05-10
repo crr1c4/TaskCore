@@ -5,7 +5,7 @@ import NavBar from '../../../../islands/NavBar.tsx'
 import Usuario from '../../../../models/Usuario.ts'
 import { Boton } from '../../../../components/Boton.tsx'
 import { Input } from '../../../../components/Input.tsx'
-import { IconoVolver } from '../../../../components/Iconos.tsx'
+import { IconoCrear, IconoVolver } from '../../../../components/Iconos.tsx'
 import { AreaTexto } from '../../../../components/AreaTexto.tsx'
 import Proyecto from '../../../../models/Proyecto.ts'
 
@@ -139,13 +139,7 @@ export default async function NuevaTarea(_req: Request, ctx: FreshContext<Usuari
 
               <div class='flex justify-end pt-4'>
                 <Boton>
-                  <svg xmlns='http://www.w3.org/2000/svg' class='h-5 w-5 mr-2' viewBox='0 0 20 20' fill='currentColor'>
-                    <path
-                      fill-rule='evenodd'
-                      d='M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z'
-                      clip-rule='evenodd'
-                    />
-                  </svg>
+                  <IconoCrear />
                   Crear Tarea
                 </Boton>
               </div>
