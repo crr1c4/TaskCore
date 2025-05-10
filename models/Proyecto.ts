@@ -32,7 +32,6 @@ export default class Proyecto {
   }
 
   private static async deserializar(proyectoSerializado: Deno.KvEntry<Proyecto>) {
-    console.log(proyectoSerializado.value.administrador)
     const proyecto = new Proyecto(
       proyectoSerializado.value.nombre,
       proyectoSerializado.value.descripcion,
