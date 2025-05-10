@@ -2,6 +2,7 @@
 import { FreshContext, Handlers } from '$fresh/server.ts'
 import { AreaTexto } from '../../../../components/AreaTexto.tsx'
 import { Boton, BotonEmergencia } from '../../../../components/Boton.tsx'
+import { IconoVolver } from '../../../../components/Iconos.tsx'
 import { Input } from '../../../../components/Input.tsx'
 import { ModalError, ModalLink } from '../../../../islands/Modal.tsx'
 import NavBar from '../../../../islands/NavBar.tsx'
@@ -94,8 +95,13 @@ export default async function EditarProyecto(_req: Request, ctx: FreshContext<Us
           </div>
 
           <div className='w-full flex justify-end'>
-            <a href={`/proyecto/${idProyecto}`}>
-              <BotonEmergencia>Cancelar</BotonEmergencia>
+            <a
+              href={`/proyecto/${idProyecto}`}
+            >
+              <Boton>
+                <IconoVolver />
+                Volver
+              </Boton>
             </a>
           </div>
         </div>

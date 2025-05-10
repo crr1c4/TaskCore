@@ -1,6 +1,7 @@
 // routes/proyectos/[idProyecto]/equipo.tsx
-import { FreshContext, Handlers, PageProps } from '$fresh/server.ts'
+import { FreshContext, Handlers } from '$fresh/server.ts'
 import { Boton } from '../../../components/Boton.tsx'
+import { IconoVolver } from '../../../components/Iconos.tsx'
 import { Input } from '../../../components/Input.tsx'
 import { ModalError, ModalLink } from '../../../islands/Modal.tsx'
 import NavBar from '../../../islands/NavBar.tsx'
@@ -21,10 +22,14 @@ export const handler: Handlers = {
 
     try {
       const proyecto = await Proyecto.obtener(idProyecto)
-
       if (accion === 'agregar' && correo) {
-        const miembro = await Usuario.obtenerPorCorreo(correo)
-        await proyecto.agregarIntegrante(miembro)
+        const integrantes = await Usuario.obtenerPorCorreo(correo)
+
+        if (integrantes.rol === 'admin') {
+          throw new Error('No se pueden registrar integrantes que tengan el rol de administrador.')
+        }
+
+        await proyecto.agregarIntegrante(integrantes)
       } else if (accion === 'eliminar' && correo) {
         await proyecto.eliminarIntegrante(correo)
       }
@@ -84,14 +89,8 @@ export default async function GestionEquipo(_req: Request, ctx: FreshContext<Usu
               href={`/proyecto/${idProyecto}`}
             >
               <Boton>
-                <svg xmlns='http://www.w3.org/2000/svg' class='h-5 w-5 mr-2' viewBox='0 0 20 20' fill='currentColor'>
-                  <path
-                    fill-rule='evenodd'
-                    d='M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z'
-                    clip-rule='evenodd'
-                  />
-                </svg>
-                Volver al proyecto
+                <IconoVolver />
+                Volver
               </Boton>
             </a>
           </div>

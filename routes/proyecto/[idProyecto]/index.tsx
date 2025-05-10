@@ -17,15 +17,15 @@ export default async function PaginaProyecto(_request: Request, ctx: FreshContex
   const mensaje = ctx.url.searchParams.get('mensaje') || ''
 
   const proyecto = await Proyecto.obtener(idProyecto)
-  const tareas = await Promise.all(proyecto.tareas.map(async (idTarea) => await Tarea.obtener(idTarea)))
+  const tareas = await proyecto.obtenerTareas()
   const miembros = await Promise.all(proyecto.miembros.map(async (correo) => await Usuario.obtenerPorCorreo(correo)))
   const anuncios = await Promise.all(proyecto.anuncios.map(async (idAnuncio) => await Anuncio.obtener(idAnuncio)))
 
-  const totalTareas = proyecto.tareas.length
+  const totalTareas = tareas.length
   const estados = {
-    completado: tareas.filter((tarea) => tarea.estado && !tarea.haExpirado()).length,
-    enProgreso: tareas.filter((tarea) => !tarea.estado && !tarea.haExpirado()).length,
-    expirado: tareas.filter((tarea) => !tarea.estado && tarea.haExpirado()).length,
+    completado: tareas.filter((tarea) => tarea.obtenerEstado() === 'completado').length,
+    enProgreso: tareas.filter((tarea) => tarea.obtenerEstado() === 'en progreso').length,
+    expirado: tareas.filter((tarea) => tarea.obtenerEstado() === 'expirado').length,
   }
 
   const porcentajes = {
@@ -183,16 +183,7 @@ export default async function PaginaProyecto(_request: Request, ctx: FreshContex
             <section class='bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden transition-colors duration-200'>
               <div class='p-6 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center'>
                 <h2 class='text-xl font-semibold text-gray-900 dark:text-white'>Tareas del proyecto</h2>
-                <button class='text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 p-2 rounded-full hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors duration-200'>
-                  <svg class='w-5 h-5' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
-                    <path
-                      stroke-linecap='round'
-                      stroke-linejoin='round'
-                      stroke-width='2'
-                      d='M12 6v6m0 0v6m0-6h6m-6 0H6'
-                    />
-                  </svg>
-                </button>
+                {ctx.state.rol === 'admin' ? <BotonIconoLink link={`/proyecto/${idProyecto}/tareas/crear`} /> : ''}
               </div>
               <div class='overflow-x-auto'>
                 <table class='min-w-full divide-y divide-gray-200 dark:divide-gray-700'>
@@ -207,6 +198,9 @@ export default async function PaginaProyecto(_request: Request, ctx: FreshContex
                       <th class='px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider'>
                         Fecha límite
                       </th>
+                      <th class='px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider'>
+                        Detalles
+                      </th>
                     </tr>
                   </thead>
                   <tbody class='bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700'>
@@ -218,18 +212,29 @@ export default async function PaginaProyecto(_request: Request, ctx: FreshContex
                         <td class='px-6 py-4 whitespace-nowrap'>
                           <span
                             class={`px-2.5 py-1 rounded-full text-xs font-medium ${
-                              tarea.estado && !tarea.haExpirado()
+                              tarea.completada && !tarea.haExpirado()
                                 ? 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400'
-                                : tarea.estado && !tarea.haExpirado()
+                                : tarea.completada && !tarea.haExpirado()
                                 ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400'
                                 : 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400'
                             }`}
                           >
-                            {tarea.estado ? 'Completado' : tarea.haExpirado() ? 'Caducado' : 'En progreso'}
+                            {tarea.completada ? 'Completado' : tarea.haExpirado() ? 'Caducado' : 'En progreso'}
                           </span>
                         </td>
                         <td class='px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400'>
                           {formatearFecha(tarea.fechaExpiracion)}
+                        </td>
+                        <td class='px-6 py-4 whitespace-nowrap text-sm font-medium'>
+                          <a
+                            href={`/proyecto/${idProyecto}/tareas/${tarea.id}`}
+                            class='text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300 transition-colors duration-200'
+                            title='Ver detalles de la tarea'
+                          >
+                            <span class='text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300'>
+                              Ver detalles
+                            </span>
+                          </a>
                         </td>
                       </tr>
                     ))}

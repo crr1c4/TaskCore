@@ -16,6 +16,8 @@ import * as $proyecto_idProyecto_eliminar_middleware from './routes/proyecto/[id
 import * as $proyecto_idProyecto_eliminar_index from './routes/proyecto/[idProyecto]/eliminar/index.tsx'
 import * as $proyecto_idProyecto_equipo from './routes/proyecto/[idProyecto]/equipo.tsx'
 import * as $proyecto_idProyecto_index from './routes/proyecto/[idProyecto]/index.tsx'
+import * as $proyecto_idProyecto_tareas_idTarea_index from './routes/proyecto/[idProyecto]/tareas/[idTarea]/index.tsx'
+import * as $proyecto_idProyecto_tareas_crear from './routes/proyecto/[idProyecto]/tareas/crear.tsx'
 import * as $proyecto_middleware from './routes/proyecto/_middleware.ts'
 import * as $registro from './routes/registro.tsx'
 import * as $salir from './routes/salir.ts'
@@ -51,6 +53,8 @@ const manifest = {
     './routes/proyecto/[idProyecto]/eliminar/index.tsx': $proyecto_idProyecto_eliminar_index,
     './routes/proyecto/[idProyecto]/equipo.tsx': $proyecto_idProyecto_equipo,
     './routes/proyecto/[idProyecto]/index.tsx': $proyecto_idProyecto_index,
+    './routes/proyecto/[idProyecto]/tareas/[idTarea]/index.tsx': $proyecto_idProyecto_tareas_idTarea_index,
+    './routes/proyecto/[idProyecto]/tareas/crear.tsx': $proyecto_idProyecto_tareas_crear,
     './routes/proyecto/_middleware.ts': $proyecto_middleware,
     './routes/registro.tsx': $registro,
     './routes/salir.ts': $salir,

@@ -1,19 +1,25 @@
-import { throwDeprecation } from 'node:process'
-import { DB } from './mod.ts'
-
 export default class Tarea {
-  public id: string
+  public readonly id: string
   public nombre: string
-  public estado: boolean
+  public completada: boolean
   public descripcion: string
   public fechaExpiracion: Date
+  public correoResponsable: string // Correo del responsable de la tarea
 
-  public constructor(nombre: string, descripcion: string, fechaExpiracion: Date) {
-    this.id = crypto.randomUUID()
+  private constructor(
+    id: string,
+    nombre: string,
+    descripcion: string,
+    completada: boolean,
+    fechaExpiracion: Date,
+    correoResponsable: string,
+  ) {
+    this.id = id
     this.nombre = nombre
     this.descripcion = descripcion
-    this.estado = false
+    this.completada = completada
     this.fechaExpiracion = fechaExpiracion
+    this.correoResponsable = correoResponsable
   }
 
   public haExpirado(): boolean {
@@ -21,146 +27,32 @@ export default class Tarea {
     return this.fechaExpiracion < fechaActual
   }
 
-  public async eliminar() {
-    await DB.delete(['tareas', this.id])
-  }
-
-  private static deserializar(tareaSerializado: Deno.KvEntry<Tarea>) {
-    const tarea = new Tarea(
+  public static deserializar(tareaSerializado: Deno.KvEntry<Tarea>): Tarea {
+    return new Tarea(
+      tareaSerializado.value.id,
       tareaSerializado.value.nombre,
       tareaSerializado.value.descripcion,
-      tareaSerializado.value.fechaExpiracion
+      tareaSerializado.value.completada,
+      tareaSerializado.value.fechaExpiracion,
+      tareaSerializado.value.correoResponsable,
     )
-
-    tarea.id = tareaSerializado.value.id
-    tarea.estado = tareaSerializado.value.estado
-
-    return tarea
   }
 
-  public static async obtener(id: string): Promise<Tarea> {
-    const resultado = await DB.get<Tarea>(['tareas', id])
-    if (!resultado.value) throw new Error('No se ha encontrado una tarea con el id proporcionado.')
-    return Tarea.deserializar(resultado)
+  public static crear(nombre: string, descripcion: string, fechaExpiracion: Date, responsable: string): Tarea {
+    return new Tarea(
+      crypto.randomUUID(),
+      nombre,
+      descripcion,
+      false,
+      fechaExpiracion,
+      responsable,
+    )
+  }
+
+  public obtenerEstado(): 'completado' | 'en progreso' | 'expirado' {
+    if (this.completada && !this.haExpirado()) return 'completado'
+    else if (!this.completada && !this.haExpirado()) return 'en progreso'
+    else if (!this.completada && this.haExpirado()) return 'expirado'
+    else throw new Error(`Estado de la tarea ${this.id} desconocido.`)
   }
 }
-
-// export async function crearTarea(
-//   datosIniciales: {
-//     nombre: string
-//     descripcion: string
-//     fechaExpiracion: Date
-//   },
-//   correoMiembro: string,
-//   idProyecto: string,
-// ): Promise<string | null> {
-//   // Creación del objeto.
-//   const tarea: Tarea = {
-//     ...datosIniciales,
-//     id: crypto.randomUUID(),
-//     estado: false,
-//   }
-//
-//   // Verificaciones
-//   const proyecto = await obtenerProyecto(idProyecto)
-//   if (!proyecto) return null
-//
-//   if (!proyecto.correosIntegrantesEquipo.includes(correoMiembro)) {
-//     return null
-//   }
-//
-//   const llave = [PROYECTOS, idProyecto, TAREAS, correoMiembro, tarea.id]
-//
-//   const resultado = await DB.atomic()
-//     .check({ key: llave, versionstamp: null })
-//     .set(llave, tarea)
-//     .commit()
-//
-//   return resultado.ok ? tarea.id : null
-// }
-//
-// /**
-//  * Elimina una tarea de un proyecto.
-//  * @param {string} idProyecto - Identificador del proyecto.
-//  * @param {string} correoMiembro - Correo del miembro encargado de la tarea.
-//  * @param {string} idTarea - Identificador de la tarea a eliminar.
-//  * @returns {Promise<void>}
-//  */
-//
-// /**
-//  * Obtiene una tarea específica de un proyecto.
-//  * @param {string} idProyecto - Identificador del proyecto.
-//  * @param {string} correoMiembro - Correo del miembro encargado de la tarea.
-//  * @param {string} idTarea - Identificador de la tarea.
-//  * @returns {Promise<Tarea | null>} La tarea encontrada o null si no existe.
-//  */
-// export async function obtenerTarea(idProyecto: string, correoMiembro: string, idTarea: string): Promise<Tarea | null> {
-//   return (await DB.get<Tarea>([PROYECTOS, idProyecto, TAREAS, correoMiembro, idTarea])).value
-// }
-//
-// /**
-//  * Edita los datos de una tarea en un proyecto.
-//  * @param {Partial<Tarea>} datosNuevos - Datos a actualizar en la tarea.
-//  * @param {string} idProyecto - Identificador del proyecto.
-//  * @param {string} correoMiembro - Correo del miembro encargado de la tarea.
-//  * @param {string} idTarea - Identificador de la tarea a editar.
-//  * @returns {Promise<boolean>} True si la edición fue exitosa, False en caso contrario.
-//  */
-// export async function editarTarea(
-//   datosNuevos: Partial<Tarea>,
-//   idProyecto: string,
-//   correoMiembro: string,
-//   idTarea: string,
-// ): Promise<boolean> {
-//   // Verificar que la tarea exista
-//   const tarea = await obtenerTarea(idProyecto, correoMiembro, idTarea)
-//   if (!tarea) return false
-//
-//   // Actualización de los datos
-//   const tareaActualizada = {
-//     ...tarea,
-//     ...datosNuevos,
-//     id: idTarea,
-//   }
-//
-//   // Inserción de los nuevos datos.
-//   const resultado = await DB.atomic()
-//     .set([PROYECTOS, idProyecto, TAREAS, correoMiembro, idTarea], tareaActualizada)
-//     .commit()
-//   return resultado.ok
-// }
-//
-// /**
-//  * Obtiene todas las tareas de un proyecto.
-//  * @param {string} idProyecto - Identificador del proyecto.
-//  * @returns {Promise<Tarea[]>} Lista de tareas del proyecto.
-//  */
-// export async function obtenerTareasProyecto(idProyecto: string): Promise<Tarea[]> {
-//   const tareas = DB.list<Tarea>({ prefix: [PROYECTOS, idProyecto, TAREAS] })
-//
-//   const arreglo_tareas = []
-//
-//   for await (const tarea of tareas) {
-//     arreglo_tareas.push(tarea.value)
-//   }
-//
-//   return arreglo_tareas
-// }
-//
-// /**
-//  * Obtiene todas las tareas asignadas a un miembro dentro de un proyecto.
-//  * @param {string} idProyecto - Identificador del proyecto.
-//  * @param {string} correoMiembro - Correo del miembro encargado de la tarea.
-//  * @returns {Promise<Tarea[]>} Lista de tareas asignadas al miembro.
-//  */
-// export async function obtenerTareasMiembro(idProyecto: string, correoMiembro: string): Promise<Tarea[]> {
-//   const tareas = DB.list<Tarea>({ prefix: [PROYECTOS, idProyecto, TAREAS, correoMiembro] })
-//
-//   const arreglo_tareas = []
-//
-//   for await (const tarea of tareas) {
-//     arreglo_tareas.push(tarea.value)
-//   }
-//
-//   return arreglo_tareas
-// }

@@ -197,15 +197,19 @@ export default class Usuario {
 
   /* MÉTODOS PARA PROYECTOS */
   public async obtenerProyectos() {
-    return this.rol === 'admin' ? await this.proyectosAdministrador() : await this.obtenerProyectosMiembro()
+    return this.rol === 'admin' ? await this.obtenerProyectosAdministrador() : await this.obtenerProyectosMiembro()
   }
 
-  private async proyectosAdministrador(): Promise<Proyecto[]> {
+  private async obtenerProyectosAdministrador(): Promise<Proyecto[]> {
     const proyectos: Proyecto[] = []
 
     for await (const entrada of DB.list<Proyecto>({ prefix: ['proyectos'] })) {
+      // Para ignorar las otros elementos del proyecto (tareas, comentarios, anuncios, etc...)
+      if (entrada.key.length !== 2) continue
+
       if (
-        entrada.value.administrador.correo === this.correo && entrada.value.administrador.nombre === this.nombre
+        entrada.value.administrador.correo === this.correo &&
+        entrada.value.administrador.nombre === this.nombre
       ) {
         proyectos.push(entrada.value)
       }

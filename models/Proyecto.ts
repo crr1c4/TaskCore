@@ -107,13 +107,6 @@ export default class Proyecto {
     if (!resultado.ok) throw new Error('Ya existe una tarea con el mismo ID.')
   }
 
-  public async eliminarTarea(idTarea: string) {
-    const datosProyecto = DB.list({ prefix: ['proyectos', this.id, 'miembro'] })
-    for await (const registro of datosProyecto) {
-      await DB.delete(registro.key)
-    }
-  }
-
   /* ******************************* ANUNCIOS ************************************* */
 
   public async agregarAnuncio(anuncio: Anuncio) {
@@ -162,7 +155,59 @@ export default class Proyecto {
       .commit()
 
     if (!resultado.ok) throw new Error('NO se puede eliminar el integrante.')
+  }
 
+  /* ******************************* CREAR TAREA ************************************* */
+  async agregarTarea(tarea: Tarea) {
+    if (!this.miembros.includes(tarea.correoResponsable)) {
+      throw new Error('El usuario no está registrado en el proyecto.')
+    }
+
+    const resultado = await DB.atomic()
+      .set(['proyectos', this.id, 'tareas', tarea.id], tarea)
+      .commit()
+
+    if (!resultado.ok) throw new Error('No se puede guardar la tarea.')
+  }
+
+  async eliminarTarea(idTarea: string) {
+    const resultado = await DB.atomic()
+      .delete(['proyectos', this.id, 'tareas', idTarea])
+      .commit()
+
+    if (!resultado.ok) throw new Error(`No se pudo eliminar la tarea con el id ${idTarea}`)
+  }
+
+  async obtenerTareas(): Promise<Tarea[]> {
+    const tareas: Tarea[] = []
+
+    const consulta = DB.list<Tarea>({ prefix: ['proyectos', this.id, 'tareas'] })
+    for await (const tarea of consulta) tareas.push(Tarea.deserializar(tarea))
+
+    return tareas
+  }
+
+  async obtenerTarea(idTarea: string): Promise<Tarea> {
+    const resultado = await DB.get<Tarea>(['proyectos', this.id, 'tareas', idTarea])
+    if (!resultado.value) throw new Error(`No se pudo obtener la tarea con el id ${idTarea}`)
+    return Tarea.deserializar(resultado)
+  }
+
+  /**
+   * Modifica la tarea con un id especifico.
+   * WARNING: Se debe obtener la tarea y asignar los nuevos datos antes de mandar a llamar a este método.
+   */
+  async actualizarTarea(idTarea: string, nuevaTarea: Tarea) {
+    await this.obtenerTarea(idTarea)
+
+    if (!this.miembros.includes(nuevaTarea.correoResponsable)) {
+      throw new Error('El usuario no está registrado en el proyecto.')
+    }
+
+    const resultado = await DB.atomic()
+      .set(['proyectos', this.id, 'tareas', idTarea], nuevaTarea)
+      .commit()
+
+    if (!resultado.ok) throw new Error('No se pudo actualizar la tarea.')
   }
 }
-

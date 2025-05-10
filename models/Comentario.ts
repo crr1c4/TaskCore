@@ -5,11 +5,17 @@
 // /**
 //  * Representa un comentario dentro de una tarea.
 //  */
-// export interface Comentario {
-//   id: string
-//   contenido: string
-//   creadoPor: string
-// }
+export default class Comentario {
+  id: string
+  cuerpo: string
+  creadoPor: string
+
+  constructor(id: string, cuerpo: string, creadoPor: string) {
+    this.id = id
+    this.cuerpo = cuerpo
+    this.creadoPor = creadoPor
+  }
+}
 // /**
 //  * Representa la estructura de una llave para identificar un comentario dentro de la base de datos.
 //  */
