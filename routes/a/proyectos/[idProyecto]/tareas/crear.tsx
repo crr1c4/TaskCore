@@ -1,13 +1,13 @@
 // routes/proyectos/[idProyecto]/tareas/nueva.tsx
 import { FreshContext, Handlers } from '$fresh/server.ts'
-import Tarea from '../../../../models/Tarea.ts'
-import NavBar from '../../../../islands/NavBar.tsx'
-import Usuario from '../../../../models/Usuario.ts'
-import { Boton } from '../../../../components/Boton.tsx'
-import { Input } from '../../../../components/Input.tsx'
-import { IconoCrear, IconoVolver } from '../../../../components/Iconos.tsx'
-import { AreaTexto } from '../../../../components/AreaTexto.tsx'
-import Proyecto from '../../../../models/Proyecto.ts'
+import Tarea from '../../../../../models/Tarea.ts'
+import NavBar from '../../../../../islands/NavBar.tsx'
+import Usuario from '../../../../../models/Usuario.ts'
+import { Boton } from '../../../../../components/Boton.tsx'
+import { Input } from '../../../../../components/Input.tsx'
+import { IconoCrear, IconoVolver } from '../../../../../components/Iconos.tsx'
+import { AreaTexto } from '../../../../../components/AreaTexto.tsx'
+import Proyecto from '../../../../../models/Proyecto.ts'
 
 export const handler: Handlers = {
   async POST(req, ctx) {
@@ -15,7 +15,7 @@ export const handler: Handlers = {
     const nombre = formData.get('nombre')?.toString()
     const descripcion = formData.get('descripcion')?.toString()
     const fecha = formData.get('fecha')?.toString()
-    const hora = formData.get('hora')?.toString()  
+    const hora = formData.get('hora')?.toString()
     const responsable = formData.get('responsable')?.toString()
 
     if (!nombre || !descripcion || !fecha || !hora || !responsable) {
@@ -28,17 +28,30 @@ export const handler: Handlers = {
       nombre,
       descripcion,
       fechaExpiracion,
-      responsable
+      responsable,
     )
 
-    const proyecto = await Proyecto.obtener(ctx.params.idProyecto) 
+    const proyecto = await Proyecto.obtener(ctx.params.idProyecto)
     await proyecto.agregarTarea(tarea)
 
+    const params = new URLSearchParams({
+      mensaje: 'La tarea se ha creado correctamente.',
+    })
     return new Response(null, {
       status: 303,
       headers: {
-        Location: `/proyecto/${ctx.params.idProyecto}?mensaje=Tarea creada correctamente`,
+        Location: `/a/proyectos/${ctx.params.idProyecto}?${params.toString()}`,
       },
+    })
+  },
+  GET(_req, ctx) {
+    // Si el usuario es administrador, se permite continuar con la petición.
+    if (ctx.state.rol === 'admin') return ctx.next()
+
+    // Si el usuario no es admin, se redirige a la ruta de "miembro".
+    return new Response(null, {
+      status: 301, // Redirección permanente
+      headers: { Location: '/a/' },
     })
   },
 }
@@ -68,7 +81,7 @@ export default async function NuevaTarea(_req: Request, ctx: FreshContext<Usuari
               </p>
             </div>
             <a
-              href={`/proyecto/${idProyecto}`}
+              href={`/a/proyectos/${idProyecto}`}
             >
               <Boton>
                 <IconoVolver />
@@ -100,7 +113,7 @@ export default async function NuevaTarea(_req: Request, ctx: FreshContext<Usuari
               <AreaTexto
                 label='Descripción:'
                 name='descripcion'
-                rows={4}  
+                rows={4}
                 required
                 placeholder='Describe los detalles de la tarea...'
               />

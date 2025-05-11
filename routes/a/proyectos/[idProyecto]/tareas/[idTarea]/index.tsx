@@ -1,13 +1,13 @@
 // routes/proyecto/[idProyecto]/tareas/[idTarea].tsx
 import { FreshContext, Handlers, PageProps } from '$fresh/server.ts'
-import Tarea from '../../../../../models/Tarea.ts'
-import Proyecto from '../../../../../models/Proyecto.ts'
-import NavBar from '../../../../../islands/NavBar.tsx'
-import { Boton, BotonEmergencia } from '../../../../../components/Boton.tsx'
-import { IconoEditar, IconoEliminar, IconoVolver } from '../../../../../components/Iconos.tsx'
-import { formatearFecha, formatearFechaYHora, tiempoRestanteDetallado } from '../../../../../utils/formato.ts'
-import Usuario from '../../../../../models/Usuario.ts'
-import { AreaTexto } from '../../../../../components/AreaTexto.tsx'
+import Tarea from '../../../../../../models/Tarea.ts'
+import Proyecto from '../../../../../../models/Proyecto.ts'
+import NavBar from '../../../../../../islands/NavBar.tsx'
+import { Boton, BotonEmergencia } from '../../../../../../components/Boton.tsx'
+import { IconoEditar, IconoEliminar, IconoVolver } from '../../../../../../components/Iconos.tsx'
+import { formatearFecha, formatearFechaYHora, tiempoRestanteDetallado } from '../../../../../../utils/formato.ts'
+import Usuario from '../../../../../../models/Usuario.ts'
+import { AreaTexto } from '../../../../../../components/AreaTexto.tsx'
 
 // export const handler: Handlers<Tarea> = {
 //   async GET(_, ctx) {
@@ -88,7 +88,7 @@ export default async function VisualizarTarea(_req: Request, ctx: FreshContext<U
             {/* Botones TODO: Cambiar por Boton */}
             <div class='flex flex-col xs:flex-row gap-2 flex-shrink-0'>
               <a
-                href={`/proyecto/${idProyecto}`}
+                href={`/a/proyectos/${idProyecto}`}
                 class=' inline-flex items-center justify-center px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-blue-700 transition-colors dark:bg-blue-700 dark:hover:bg-blue-600'
               >
                 <IconoVolver />
@@ -96,7 +96,7 @@ export default async function VisualizarTarea(_req: Request, ctx: FreshContext<U
               </a>
 
               <a
-                href={`/proyecto/${idProyecto}/tareas/${idTarea}/editar`}
+                href={`/a/proyectos/${idProyecto}/tareas/${idTarea}/editar`}
                 class='inline-flex items-center justify-center px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition-colors dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600'
               >
                 <IconoEditar />
@@ -104,7 +104,7 @@ export default async function VisualizarTarea(_req: Request, ctx: FreshContext<U
               </a>
 
               <a
-                href={`/proyecto/${idProyecto}/tareas/${idTarea}/eliminar`}
+                href={`/a/proyectos/${idProyecto}/tareas/${idTarea}/eliminar`}
                 class='inline-flex items-center justify-center px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors dark:bg-red-700 dark:hover:bg-red-600'
               >
                 <IconoEliminar />
@@ -127,9 +127,9 @@ export default async function VisualizarTarea(_req: Request, ctx: FreshContext<U
                 <h3 class='text-sm font-medium text-gray-500 dark:text-gray-400'>Estado</h3>
                 <span
                   class={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
-                    tarea.completada
+                    tarea.obtenerEstado() === "completado"
                       ? 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400'
-                      : tarea.haExpirado()
+                      : tarea.obtenerEstado() === "expirado"
                       ? 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400'
                       : 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400'
                   }`}

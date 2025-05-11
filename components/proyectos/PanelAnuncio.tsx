@@ -16,7 +16,7 @@ export default function PanelAnuncio({ anuncio, idProyecto, rol }: Props) {
       {rol === 'admin'
         ? (
           <a
-            href={`/proyectos/${idProyecto}/anuncio/${anuncio.id}/eliminar`}
+            href={`/a/proyectos/${idProyecto}/anuncio/${anuncio.id}/eliminar`}
             class='absolute flex gap-2 text-xs items-center justify-center top-2 right-2 rounded-full bg-rose-100 hover:bg-rose-200 dark:bg-rose-900/30 dark:hover:bg-rose-900/50 text-rose-500 hover:text-rose-700 dark:text-rose-400 dark:hover:text-rose-300 transition-colors duration-200 py-2 px-4'
             title='Eliminar anuncio'
           >

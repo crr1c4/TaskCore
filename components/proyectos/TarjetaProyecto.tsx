@@ -10,7 +10,7 @@ interface Props {
 export default function ComponenteProyecto({ rol, proyecto, numeroTareas }: Props) {
   return (
     <a
-      href={`/proyectos/${proyecto.id}`}
+      href={`/a/proyectos/${proyecto.id}`}
       class='rounded-xl shadow-sm hover:shadow-md transition-all duration-200 border border-gray-200 dark:border-gray-700 overflow-hidden bg-white dark:bg-gray-800 hover:border-gray-300 dark:hover:border-gray-600 cursor-pointer select-none'
     >
       <div class='w-full h-full flex flex-col'>
