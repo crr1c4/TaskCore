@@ -24,11 +24,11 @@ Deno.test.ignore('HTTP.', async (t) => {
   })
 })
 
-Deno.test('GET /proyecto/ee4e1e7b-1835-4d1b-98b6-8e206c2fcf75/', async (t) => {
+Deno.test('GET /proyecto/ee4e1e7b-1835-4d1b-98b6-8e206c2fcf75/tareas/0c987ce6-7862-440f-ab30-d3aa0017bdda', async (t) => {
   const handler = await createHandler(manifest, config)
-  const BASE_URL = 'http://127.0.0.1/proyecto/ee4e1e7b-1835-4d1b-98b6-8e206c2fcf75'
+  const BASE_URL = 'http://127.0.0.1/proyecto/ee4e1e7b-1835-4d1b-98b6-8e206c2fcf75/tareas/0c987ce6-7862-440f-ab30-d3aa0017bdda'
 
-  await t.step('Debería cargar correctamente la UI de un proyecto', async () => {
+  await t.step('Debería cargar correctamente la UI de una tarea en especifico', async () => {
     // Simular cookie de sesión válida
     const headers = new Headers()
     headers.set('Cookie', 'token=eyJhbGciOiJIUzI1NiJ9.eyJjb3JyZW8iOiJhZG1pbjFAZ21haWwuY29tIiwibm9tYnJlIjoiY3IxYzQiLCJyb2wiOiJhZG1pbiIsInRlbWEiOiJkYXJrIiwiaWF0IjoxNzQ2ODQ2NjkzLCJleHAiOjE3NDY4NTM4OTN9.J8Deb6jhughRYpf_MoETT3NOOYa7ECHJ46L_tHygq7I')
@@ -41,11 +41,9 @@ Deno.test('GET /proyecto/ee4e1e7b-1835-4d1b-98b6-8e206c2fcf75/', async (t) => {
     expect(resp.status).toBe(200)
 
     const body = await resp.text()
-    expect(body).toContain('Mantenimiento')
-    expect(body).toContain('Equipo')
-    expect(body).toContain('anuncios')
-    expect(body).toContain('Tareas del proyecto')
-    expect(body).toContain('Resumen')
+    expect(body).toContain('Detalles de la Tarea')
+    expect(body).toContain('Estado')
+    expect(body).toContain('Comentarios')
   })
 })
 

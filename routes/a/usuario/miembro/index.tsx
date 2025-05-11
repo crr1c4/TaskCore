@@ -10,7 +10,7 @@ export default async function Home(req: Request, ctx: FreshContext<Usuario>) {
   // Obtiene la URL actual y extrae los parámetros 'error', 'nombre' y 'correo' (si existen).
   const url = ctx.url
   const resultado = url.searchParams.get('resultado')?.replaceAll('"', '') || ''
-  const usuario = await Usuario.obtenerPorCorreo(ctx.state.correo)
+  const usuario = await Usuario.obtener(ctx.state.correo)
   const proyectos = await usuario.obtenerProyectos()
 
   return (

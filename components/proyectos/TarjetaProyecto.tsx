@@ -38,7 +38,7 @@ export function ComponenteProyecto({ rol, proyecto }: Props) {
               <div class='flex justify-end items-center gap-4 mt-auto pt-2 border-t border-gray-100 dark:border-gray-700'>
                 <div class='flex items-center gap-1.5 text-sm text-gray-500 dark:text-gray-400'>
                   <IconoEquipo />
-                  <span>{proyecto.miembros.length} miembro{proyecto.miembros.length !== 1 ? 's' : ''}</span>
+                  <span>{proyecto.integrantes.length} miembro{proyecto.integrantes.length !== 1 ? 's' : ''}</span>
                 </div>
 
                 <div class='flex items-center gap-1.5 text-sm text-gray-500 dark:text-gray-400'>

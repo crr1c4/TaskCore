@@ -18,7 +18,7 @@ export default async function PaginaProyecto(_request: Request, ctx: FreshContex
 
   const proyecto = await Proyecto.obtener(idProyecto)
   const tareas = await proyecto.obtenerTareas()
-  const miembros = await Promise.all(proyecto.miembros.map(async (correo) => await Usuario.obtenerPorCorreo(correo)))
+  const miembros = await Promise.all(proyecto.integrantes.map(async (correo) => await Usuario.obtener(correo)))
   const anuncios = await Promise.all(proyecto.anuncios.map(async (idAnuncio) => await Anuncio.obtener(idAnuncio)))
 
   const totalTareas = tareas.length

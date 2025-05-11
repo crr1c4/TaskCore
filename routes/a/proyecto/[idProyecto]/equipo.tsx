@@ -23,7 +23,7 @@ export const handler: Handlers = {
     try {
       const proyecto = await Proyecto.obtener(idProyecto)
       if (accion === 'agregar' && correo) {
-        const integrantes = await Usuario.obtenerPorCorreo(correo)
+        const integrantes = await Usuario.obtener(correo)
 
         if (integrantes.rol === 'admin') {
           throw new Error('No se pueden registrar integrantes que tengan el rol de administrador.')
@@ -132,11 +132,11 @@ export default async function GestionEquipo(_req: Request, ctx: FreshContext<Usu
           <div class='p-6 border-b border-gray-200 dark:border-gray-700'>
             <h2 class='text-xl font-semibold text-gray-900 dark:text-white'>Miembros del equipo</h2>
             <p class='mt-1 text-sm text-gray-500 dark:text-gray-400'>
-              {proyecto.miembros.length} {proyecto.miembros.length === 1 ? 'miembro' : 'miembros'}
+              {proyecto.integrantes.length} {proyecto.integrantes.length === 1 ? 'miembro' : 'miembros'}
             </p>
           </div>
 
-          {proyecto.miembros.length === 0
+          {proyecto.integrantes.length === 0
             ? (
               <div class='p-8 text-center'>
                 <svg
@@ -159,7 +159,7 @@ export default async function GestionEquipo(_req: Request, ctx: FreshContext<Usu
             )
             : (
               <ul class='divide-y divide-gray-200 dark:divide-gray-700'>
-                {proyecto.miembros.map((miembro) => (
+                {proyecto.integrantes.map((miembro) => (
                   <li class='p-4 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors duration-200'>
                     <div class='flex items-center justify-between'>
                       <div class='flex items-center space-x-4'>

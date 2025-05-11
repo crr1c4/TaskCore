@@ -29,7 +29,7 @@ export const handler: Handlers = {
       if (nueva !== confirmacion) {
         throw new Error('Las contraseñas nuevas no coinciden.')
       }
-      const usuario = await Usuario.obtenerPorCorreo(correo)
+      const usuario = await Usuario.obtener(correo)
 
       if (!await usuario.verificarContraseña(actual)) throw new Error('La contraseña actual no es correcta.')
       await usuario.cambiarContraseña(nueva)

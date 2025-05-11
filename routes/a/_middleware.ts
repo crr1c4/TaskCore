@@ -26,7 +26,7 @@ export async function handler(
   if (!cookies.token) {
     const url = new URL(req.url)
     url.pathname = '/ingresar'
-    const params = new URLSearchParams({ mensaje: 'Error de autenticación, vuelva a iniciar sesion.' })
+    const params = new URLSearchParams({ error: 'Error de autenticación, vuelva a iniciar sesion.' })
     return Response.redirect(`${url.toString()}?${params.toString()}`, 303)
   }
 
@@ -36,7 +36,7 @@ export async function handler(
   if (!datos) {
     const url = new URL(req.url)
     url.pathname = '/ingresar'
-    const params = new URLSearchParams({ mensaje: 'Error de autenticación, vuelva a iniciar sesion.' })
+    const params = new URLSearchParams({ error: 'Error de autenticación, vuelva a iniciar sesion.' })
     return Response.redirect(`${url.toString()}?${params.toString()}`, 303)
   }
 

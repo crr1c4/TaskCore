@@ -34,7 +34,7 @@ export const handler: Handlers = {
         throw new Error('Error en el envío del formulario.')
       }
 
-      const usuario = await Usuario.obtenerPorCorreo(correo) 
+      const usuario = await Usuario.obtener(correo) 
 
       if (!(await usuario.verificarContraseña(contraseña))) {
         throw new Error('La contraseña es incorrecta.')
@@ -62,7 +62,7 @@ export const handler: Handlers = {
         // secure: true, // Solo se envía en conexiones HTTPS.
       })
 
-      headers.set('Location', `/usuario/${usuario.rol}/`)
+      headers.set('Location', `/a/`)
       return new Response(null, {
         status: 303,
         headers,
@@ -70,9 +70,10 @@ export const handler: Handlers = {
     } catch (error) {
       const objetoErrores = error as Error
       const correo = formulario.get('correo')?.toString().trim() || ''
+
       const params = new URLSearchParams({
         correo,
-        mensaje: objetoErrores.message,
+        error: objetoErrores.message,
       })
 
       return new Response(null, {
@@ -100,7 +101,7 @@ export const handler: Handlers = {
 export default function Ingresar(req: Request) {
   // Obtiene la URL actual y extrae los parámetros 'error' y 'correo' si existe
   const url = new URL(req.url)
-  const error = url.searchParams.get('mensaje')?.replaceAll('"', '')
+  const error = url.searchParams.get('error')?.replaceAll('"', '')
   const correo = url.searchParams.get('correo')?.replaceAll('"', '')
 
   return (

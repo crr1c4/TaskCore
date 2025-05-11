@@ -8,9 +8,10 @@ import {
 } from '../components/Iconos.tsx'
 
 import { useSignal } from '@preact/signals'
+import { Rol } from '../models/Usuario.ts'
 
 interface Props {
-  rol: 'admin' | 'miembro'
+  rol: Rol
 }
 
 export default function NavBar({ rol }: Props) {

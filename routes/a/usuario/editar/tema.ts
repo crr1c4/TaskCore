@@ -1,11 +1,12 @@
 import { FreshContext } from '$fresh/server.ts'
 import { Handlers } from '$fresh/server.ts'
-import { crearToken } from '../../../utils/autenticacion.ts'
 import Usuario from '../../../models/Usuario.ts'
+// import { Usuario } from '../../../components/Iconos.tsx'
+import { crearToken } from '../../../utils/autenticacion.ts'
+
+// import { editarUsuario, obtenerUsuario } from '../../../utils/db/modelos/usuario.ts'
 import { setCookie } from 'jsr:@std/http/cookie'
 import { deleteCookie } from 'jsr:@std/http/cookie'
-// import { crearToken } from '../../../utils/autenticacion.ts'
-
 /**
  * Manejador de la autenticación de usuarios mediante formulario.
  * @type {Handlers} Manejador de solicitudes HTTP.
@@ -18,22 +19,16 @@ export const handler: Handlers = {
    */
   async POST(req: Request, _ctx: FreshContext) {
     try {
-      // Obtención de los datos del formulario enviado por el usuario.
       const formulario = await req.formData()
-      const nombre = formulario.get('nombre')?.toString().trim()
       const correo = formulario.get('correo')?.toString().trim()
 
-      // Verificación de que los datos no sean indefinidos o vacíos.
-      if (!nombre || !correo) {
+      if (!correo) {
         throw new Error('Error en el envío del formulario.')
       }
 
-      // Obtención del usuario desde la base de datos.
-      const usuario = await Usuario.obtenerPorCorreo(correo)
+      const usuario = await Usuario.obtener(correo)
+      await usuario.cambiarTema()
 
-      await usuario.cambiarNombre(nombre)
-
-      // Generación del token JWT con la información del usuario.
       const token = await crearToken({
         correo: usuario.correo,
         nombre: usuario.nombre,
@@ -44,7 +39,6 @@ export const handler: Handlers = {
       const headers = new Headers()
       deleteCookie(headers, 'token')
 
-      // Inserción del token en una cookie segura.
       setCookie(headers, {
         name: 'token',
         value: token,
@@ -60,7 +54,7 @@ export const handler: Handlers = {
 
       const params = new URLSearchParams({
         resultado: 'ok',
-        mensaje: 'El nombre se ha cambiado correctamente.',
+        mensaje: "El tema se ha cambiado correctamente."
       })
 
       headers.set('Location', `/usuario/${usuario.rol}/?${params.toString()}`)
@@ -69,16 +63,15 @@ export const handler: Handlers = {
         status: 303,
         headers,
       })
-    } catch (error) {
-      const objetoErrores = error as Error
-      const params = new URLSearchParams({
-        error: objetoErrores.message,
-      })
+
+    } catch (_error) {
+
+      console.log(_error)
 
       return new Response(null, {
         status: 303,
         headers: {
-          'Location': `/usuario/configuracion?${params.toString()}`,
+          'Location': `/ingresar`,
         },
       })
     }

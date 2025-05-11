@@ -26,7 +26,7 @@ export const handler: Handlers = {
       await usuario.guardar()
 
       const params = new URLSearchParams({
-        resultado: 'ok',
+        mensaje: '¡Registro completado exitosamente! Inicia sesión para empezar a utilizar TaskCore.',
       })
 
       return new Response(null, {
@@ -60,18 +60,19 @@ export default function Registro(req: Request) {
   const error = url.searchParams.get('error')?.replaceAll('"', '') || ''
   const nombre = url.searchParams.get('nombre')?.replaceAll('"', '') || ''
   const correo = url.searchParams.get('correo')?.replaceAll('"', '') || ''
+  
   const rol = url.searchParams.get('rol') || ''
-  const resultado = url.searchParams.get('resultado')?.replaceAll('"', '') || ''
+  const mensaje = url.searchParams.get('mensaje')?.replaceAll('"', '') || ''
 
   return (
     <div class='w-screen h-screen bg-black flex flex-col justify-center items-center'>
       <Fondo ruta='/fondo3.gif' />
 
       {error ? <ModalError mensaje={error} /> : ''}
-      {resultado === 'ok'
+      {mensaje
         ? (
           <ModalLink
-            mensaje='¡Registro completado exitosamente! Inicia sesión para empezar a utilizar TaskCore.'
+            mensaje={mensaje}
             enlace='/ingresar'
             textoEnlace='Iniciar sesión'
           />

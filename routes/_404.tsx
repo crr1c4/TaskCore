@@ -1,27 +1,55 @@
-import { Head } from "$fresh/runtime.ts";
+import { Head } from '$fresh/runtime.ts'
 
 export default function Error404() {
   return (
     <>
       <Head>
-        <title>404 - Page not found</title>
+        <title>404 - TaskCore | Página no encontrada</title>
       </Head>
-      <div class="px-4 py-8 mx-auto bg-[#86efac]">
-        <div class="max-w-screen-md mx-auto flex flex-col items-center justify-center">
+      <div class='min-h-screen bg-gradient-to-br from-green-100 to-indigo-100 flex flex-col items-center justify-center px-4 py-8'>
+        <div class='max-w-md mx-auto text-center'>
+          {/* Logo o ícono personalizado */}
           <img
-            class="my-6"
-            src="/logo.svg"
-            width="128"
-            height="128"
-            alt="the Fresh logo: a sliced lemon dripping with juice"
+            class='mx-auto mb-6 w-32 h-32'
+            src='/iconoTransparente.png' // Ajusta la ruta de tu logo
+            alt='TaskCore Logo'
           />
-          <h1 class="text-4xl font-bold">404 - Page not found</h1>
-          <p class="my-4">
-            The page you were looking for doesn't exist.
+
+          {/* Ilustración opcional */}
+          <svg
+            class='mx-auto mb-8 w-40 h-40 text-green-500'
+            fill='none'
+            stroke='currentColor'
+            viewBox='0 0 24 24'
+            xmlns='http://www.w3.org/2000/svg'
+          >
+            <path
+              stroke-linecap='round'
+              stroke-linejoin='round'
+              stroke-width='2'
+              d='M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z'
+            >
+            </path>
+          </svg>
+
+          {/* Título y mensaje */}
+          <h1 class='text-5xl font-bold text-green-600 mb-4'>404</h1>
+          <h2 class='text-2xl font-semibold text-gray-800 mb-4'>
+            ¡Ups! Página no encontrada
+          </h2>
+          <p class='text-gray-600 mb-8'>
+            La página que buscas parece haber sido archivada o no existe. Revisa la URL o vuelve al tablero principal.
           </p>
-          <a href="/" class="underline">Go back home</a>
+
+          {/* Botón de acción */}
+          <a
+            href='/'
+            class='inline-block px-6 py-3 bg-green-500 hover:bg-green-600 text-white font-medium rounded-lg shadow-md transition duration-200'
+          >
+            Volver al Inicio
+          </a>
         </div>
       </div>
     </>
-  );
+  )
 }

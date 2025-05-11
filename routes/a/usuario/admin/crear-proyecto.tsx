@@ -18,7 +18,7 @@ export const handler: Handlers = {
         throw new Error('Datos invalidos.')
       }
 
-      const proyecto = new Proyecto(nombre, descripcion, await Usuario.obtenerPorCorreo(correoAdministrador))
+      const proyecto = new Proyecto(nombre, descripcion, await Usuario.obtener(correoAdministrador))
       await proyecto.guardar()
 
       const params = new URLSearchParams({
