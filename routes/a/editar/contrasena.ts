@@ -29,20 +29,19 @@ export const handler: Handlers = {
       if (nueva !== confirmacion) {
         throw new Error('Las contraseñas nuevas no coinciden.')
       }
-      const usuario = await Usuario.obtener(correo)
 
+      const usuario = await Usuario.obtener(correo)
       if (!await usuario.verificarContraseña(actual)) throw new Error('La contraseña actual no es correcta.')
       await usuario.cambiarContraseña(nueva)
 
       const params = new URLSearchParams({
-        resultado: 'ok',
         mensaje: 'La contraseña se ha cambiado correctamente.',
       })
 
       return new Response(null, {
         status: 303,
         headers: {
-          'Location': `/usuario/${usuario.rol}/?${params.toString()}`,
+          'Location': `/a?${params.toString()}`,
         },
       })
     } catch (error) {
@@ -54,7 +53,7 @@ export const handler: Handlers = {
       return new Response(null, {
         status: 303,
         headers: {
-          'Location': `/usuario/configuracion?${params.toString()}`,
+          'Location': `/a/configuracion?${params.toString()}`,
         },
       })
     }

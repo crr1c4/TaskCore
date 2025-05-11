@@ -41,7 +41,7 @@ export default function NavBar({ rol }: Props) {
       <div class='flex items-center gap-1 sm:gap-2 relative'>
         {rol === 'admin' && (
           <a
-            href='/usuario/admin/crear-proyecto/'
+            href='/a/admin/crear-proyecto/'
             class='p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200'
             aria-label='Crear proyecto'
           >
@@ -50,7 +50,7 @@ export default function NavBar({ rol }: Props) {
         )}
 
         <a
-          href={`/usuario/${rol}`}
+          href='/a/'
           class='p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200'
           aria-label='Inicio'
         >
@@ -58,6 +58,7 @@ export default function NavBar({ rol }: Props) {
         </a>
 
         <button
+          type='button'
           onClick={() => mostrarMenu.value = !mostrarMenu.value}
           class='p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200'
           aria-label='Menú usuario'
@@ -68,14 +69,14 @@ export default function NavBar({ rol }: Props) {
         {mostrarMenu.value && (
           <div class='absolute right-0 top-12 w-56 bg-white dark:bg-gray-800 rounded-lg shadow-lg ring-1 ring-gray-200 dark:ring-gray-700 z-50 overflow-hidden animate-fade-in'>
             <a
-              href='/usuario/notificaciones'
+              href='/a/notificaciones'
               class='flex items-center gap-3 px-4 py-3 text-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-150'
             >
               <IconoNotificaciones />
               Notificaciones
             </a>
             <a
-              href='/usuario/configuracion'
+              href='/a/configuracion'
               class='flex items-center gap-3 px-4 py-3 text-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-150'
             >
               <IconoConfiguracion />

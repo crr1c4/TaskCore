@@ -18,18 +18,17 @@ export const handler: Handlers = {
         throw new Error('Datos invalidos.')
       }
 
-      const proyecto = new Proyecto(nombre, descripcion, await Usuario.obtener(correoAdministrador))
+      const proyecto = Proyecto.crear(nombre, descripcion, correoAdministrador)
       await proyecto.guardar()
 
       const params = new URLSearchParams({
-        resultado: 'ok',
         mensaje: 'El proyecto se ha creado correctamente.',
       })
 
       return new Response(null, {
         status: 303,
         headers: {
-          'Location': `/usuario/admin?${params.toString()}`,
+          'Location': `/a?${params.toString()}`,
         },
       })
     } catch (error) {
@@ -41,7 +40,7 @@ export const handler: Handlers = {
       return new Response(null, {
         status: 303,
         headers: {
-          'Location': `/usuario/admin/crear-proyecto?${params.toString()}`,
+          'Location': `/a/admin/crear-proyecto?${params.toString()}`,
         },
       })
     }
@@ -56,7 +55,7 @@ export default function PaginaCrearProyecto(ctx: FreshContext<Usuario>) {
       <NavBar rol={ctx.state.rol} />
 
       <main class='px-4 sm:px-6 lg:px-8 py-24 max-w-7xl mx-auto'>
-        <form method='POST' action='/usuario/admin/crear-proyecto' class='space-y-8 max-w-4xl mx-auto'>
+        <form method='POST' action='/a/admin/crear-proyecto' class='space-y-8 max-w-4xl mx-auto'>
           {/* Encabezado */}
           <div class='text-center mb-12'>
             <h1 class='text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-2'>

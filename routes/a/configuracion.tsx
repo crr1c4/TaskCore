@@ -63,7 +63,7 @@ export default function Configuracion(ctx: FreshContext<Usuario>) {
                     </p>
                   </div>
                   <div class='px-4 py-5 sm:p-6'>
-                    <form action='/usuario/editar/nombre' method='POST' class='space-y-6'>
+                    <form action='/a/editar/nombre' method='POST' class='space-y-6'>
                       <Input
                         name='nombre'
                         label='Nombre de usuario'
@@ -92,7 +92,7 @@ export default function Configuracion(ctx: FreshContext<Usuario>) {
                     </p>
                   </div>
                   <div class='px-4 py-5 sm:p-6'>
-                    <form action='/usuario/editar/contrasena' method='POST' class='space-y-6'>
+                    <form action='/a/editar/contrasena' method='POST' class='space-y-6'>
                       <input type='hidden' value={ctx.state.correo} name='correo' />
                       <Input
                         type='password'
@@ -137,7 +137,7 @@ export default function Configuracion(ctx: FreshContext<Usuario>) {
                     </p>
                   </div>
                   <div class='px-4 py-5 sm:p-6'>
-                    <form action='/usuario/editar/tema' method='POST' class='space-y-6'>
+                    <form action='/a/editar/tema' method='POST' class='space-y-6'>
                       <input type='hidden' value={ctx.state.correo} name='correo' />
                       <div class='flex items-center justify-between'>
                         <div>
@@ -154,7 +154,7 @@ export default function Configuracion(ctx: FreshContext<Usuario>) {
               </section>
 
               <div class='flex justify-end'>
-                <a href='/usuario/miembro' class='inline-flex'>
+                <a href='/a/' class='inline-flex'>
                   <Boton>Volver al inicio</Boton>
                 </a>
               </div>

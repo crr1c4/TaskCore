@@ -5,11 +5,12 @@ import { Rol } from '../../models/Usuario.ts'
 interface Props {
   proyecto: Proyecto
   rol: Rol
+  numeroTareas: number
 }
-export function ComponenteProyecto({ rol, proyecto }: Props) {
+export default function ComponenteProyecto({ rol, proyecto, numeroTareas }: Props) {
   return (
     <a
-      href={`/proyecto/${proyecto.id}`}
+      href={`/proyectos/${proyecto.id}`}
       class='rounded-xl shadow-sm hover:shadow-md transition-all duration-200 border border-gray-200 dark:border-gray-700 overflow-hidden bg-white dark:bg-gray-800 hover:border-gray-300 dark:hover:border-gray-600 cursor-pointer select-none'
     >
       <div class='w-full h-full flex flex-col'>
@@ -43,7 +44,7 @@ export function ComponenteProyecto({ rol, proyecto }: Props) {
 
                 <div class='flex items-center gap-1.5 text-sm text-gray-500 dark:text-gray-400'>
                   <IconoTarea />
-                  <span>{proyecto.tareas.length} tarea{proyecto.tareas.length !== 1 ? 's' : ''}</span>
+                  <span>{numeroTareas} tarea{numeroTareas !== 1 ? 's' : ''}</span>
                 </div>
               </div>
             )

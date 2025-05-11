@@ -1,5 +1,5 @@
 import { FreshContext } from '$fresh/src/server/mod.ts'
-import { ComponenteProyecto } from '../../components/proyectos/TarjetaProyecto.tsx'
+import ComponenteProyecto from '../../components/proyectos/TarjetaProyecto.tsx'
 import { ModalLink } from '../../islands/Modal.tsx'
 import NavBar from '../../islands/NavBar.tsx'
 import Usuario from '../../models/Usuario.ts'
@@ -11,6 +11,7 @@ export default async function Home(_req: Request, ctx: FreshContext<Usuario>) {
 
   const usuario = await Usuario.obtener(ctx.state.correo)
   const proyectos = await usuario.obtenerProyectos()
+  const tareas = await Promise.all(proyectos.map(async (proyecto) => await proyecto.obtenerTareas()))
 
   return (
     <div class={`h-screen ${ctx.state.tema}`}>
@@ -44,11 +45,12 @@ export default async function Home(_req: Request, ctx: FreshContext<Usuario>) {
             )
             : (
               <div class='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6'>
-                {proyectos.map((proyecto: Proyecto) => (
+                {proyectos.map((proyecto: Proyecto, index) => (
                   <ComponenteProyecto
                     key={proyecto.id}
                     rol={usuario.rol}
                     proyecto={proyecto}
+                    numeroTareas={tareas[index].length}
                   />
                 ))}
               </div>

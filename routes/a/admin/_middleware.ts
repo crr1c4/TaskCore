@@ -15,6 +15,6 @@ export function handler(_req: Request, ctx: FreshContext<Usuario>) {
   // Si el usuario no es admin, se redirige a la ruta de "miembro".
   return new Response(null, {
     status: 301, // Redirección permanente
-    headers: { Location: "/usuario/miembro" },
+    headers: { Location: "/a/" },
   });
 }
