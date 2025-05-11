@@ -1,5 +1,5 @@
 import { FreshContext } from "$fresh/server.ts";
-import Usuario from '../../../../models/Usuario.ts'
+import Usuario from '../../../../../models/Usuario.ts'
 
 /**
  * Middleware para verificar si el usuario tiene el rol de "admin".
@@ -15,6 +15,6 @@ export function handler(_req: Request, ctx: FreshContext<Usuario>) {
   // Si el usuario no es admin, se redirige a la ruta de "miembro".
   return new Response(null, {
     status: 301, // Redirección permanente
-    headers: { Location: "/usuario/miembro" },
+    headers: { Location: "/a/" },
   });
 }

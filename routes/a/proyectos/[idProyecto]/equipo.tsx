@@ -1,18 +1,13 @@
 // routes/proyectos/[idProyecto]/equipo.tsx
 import { FreshContext, Handlers } from '$fresh/server.ts'
-import { Boton } from '../../../components/Boton.tsx'
-import { IconoVolver } from '../../../components/Iconos.tsx'
-import { Input } from '../../../components/Input.tsx'
-import { ModalError, ModalLink } from '../../../islands/Modal.tsx'
-import NavBar from '../../../islands/NavBar.tsx'
-import Proyecto from '../../../models/Proyecto.ts'
-import Usuario from '../../../models/Usuario.ts'
+import { Boton } from '../../../../components/Boton.tsx'
+import { IconoVolver } from '../../../../components/Iconos.tsx'
+import { Input } from '../../../../components/Input.tsx'
+import { ModalError, ModalLink } from '../../../../islands/Modal.tsx'
+import NavBar from '../../../../islands/NavBar.tsx'
+import Proyecto from '../../../../models/Proyecto.ts'
+import Usuario from '../../../../models/Usuario.ts'
 
-// interface Data {
-//   proyecto: Proyecto
-//   idProyecto: string
-// }
-//
 export const handler: Handlers = {
   async POST(req, ctx) {
     const { idProyecto } = ctx.params
@@ -23,33 +18,41 @@ export const handler: Handlers = {
     try {
       const proyecto = await Proyecto.obtener(idProyecto)
       if (accion === 'agregar' && correo) {
-        const integrantes = await Usuario.obtener(correo)
-
-        if (integrantes.rol === 'admin') {
-          throw new Error('No se pueden registrar integrantes que tengan el rol de administrador.')
-        }
-
-        await proyecto.agregarIntegrante(integrantes)
+        await proyecto.agregarIntegrante(correo)
       } else if (accion === 'eliminar' && correo) {
         await proyecto.eliminarIntegrante(correo)
       }
 
+      const params = new URLSearchParams({
+        mensaje: 'Integrante agregado correctamente.',
+      })
+
       return new Response(null, {
         status: 303,
-        headers: { Location: `/proyecto/${idProyecto}/equipo?mensaje=Integrante+agregado+exitosamente` },
+        headers: { Location: `/a/proyectos/${idProyecto}/equipo?${params.toString()}` },
       })
     } catch (error) {
       const e = error as Error
       return new Response(null, {
         status: 303,
         headers: {
-          Location: `/proyecto/${idProyecto}/equipo?error=${encodeURIComponent(e.message)}`,
+          Location: `/a/proyectos/${idProyecto}/equipo?error=${encodeURIComponent(e.message)}`,
         },
       })
     }
   },
+  GET(_req, ctx) {
+    // Si el usuario es administrador, se permite continuar con la petición.
+    if (ctx.state.rol === 'admin') return ctx.next()
+
+    // Si el usuario no es admin, se redirige a la ruta de "miembro".
+    return new Response(null, {
+      status: 301, // Redirección permanente
+      headers: { Location: '/a/' },
+    })
+  },
 }
-//
+
 export default async function GestionEquipo(_req: Request, ctx: FreshContext<Usuario>) {
   const { idProyecto } = ctx.params
   const proyecto = await Proyecto.obtener(idProyecto)
@@ -65,7 +68,7 @@ export default async function GestionEquipo(_req: Request, ctx: FreshContext<Usu
       {mensaje && (
         <ModalLink
           mensaje={mensaje}
-          enlace={`/proyecto/${idProyecto}/equipo`}
+          enlace={`/a/proyectos/${idProyecto}/equipo`}
           textoEnlace='Aceptar'
         />
       )}
@@ -86,7 +89,7 @@ export default async function GestionEquipo(_req: Request, ctx: FreshContext<Usu
               </p>
             </div>
             <a
-              href={`/proyecto/${idProyecto}`}
+              href={`/a/proyectos/${idProyecto}`}
             >
               <Boton>
                 <IconoVolver />

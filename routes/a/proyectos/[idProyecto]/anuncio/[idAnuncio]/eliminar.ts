@@ -1,5 +1,5 @@
 import { Handlers } from '$fresh/server.ts'
-import Proyecto from '../../../../../models/Proyecto.ts'
+import Proyecto from '../../../../../../models/Proyecto.ts'
 
 export const handler: Handlers = {
   async GET(_req, ctx) {
@@ -8,10 +8,14 @@ export const handler: Handlers = {
       const proyecto = await Proyecto.obtener(idProyecto)
       await proyecto.eliminarAnuncio(idAnuncio)
 
+      const params = new URLSearchParams({
+        mensaje: 'Anuncio elminado correctamente.',
+      })
+
       return new Response(null, {
         status: 303,
         headers: {
-          Location: `/proyecto/${idProyecto}?mensaje=Anuncio+eliminado+correctamente`,
+          Location: `/a/proyectos/${idProyecto}?${params.toString()}`,
         },
       })
     } catch (error) {
@@ -23,7 +27,7 @@ export const handler: Handlers = {
       return new Response(null, {
         status: 303,
         headers: {
-          Location: `/proyecto/${ctx.params.idProyecto}?${params.toString()}`,
+          Location: `/a/proyectos/${ctx.params.idProyecto}?${params.toString()}`,
         },
       })
     }

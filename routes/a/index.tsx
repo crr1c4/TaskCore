@@ -20,7 +20,7 @@ export default async function Home(_req: Request, ctx: FreshContext<Usuario>) {
           <ModalLink
             mensaje={mensaje}
             enlace='/a/'
-            textoEnlace='Ok'
+            textoEnlace='Aceptar'
           />
         )
         : ''}

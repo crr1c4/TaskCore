@@ -1,15 +1,15 @@
 import { FreshContext } from '$fresh/server.ts'
-import { Boton, BotonEmergencia, BotonIconoLink } from '../../../components/Boton.tsx'
-import { IconoEditar, IconoEliminar } from '../../../components/Iconos.tsx'
-import PanelAnuncio from '../../../components/proyectos/PanelAnuncio.tsx'
-import PanelUsuario from '../../../components/proyectos/PanelUsuario.tsx'
-import { ModalError, ModalLink } from '../../../islands/Modal.tsx'
-import NavBar from '../../../islands/NavBar.tsx'
-import Anuncio from '../../../models/Anuncio.ts'
-import Proyecto from '../../../models/Proyecto.ts'
-import Tarea from '../../../models/Tarea.ts'
-import Usuario from '../../../models/Usuario.ts'
-import { formatearFecha } from '../../../utils/formato.ts'
+import { Boton, BotonEmergencia, BotonIconoLink } from '../../../../components/Boton.tsx'
+import { IconoEditar, IconoEliminar } from '../../../../components/Iconos.tsx'
+import PanelAnuncio from '../../../../components/proyectos/PanelAnuncio.tsx'
+import PanelUsuario from '../../../../components/proyectos/PanelUsuario.tsx'
+import { ModalError, ModalLink } from '../../../../islands/Modal.tsx'
+import NavBar from '../../../../islands/NavBar.tsx'
+import Anuncio from '../../../../models/Anuncio.ts'
+import Proyecto from '../../../../models/Proyecto.ts'
+import Tarea from '../../../../models/Tarea.ts'
+import Usuario from '../../../../models/Usuario.ts'
+import { formatearFecha } from '../../../../utils/formato.ts'
 
 export default async function PaginaProyecto(_request: Request, ctx: FreshContext<Usuario>) {
   const { idProyecto } = ctx.params
@@ -18,8 +18,8 @@ export default async function PaginaProyecto(_request: Request, ctx: FreshContex
 
   const proyecto = await Proyecto.obtener(idProyecto)
   const tareas = await proyecto.obtenerTareas()
-  const miembros = await Promise.all(proyecto.integrantes.map(async (correo) => await Usuario.obtener(correo)))
-  const anuncios = await Promise.all(proyecto.anuncios.map(async (idAnuncio) => await Anuncio.obtener(idAnuncio)))
+  const integrantes = await proyecto.obtenerIntegrantes()
+  const anuncios = await proyecto.obtenerAnuncios()
 
   const totalTareas = tareas.length
   const estados = {
@@ -44,7 +44,7 @@ export default async function PaginaProyecto(_request: Request, ctx: FreshContex
         ? (
           <ModalLink
             mensaje={mensaje}
-            enlace={`/proyecto/${idProyecto}/`}
+            enlace={`/a/proyectos/${idProyecto}/`}
             textoEnlace='Aceptar'
           />
         )
@@ -67,7 +67,7 @@ export default async function PaginaProyecto(_request: Request, ctx: FreshContex
               ? (
                 <div class='flex items-center gap-2'>
                   <a
-                    href={`/proyecto/${proyecto.id}/editar`}
+                    href={`/a/proyectos/${proyecto.id}/editar`}
                   >
                     <Boton>
                       <IconoEditar />
@@ -76,7 +76,7 @@ export default async function PaginaProyecto(_request: Request, ctx: FreshContex
                   </a>
 
                   <a
-                    href={`/proyecto/${proyecto.id}/eliminar`}
+                    href={`/a/proyectos/${proyecto.id}/eliminar`}
                   >
                     <BotonEmergencia>
                       <IconoEliminar />
@@ -98,10 +98,10 @@ export default async function PaginaProyecto(_request: Request, ctx: FreshContex
             <section class='bg-white dark:bg-gray-800 rounded-lg shadow p-6 transition-colors duration-200'>
               <div class='flex justify-between items-center mb-4'>
                 <h2 class='text-xl font-semibold text-gray-900 dark:text-white'>Equipo</h2>
-                {ctx.state.rol === 'admin' ? <BotonIconoLink link={`/proyecto/${idProyecto}/equipo`} /> : ''}
+                {ctx.state.rol === 'admin' ? <BotonIconoLink link={`/a/proyectos/${idProyecto}/equipo`} /> : ''}
               </div>
               <div class='space-y-3'>
-                {miembros.map((miembro) => <PanelUsuario key={miembro.correo} miembro={miembro} />)}
+                {integrantes.map((miembro) => <PanelUsuario key={miembro.correo} miembro={miembro} />)}
               </div>
             </section>
 
@@ -170,7 +170,7 @@ export default async function PaginaProyecto(_request: Request, ctx: FreshContex
             <section class='bg-white dark:bg-gray-800 rounded-lg shadow p-6 transition-colors duration-200'>
               <div class='flex justify-between items-center mb-4'>
                 <h2 class='text-xl font-semibold text-gray-900 dark:text-white'>Últimos anuncios</h2>
-                {ctx.state.rol === 'admin' ? <BotonIconoLink link={`/proyecto/${idProyecto}/anuncio/crear`} /> : ''}
+                {ctx.state.rol === 'admin' ? <BotonIconoLink link={`/a/proyectos/${idProyecto}/anuncio/crear`} /> : ''}
               </div>
               <div class='space-y-4'>
                 {anuncios.map((anuncio) => (
@@ -183,7 +183,7 @@ export default async function PaginaProyecto(_request: Request, ctx: FreshContex
             <section class='bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden transition-colors duration-200'>
               <div class='p-6 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center'>
                 <h2 class='text-xl font-semibold text-gray-900 dark:text-white'>Tareas del proyecto</h2>
-                {ctx.state.rol === 'admin' ? <BotonIconoLink link={`/proyecto/${idProyecto}/tareas/crear`} /> : ''}
+                {ctx.state.rol === 'admin' ? <BotonIconoLink link={`/a/proyectos/${idProyecto}/tareas/crear`} /> : ''}
               </div>
               <div class='overflow-x-auto'>
                 <table class='min-w-full divide-y divide-gray-200 dark:divide-gray-700'>
@@ -212,9 +212,9 @@ export default async function PaginaProyecto(_request: Request, ctx: FreshContex
                         <td class='px-6 py-4 whitespace-nowrap'>
                           <span
                             class={`px-2.5 py-1 rounded-full text-xs font-medium ${
-                              tarea.completada && !tarea.haExpirado()
+                              tarea.obtenerEstado() === "completado"
                                 ? 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400'
-                                : tarea.completada && !tarea.haExpirado()
+                                : tarea.obtenerEstado() === "en progreso"
                                 ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400'
                                 : 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400'
                             }`}
@@ -227,7 +227,7 @@ export default async function PaginaProyecto(_request: Request, ctx: FreshContex
                         </td>
                         <td class='px-6 py-4 whitespace-nowrap text-sm font-medium'>
                           <a
-                            href={`/proyecto/${idProyecto}/tareas/${tarea.id}`}
+                            href={`/a/proyectos/${idProyecto}/tareas/${tarea.id}`}
                             class='text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300 transition-colors duration-200'
                             title='Ver detalles de la tarea'
                           >

@@ -1,7 +1,7 @@
 // routes/proyectos/[idProyecto]/editar.tsx
 import { FreshContext, Handlers } from '$fresh/server.ts'
 import { AreaTexto } from '../../../../components/AreaTexto.tsx'
-import { Boton, BotonEmergencia } from '../../../../components/Boton.tsx'
+import { Boton } from '../../../../components/Boton.tsx'
 import { IconoVolver } from '../../../../components/Iconos.tsx'
 import { Input } from '../../../../components/Input.tsx'
 import { ModalError, ModalLink } from '../../../../islands/Modal.tsx'
@@ -34,7 +34,7 @@ export const handler: Handlers = {
       return new Response(null, {
         status: 303,
         headers: {
-          'Location': `/proyecto/${idProyecto}?${params.toString()}`,
+          'Location': `/a/proyectos/${idProyecto}?${params.toString()}`,
         },
       })
     } catch (error) {
@@ -46,10 +46,20 @@ export const handler: Handlers = {
       return new Response(null, {
         status: 303,
         headers: {
-          'Location': `/proyecto/${idProyecto}/editar?${params.toString()}`,
+          'Location': `/a/proyectos/${idProyecto}/editar?${params.toString()}`,
         },
       })
     }
+  },
+  GET(_req, ctx) {
+    // Si el usuario es administrador, se permite continuar con la petición.
+    if (ctx.state.rol === 'admin') return ctx.next()
+
+    // Si el usuario no es admin, se redirige a la ruta de "miembro".
+    return new Response(null, {
+      status: 301, // Redirección permanente
+      headers: { Location: '/a/' },
+    })
   },
 }
 
@@ -67,7 +77,7 @@ export default async function EditarProyecto(_req: Request, ctx: FreshContext<Us
         ? (
           <ModalLink
             mensaje={mensaje}
-            enlace={`/proyecto/${idProyecto}/`}
+            enlace={`/a/proyectos/${idProyecto}/`}
             textoEnlace='Aceptar'
           />
         )
@@ -96,7 +106,7 @@ export default async function EditarProyecto(_req: Request, ctx: FreshContext<Us
 
           <div className='w-full flex justify-end'>
             <a
-              href={`/proyecto/${idProyecto}`}
+              href={`/a/proyectos/${idProyecto}`}
             >
               <Boton>
                 <IconoVolver />
@@ -112,7 +122,6 @@ export default async function EditarProyecto(_req: Request, ctx: FreshContext<Us
         {/* Sección de Detalles del Proyecto */}
         <form
           method='POST'
-          action={`/proyecto/${idProyecto}/editar`}
           class='bg-white dark:bg-gray-800 rounded-xl shadow-xl p-6 transition-colors duration-200'
         >
           <h2 class='text-2xl font-bold text-gray-900 dark:text-white mb-6'>Detalles del Proyecto</h2>

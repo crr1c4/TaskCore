@@ -14,17 +14,27 @@ export const handler: Handlers<Usuario> = {
 
       return new Response(null, {
         status: 303,
-        headers: { Location: `/usuario/${ctx.state.rol}?mensaje=Proyecto+eliminado+correctamente` },
+        headers: { Location: `/a/${ctx.state.rol}?mensaje=${encodeURIComponent('Proyecto eliminado correctamente.')}` },
       })
     } catch (error) {
       const e = error as Error
       return new Response(null, {
         status: 303,
         headers: {
-          Location: `/proyecto/${idProyecto}/eliminar?error=${encodeURIComponent(e.message)}`,
+          Location: `/a/proyectos/${idProyecto}/eliminar?error=${encodeURIComponent(e.message)}`,
         },
       })
     }
+  },
+  GET(_req, ctx) {
+    // Si el usuario es administrador, se permite continuar con la petición.
+    if (ctx.state.rol === 'admin') return ctx.next()
+
+    // Si el usuario no es admin, se redirige a la ruta de "miembro".
+    return new Response(null, {
+      status: 301, // Redirección permanente
+      headers: { Location: '/a/' },
+    })
   },
 }
 
@@ -73,7 +83,7 @@ export default async function EliminarProyecto(_req: Request, ctx: FreshContext<
 
           <div class='flex justify-center gap-4'>
             <a
-              href={`/proyecto/${idProyecto}`}
+              href={`/a/proyectos/${idProyecto}`}
             >
               <Boton>
                 Cancelar

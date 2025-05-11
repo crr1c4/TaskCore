@@ -1,12 +1,13 @@
 // routes/proyectos/[id]/crear-anuncio.tsx
 import { FreshContext, Handlers } from '$fresh/server.ts'
-import { Input } from '../../../../components/Input.tsx'
-import NavBar from '../../../../islands/NavBar.tsx'
-import Usuario from '../../../../models/Usuario.ts'
-import { IconoAnuncio } from '../../../../components/Iconos.tsx'
-import { Boton } from '../../../../components/Boton.tsx'
-import Anuncio from '../../../../models/Anuncio.ts'
-import Proyecto from '../../../../models/Proyecto.ts'
+import { Input } from '../../../../../components/Input.tsx'
+import NavBar from '../../../../../islands/NavBar.tsx'
+import Usuario from '../../../../../models/Usuario.ts'
+import { IconoAnuncio } from '../../../../../components/Iconos.tsx'
+import { Boton } from '../../../../../components/Boton.tsx'
+import Anuncio from '../../../../../models/Anuncio.ts'
+import Proyecto from '../../../../../models/Proyecto.ts'
+import { ModalError } from '../../../../../islands/Modal.tsx'
 
 interface State {
   tema: string
@@ -15,30 +16,44 @@ interface State {
 
 export const handler: Handlers<unknown, State> = {
   async POST(req, ctx) {
-    const formData = await req.formData()
-    const { idProyecto } = ctx.params
+    try {
+      const formData = await req.formData()
+      const { idProyecto } = ctx.params
 
-    const datosAnuncio = {
-      titulo: formData.get('titulo')?.toString() || '',
-      descripcion: formData.get('descripcion')?.toString() || '',
-    }
+      const datosAnuncio = {
+        titulo: formData.get('titulo')?.toString() || '',
+        descripcion: formData.get('descripcion')?.toString() || '',
+      }
 
-    // Validación básica
-    if (!datosAnuncio.titulo || !datosAnuncio.descripcion) {
+      // Validación básica
+      if (!datosAnuncio.titulo || !datosAnuncio.descripcion) {
+        throw new Error('Faltan campos obligatorios.')
+      }
+
+      const anuncio = new Anuncio(datosAnuncio.titulo, datosAnuncio.descripcion, new Date())
+      const proyecto = await Proyecto.obtener(idProyecto)
+      await proyecto.agregarAnuncio(anuncio)
+
+      const params = new URLSearchParams({
+        mensaje: 'Anuncio creado correctamente',
+      })
       return new Response(null, {
         status: 303,
-        headers: { 'Location': `/proyecto/${idProyecto}/crear-anuncio?error=Faltan+campos+obligatorios` },
+        headers: { 'Location': `/a/proyectos/${idProyecto}?${params.toString()}` },
+      })
+    } catch (error) {
+      const objetoErrores = error as Error
+      const params = new URLSearchParams({
+        error: objetoErrores.message,
+      })
+
+      return new Response(null, {
+        status: 303,
+        headers: {
+          'Location': `/a/proyectos/${ctx.params.idProyecto}/crear?${params.toString()}`,
+        },
       })
     }
-
-    const anuncio = new Anuncio(datosAnuncio.titulo, datosAnuncio.descripcion, new Date())
-    const proyecto = await Proyecto.obtener(idProyecto)
-    await proyecto.agregarAnuncio(anuncio)
-
-    return new Response(null, {
-      status: 303,
-      headers: { 'Location': `/proyecto/${idProyecto}?mensaje=Anuncio+creado+correctamente` },
-    })
   },
 }
 
@@ -48,6 +63,7 @@ export default function CrearAnuncio(ctx: FreshContext<Usuario>) {
 
   return (
     <div class={`min-h-screen ${ctx.state.tema} dark:bg-gray-900 bg-gray-50`}>
+      {error && <ModalError mensaje={error} />}
       <NavBar rol={ctx.state.rol} />
 
       <main class='pt-20 max-w-4xl mx-auto px-4 py-8 sm:px-6 lg:px-8'>
@@ -64,13 +80,6 @@ export default function CrearAnuncio(ctx: FreshContext<Usuario>) {
               Completa los detalles del anuncio para el proyecto
             </p>
           </div>
-
-          {/* Mensaje de error */}
-          {error && (
-            <div class='mb-6 p-4 bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded-md'>
-              {decodeURIComponent(error)}
-            </div>
-          )}
 
           {/* Formulario */}
           <form method='POST' class='space-y-6'>
@@ -104,7 +113,7 @@ export default function CrearAnuncio(ctx: FreshContext<Usuario>) {
 
             <div class='flex justify-end gap-3 pt-4'>
               <a
-                href={`/proyecto/${idProyecto}`}
+                href={`/a/proyectos/${idProyecto}`}
                 class='px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 flex items-center'
               >
                 Cancelar
