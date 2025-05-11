@@ -7,6 +7,8 @@ import { hash as encriptar, verify as verificarContraseñaHasheada } from '@feli
 import { DB } from './mod.ts'
 import { z as esquema } from 'zod'
 import Proyecto from './Proyecto.ts'
+import Tarea from './Tarea.ts'
+import Notificacion from './Notificacion.ts'
 
 /**
  * @description Esquema para validar la complejidad de la contraseña.
@@ -27,11 +29,9 @@ const esquemaContraseña = esquema
 
 /**
  * @description Esquema de validación para nombres.
- * - Debe ser una cadena de texto con al menos 1 carácter.
+ * - Debe ser una cadena de texto con al menos 5 caracteres.
  */
-const esquemaNombre = esquema.string()
-  .min(5)
-  .regex(/^[a-zA-Z0-9]+$/)
+const esquemaNombre = esquema.string().min(5)
 
 /**
  * @description Esquema de validación para correos electrónicos.
@@ -44,7 +44,7 @@ export type Tema = 'dark' | ''
 
 export default class Usuario {
   public nombre: string
-  public correo: string
+  public readonly correo: string
   private contraseña: string
   public readonly rol: Rol
   public tema: Tema
@@ -72,14 +72,11 @@ export default class Usuario {
 
     this.contraseña = await encriptar(this.contraseña)
 
-    const llaveCorreo = ['usuarios.correo', this.correo]
-    const llaveNombre = ['usuarios.nombre', this.nombre]
+    const llave = ['usuarios', this.correo]
 
     const resultado = await DB.atomic()
-      .check({ key: llaveNombre, versionstamp: null })
-      .check({ key: llaveCorreo, versionstamp: null })
-      .set(llaveNombre, this)
-      .set(llaveCorreo, this)
+      .check({ key: llave, versionstamp: null })
+      .set(llave, this)
       .commit()
 
     if (!resultado.ok) {
@@ -104,21 +101,18 @@ export default class Usuario {
     return usuario
   }
 
-  public static async obtenerPorCorreo(correo: string): Promise<Usuario> {
-    const resultado = await DB.get<Usuario>(['usuarios.correo', correo])
+  public static async obtener(correo: string): Promise<Usuario> {
+    const resultado = await DB.get<Usuario>(['usuarios', correo])
     if (!resultado.versionstamp || !resultado.value) throw new Error('Usuario no encontrado.')
     return Usuario.deserializar(resultado)
   }
 
-  public static async obtenerPorNombre(nombre: string): Promise<Usuario> {
-    const resultado = await DB.get<Usuario>(['usuarios.nombre', nombre])
-    if (!resultado.versionstamp || !resultado.value) throw new Error('Usuario no encontrado.')
-    return Usuario.deserializar(resultado)
-  }
+  private async actualizar() {
+    const resultado = await DB.atomic()
+      .set(['usuarios', this.correo], this)
+      .commit()
 
-  public static async verificarExistenciaNombre(nombre: string) {
-    const resultado = await DB.get(['usuarios.nombre', nombre])
-    return resultado.versionstamp && resultado.value
+    if (!resultado.ok) throw new Error('No se pudo cambiar los datos de usuario.')
   }
 
   public async cambiarNombre(nombre: string) {
@@ -126,56 +120,13 @@ export default class Usuario {
       throw new Error('El nombre de usuario no es válido.')
     }
 
-    if (await Usuario.verificarExistenciaNombre(nombre)) {
-      throw new Error('Ya existe un usuario con ese nombre.')
-    }
-
-    const nombreAntiguo = this.nombre
     this.nombre = nombre
-
-    const resultado = await DB.atomic()
-      // .check({ key: ['usuarios.nombre', this.nombre], versionstamp: null })
-      .delete(['usuarios.nombre', nombreAntiguo])
-      .set(['usuarios.nombre', this.nombre], this)
-      .set(['usuarios.correo', this.correo], this)
-      .commit()
-
-    if (!resultado.ok) throw new Error('No se pudo cambiar el nombre de usuario.')
-  }
-
-  public async cambiarCorreo(correo: string) {
-    if (!esquemaCorreo.safeParse(correo).success) {
-      throw new Error('El correo no es válido.')
-    }
-
-    const usuarioExistente = await Usuario.obtenerPorCorreo(correo)
-
-    if (usuarioExistente) {
-      throw new Error('Ya existe un usuario con ese correo.')
-    }
-
-    const correoAntiguo = this.correo
-    this.correo = correo
-
-    const resultado = await DB.atomic()
-      // .check({ key: ['usuarios.correo', this.correo], versionstamp: null })
-      .delete(['usuarios.correo', correoAntiguo])
-      .set(['usuarios.nombre', this.nombre], this)
-      .set(['usuarios.correo', this.correo], this)
-      .commit()
-
-    if (!resultado.ok) throw new Error('No se pudo cambiar el correo electronico.')
+    await this.actualizar()
   }
 
   public async cambiarTema() {
     this.tema = this.tema === '' ? 'dark' : ''
-
-    const resultado = await DB.atomic()
-      .set(['usuarios.nombre', this.nombre], this)
-      .set(['usuarios.correo', this.correo], this)
-      .commit()
-
-    if (!resultado.ok) throw new Error('No se pudo cambiar el tema de la aplicación.')
+    await this.actualizar()
   }
 
   public async cambiarContraseña(contraseña: string) {
@@ -186,13 +137,7 @@ export default class Usuario {
     }
 
     this.contraseña = await encriptar(contraseña)
-
-    const resultado = await DB.atomic()
-      .set(['usuarios.nombre', this.nombre], this)
-      .set(['usuarios.correo', this.correo], this)
-      .commit()
-
-    if (!resultado.ok) throw new Error('No se pudo cambiar la contraseña.')
+    await this.actualizar()
   }
 
   /* MÉTODOS PARA PROYECTOS */
@@ -203,15 +148,12 @@ export default class Usuario {
   private async obtenerProyectosAdministrador(): Promise<Proyecto[]> {
     const proyectos: Proyecto[] = []
 
-    for await (const entrada of DB.list<Proyecto>({ prefix: ['proyectos'] })) {
+    for await (const proyecto of DB.list<Proyecto>({ prefix: ['proyectos'] })) {
       // Para ignorar las otros elementos del proyecto (tareas, comentarios, anuncios, etc...)
-      if (entrada.key.length !== 2) continue
+      if (proyecto.key.length !== 2) continue
 
-      if (
-        entrada.value.administrador.correo === this.correo &&
-        entrada.value.administrador.nombre === this.nombre
-      ) {
-        proyectos.push(entrada.value)
+      if (proyecto.value.administrador === this.correo) {
+        proyectos.push(proyecto.value)
       }
     }
 
@@ -221,23 +163,74 @@ export default class Usuario {
   private async obtenerProyectosMiembro() {
     const proyectos: Proyecto[] = []
 
-    for await (const entrada of DB.list<Proyecto>({ prefix: ['proyectos'] })) {
-      const [_cadenaProyecto, idProyecto] = entrada.key as [string, string]
-      const proyecto = await Proyecto.obtener(idProyecto)
-      if (proyecto.miembros.includes(this.correo)) {
-        proyectos.push(proyecto)
+    for await (const proyecto of DB.list<Proyecto>({ prefix: ['proyectos'] })) {
+      // Para ignorar las otros elementos del proyecto (tareas, comentarios, anuncios, etc...)
+      if (proyecto.key.length !== 2) continue
+
+      if (proyecto.value.integrantes.includes(this.correo)) {
+        proyectos.push(proyecto.value)
       }
     }
 
     return proyectos
   }
 
-  // public async obtenerTareas(idProyecto: string): Promise<Tarea[]> {
-  //   const tareas: Tarea[] = []
-  //
-  //   for await (const entrada of DB.list<Usuario>({ prefix: ['proyectos', idProyecto, 'tareas', this.#correo] })) {
-  //   }
-  //
-  //   return tareas
+  public async obtenerTareas() {
+    if (this.rol === 'admin') return []
+
+    const tareas: Tarea[] = []
+    const proyectos = await this.obtenerProyectosMiembro()
+
+    for (const proyecto of proyectos) {
+      const tareasProyecto = await proyecto.obtenerTareas()
+      for (const tarea of tareasProyecto) {
+        if (tarea.correoResponsable === this.correo) tareas.push(tarea)
+      }
+    }
+
+    return tareas
+  }
+
+  /********************************************* NOTIFICACIONES ************************************************/
+
+  public async obtenerTareasProximasAVencer() {
+    const tareas = await this.obtenerTareas()
+    const fechaActual = new Date()
+
+    return tareas.filter((tarea) => {
+      const diferenciaMs = tarea.fechaExpiracion.getTime() - fechaActual.getTime()
+      const unaHoraEnMs = 60 * 60 * 1000
+      return diferenciaMs <= unaHoraEnMs && !tarea.haExpirado()
+    }).map((tarea) =>
+      new Notificacion(
+        '¡Tarea por vencer!', // Asunto
+        `La tarea "${tarea.nombre}" vence en menos de 1 hora.`, // Mensaje
+        tarea.fechaExpiracion,
+      )
+    )
+  }
+
+  public async agregarNotificacion(notificacion: Notificacion) {
+    const tiempoRestante = notificacion.fechaExpiracion.getMilliseconds()
+    const resultado = await DB
+      .atomic()
+      .set(['usuarios', this.correo, 'notificaciones', notificacion.id], notificacion, { expireIn: tiempoRestante })
+      .commit()
+
+    if (!resultado.ok) throw new Error('No se pudo crear la notificación.')
+  }
+
+  // public async eliminarNotificacion(idNotificacion: string) {
+  //   await DB.delete(['usuarios', this.correo, 'notificaciones', idNotificacion])
   // }
+
+  public async obtenerNotificaciones() {
+    const notificaciones = []
+
+    for await (const notificacion of DB.list({ prefix: ['usuarios', this.correo, 'notificaciones'] })) {
+      notificaciones.push(notificacion.value)
+    }
+
+    return notificaciones.concat(await this.obtenerTareasProximasAVencer())
+  }
 }
