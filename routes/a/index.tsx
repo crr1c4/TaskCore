@@ -14,7 +14,7 @@ export default async function Home(_req: Request, ctx: FreshContext<Usuario>) {
   const tareas = await Promise.all(proyectos.map(async (proyecto) => await proyecto.obtenerTareas()))
 
   return (
-    <div class={`h-screen ${ctx.state.tema}`}>
+    <div class={`h-screen ${ctx.state.tema} dark:bg-gray-900`}>
       {mensaje
         ? (
           <ModalLink
@@ -27,7 +27,7 @@ export default async function Home(_req: Request, ctx: FreshContext<Usuario>) {
 
       <NavBar rol={ctx.state.rol} />
 
-      <main class='px-6 md:px-20 pt-24'>
+      <main class='px-6 md:px-20 pt-20'>
         <div class='mb-8'>
           <h2 class='text-2xl font-bold mb-6 text-gray-900 dark:text-white select-none'>
             Proyectos {proyectos.length > 0 && `(${proyectos.length})`}
@@ -37,9 +37,13 @@ export default async function Home(_req: Request, ctx: FreshContext<Usuario>) {
               <div class='bg-white dark:bg-gray-700 p-6 rounded-lg shadow'>
                 <p class='text-gray-600 dark:text-gray-300'>
                   No hay proyectos disponibles.
-                  <a href='/a/admin/crear-proyecto' class='text-blue-600 dark:text-blue-400 hover:underline ml-1'>
-                    Crear nuevo proyecto
-                  </a>
+                  {ctx.state.rol === 'admin'
+                    ? (
+                      <a href='/a/admin/crear-proyecto' class='text-blue-600 dark:text-blue-400 hover:underline ml-1'>
+                        Crear nuevo proyecto
+                      </a>
+                    )
+                    : ''}
                 </p>
               </div>
             )

@@ -10,31 +10,43 @@ export const handler: Handlers<Usuario> = {
   async POST(_req, ctx) {
     const { idProyecto } = ctx.params
     try {
-      await Proyecto.eliminar(idProyecto)
+      await Proyecto.eliminar(idProyecto) 
+
+      const params = new URLSearchParams({
+        mensaje:'Proyecto eliminado correctamente.' 
+      })
+
+
 
       return new Response(null, {
         status: 303,
-        headers: { Location: `/a/${ctx.state.rol}?mensaje=${encodeURIComponent('Proyecto eliminado correctamente.')}` },
+        headers: { Location: `/a?${params.toString()}` },
       })
     } catch (error) {
       const e = error as Error
+
+      const params = new URLSearchParams({
+        error: e.message
+      })
+
+
       return new Response(null, {
         status: 303,
         headers: {
-          Location: `/a/proyectos/${idProyecto}/eliminar?error=${encodeURIComponent(e.message)}`,
+          Location: `/a/proyectos/${idProyecto}/eliminar?error=${params.toString()}`,
         },
       })
     }
   },
-  GET(_req, ctx) {
+  async GET(_req, ctx) {
     // Si el usuario es administrador, se permite continuar con la petición.
-    if (ctx.state.rol === 'admin') return ctx.next()
-
-    // Si el usuario no es admin, se redirige a la ruta de "miembro".
-    return new Response(null, {
+    if (ctx.state.rol !== 'admin') return new Response(null, {
       status: 301, // Redirección permanente
       headers: { Location: '/a/' },
     })
+
+    const respuesta = await ctx.render()
+    return respuesta
   },
 }
 

@@ -34,7 +34,7 @@ export default async function PaginaProyecto(_request: Request, ctx: FreshContex
 
   return (
     <div class={`${ctx.state.tema} min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-200`}>
-      <NavBar rol='admin' />
+      <NavBar rol={ctx.state.rol} />
 
       {/* Mensajes de estado */}
       {error ? <ModalError mensaje={error} /> : ''}

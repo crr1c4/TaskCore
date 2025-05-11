@@ -153,7 +153,7 @@ export default class Usuario {
       if (proyecto.key.length !== 2) continue
 
       if (proyecto.value.administrador === this.correo) {
-        proyectos.push(proyecto.value)
+        proyectos.push(Proyecto.deserializar(proyecto))
       }
     }
 
@@ -168,7 +168,7 @@ export default class Usuario {
       if (proyecto.key.length !== 2) continue
 
       if (proyecto.value.integrantes.includes(this.correo)) {
-        proyectos.push(proyecto.value)
+        proyectos.push(Proyecto.deserializar(proyecto))
       }
     }
 

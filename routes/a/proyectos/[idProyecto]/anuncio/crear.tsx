@@ -34,6 +34,8 @@ export const handler: Handlers<unknown, State> = {
       const proyecto = await Proyecto.obtener(idProyecto)
       await proyecto.agregarAnuncio(anuncio)
 
+      // TODO: ENVIAR NOTIFIACION A TODOS LOS USUARIOS
+
       const params = new URLSearchParams({
         mensaje: 'Anuncio creado correctamente',
       })
@@ -50,7 +52,7 @@ export const handler: Handlers<unknown, State> = {
       return new Response(null, {
         status: 303,
         headers: {
-          'Location': `/a/proyectos/${ctx.params.idProyecto}/crear?${params.toString()}`,
+          'Location': `/a/proyectos/${ctx.params.idProyecto}/crearo?${params.toString()}`,
         },
       })
     }

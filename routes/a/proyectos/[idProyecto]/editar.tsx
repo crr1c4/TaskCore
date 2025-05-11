@@ -51,15 +51,15 @@ export const handler: Handlers = {
       })
     }
   },
-  GET(_req, ctx) {
+  async GET(_req, ctx) {
     // Si el usuario es administrador, se permite continuar con la petición.
-    if (ctx.state.rol === 'admin') return ctx.next()
-
-    // Si el usuario no es admin, se redirige a la ruta de "miembro".
-    return new Response(null, {
+    if (ctx.state.rol !== 'admin') return new Response(null, {
       status: 301, // Redirección permanente
       headers: { Location: '/a/' },
     })
+
+    const respuesta = await ctx.render()
+    return respuesta
   },
 }
 

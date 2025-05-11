@@ -3,35 +3,29 @@
 // This file is automatically updated during development when running `dev.ts`.
 
 import * as $_404 from './routes/_404.tsx'
-import * as $_500 from './routes/_500.tsx'
 import * as $_app from './routes/_app.tsx'
+import * as $a_middleware from './routes/a/_middleware.ts'
+import * as $a_admin_middleware from './routes/a/admin/_middleware.ts'
+import * as $a_admin_crear_proyecto from './routes/a/admin/crear-proyecto.tsx'
+import * as $a_configuracion from './routes/a/configuracion.tsx'
+import * as $a_editar_contrasena from './routes/a/editar/contrasena.ts'
+import * as $a_editar_nombre from './routes/a/editar/nombre.ts'
+import * as $a_editar_tema from './routes/a/editar/tema.ts'
+import * as $a_index from './routes/a/index.tsx'
+import * as $a_notificaciones from './routes/a/notificaciones.tsx'
+import * as $a_proyectos_idProyecto_anuncio_idAnuncio_eliminar from './routes/a/proyectos/[idProyecto]/anuncio/[idAnuncio]/eliminar.ts'
+import * as $a_proyectos_idProyecto_anuncio_middleware from './routes/a/proyectos/[idProyecto]/anuncio/_middleware.ts'
+import * as $a_proyectos_idProyecto_anuncio_crear from './routes/a/proyectos/[idProyecto]/anuncio/crear.tsx'
+import * as $a_proyectos_idProyecto_editar from './routes/a/proyectos/[idProyecto]/editar.tsx'
+import * as $a_proyectos_idProyecto_eliminar from './routes/a/proyectos/[idProyecto]/eliminar.tsx'
+import * as $a_proyectos_idProyecto_equipo from './routes/a/proyectos/[idProyecto]/equipo.tsx'
+import * as $a_proyectos_idProyecto_index from './routes/a/proyectos/[idProyecto]/index.tsx'
+import * as $a_proyectos_idProyecto_tareas_idTarea_index from './routes/a/proyectos/[idProyecto]/tareas/[idTarea]/index.tsx'
+import * as $a_proyectos_idProyecto_tareas_crear from './routes/a/proyectos/[idProyecto]/tareas/crear.tsx'
 import * as $index from './routes/index.tsx'
 import * as $ingresar from './routes/ingresar.tsx'
-import * as $proyecto_idProyecto_anuncio_idAnuncio_eliminar from './routes/proyecto/[idProyecto]/anuncio/[idAnuncio]/eliminar.ts'
-import * as $proyecto_idProyecto_anuncio_middleware from './routes/proyecto/[idProyecto]/anuncio/_middleware.ts'
-import * as $proyecto_idProyecto_anuncio_crear from './routes/proyecto/[idProyecto]/anuncio/crear.tsx'
-import * as $proyecto_idProyecto_editar_middleware from './routes/proyecto/[idProyecto]/editar/_middleware.ts'
-import * as $proyecto_idProyecto_editar_index from './routes/proyecto/[idProyecto]/editar/index.tsx'
-import * as $proyecto_idProyecto_eliminar_middleware from './routes/proyecto/[idProyecto]/eliminar/_middleware.ts'
-import * as $proyecto_idProyecto_eliminar_index from './routes/proyecto/[idProyecto]/eliminar/index.tsx'
-import * as $proyecto_idProyecto_equipo from './routes/proyecto/[idProyecto]/equipo.tsx'
-import * as $proyecto_idProyecto_index from './routes/proyecto/[idProyecto]/index.tsx'
-import * as $proyecto_idProyecto_tareas_idTarea_index from './routes/proyecto/[idProyecto]/tareas/[idTarea]/index.tsx'
-import * as $proyecto_idProyecto_tareas_crear from './routes/proyecto/[idProyecto]/tareas/crear.tsx'
-import * as $proyecto_middleware from './routes/proyecto/_middleware.ts'
 import * as $registro from './routes/registro.tsx'
 import * as $salir from './routes/salir.ts'
-import * as $usuario_middleware from './routes/usuario/_middleware.ts'
-import * as $usuario_admin_middleware from './routes/usuario/admin/_middleware.ts'
-import * as $usuario_admin_crear_proyecto from './routes/usuario/admin/crear-proyecto.tsx'
-import * as $usuario_admin_index from './routes/usuario/admin/index.tsx'
-import * as $usuario_configuracion from './routes/usuario/configuracion.tsx'
-import * as $usuario_editar_contrasena from './routes/usuario/editar/contrasena.ts'
-import * as $usuario_editar_nombre from './routes/usuario/editar/nombre.ts'
-import * as $usuario_editar_tema from './routes/usuario/editar/tema.ts'
-import * as $usuario_miembro_middleware from './routes/usuario/miembro/_middleware.ts'
-import * as $usuario_miembro_index from './routes/usuario/miembro/index.tsx'
-import * as $usuario_notificaciones from './routes/usuario/notificaciones.tsx'
 import * as $Counter from './islands/Counter.tsx'
 import * as $Modal from './islands/Modal.tsx'
 import * as $NavBar from './islands/NavBar.tsx'
@@ -40,35 +34,30 @@ import type { Manifest } from '$fresh/server.ts'
 const manifest = {
   routes: {
     './routes/_404.tsx': $_404,
-    './routes/_500.tsx': $_500,
     './routes/_app.tsx': $_app,
+    './routes/a/_middleware.ts': $a_middleware,
+    './routes/a/admin/_middleware.ts': $a_admin_middleware,
+    './routes/a/admin/crear-proyecto.tsx': $a_admin_crear_proyecto,
+    './routes/a/configuracion.tsx': $a_configuracion,
+    './routes/a/editar/contrasena.ts': $a_editar_contrasena,
+    './routes/a/editar/nombre.ts': $a_editar_nombre,
+    './routes/a/editar/tema.ts': $a_editar_tema,
+    './routes/a/index.tsx': $a_index,
+    './routes/a/notificaciones.tsx': $a_notificaciones,
+    './routes/a/proyectos/[idProyecto]/anuncio/[idAnuncio]/eliminar.ts':
+      $a_proyectos_idProyecto_anuncio_idAnuncio_eliminar,
+    './routes/a/proyectos/[idProyecto]/anuncio/_middleware.ts': $a_proyectos_idProyecto_anuncio_middleware,
+    './routes/a/proyectos/[idProyecto]/anuncio/crear.tsx': $a_proyectos_idProyecto_anuncio_crear,
+    './routes/a/proyectos/[idProyecto]/editar.tsx': $a_proyectos_idProyecto_editar,
+    './routes/a/proyectos/[idProyecto]/eliminar.tsx': $a_proyectos_idProyecto_eliminar,
+    './routes/a/proyectos/[idProyecto]/equipo.tsx': $a_proyectos_idProyecto_equipo,
+    './routes/a/proyectos/[idProyecto]/index.tsx': $a_proyectos_idProyecto_index,
+    './routes/a/proyectos/[idProyecto]/tareas/[idTarea]/index.tsx': $a_proyectos_idProyecto_tareas_idTarea_index,
+    './routes/a/proyectos/[idProyecto]/tareas/crear.tsx': $a_proyectos_idProyecto_tareas_crear,
     './routes/index.tsx': $index,
     './routes/ingresar.tsx': $ingresar,
-    './routes/proyecto/[idProyecto]/anuncio/[idAnuncio]/eliminar.ts': $proyecto_idProyecto_anuncio_idAnuncio_eliminar,
-    './routes/proyecto/[idProyecto]/anuncio/_middleware.ts': $proyecto_idProyecto_anuncio_middleware,
-    './routes/proyecto/[idProyecto]/anuncio/crear.tsx': $proyecto_idProyecto_anuncio_crear,
-    './routes/proyecto/[idProyecto]/editar/_middleware.ts': $proyecto_idProyecto_editar_middleware,
-    './routes/proyecto/[idProyecto]/editar/index.tsx': $proyecto_idProyecto_editar_index,
-    './routes/proyecto/[idProyecto]/eliminar/_middleware.ts': $proyecto_idProyecto_eliminar_middleware,
-    './routes/proyecto/[idProyecto]/eliminar/index.tsx': $proyecto_idProyecto_eliminar_index,
-    './routes/proyecto/[idProyecto]/equipo.tsx': $proyecto_idProyecto_equipo,
-    './routes/proyecto/[idProyecto]/index.tsx': $proyecto_idProyecto_index,
-    './routes/proyecto/[idProyecto]/tareas/[idTarea]/index.tsx': $proyecto_idProyecto_tareas_idTarea_index,
-    './routes/proyecto/[idProyecto]/tareas/crear.tsx': $proyecto_idProyecto_tareas_crear,
-    './routes/proyecto/_middleware.ts': $proyecto_middleware,
     './routes/registro.tsx': $registro,
     './routes/salir.ts': $salir,
-    './routes/usuario/_middleware.ts': $usuario_middleware,
-    './routes/usuario/admin/_middleware.ts': $usuario_admin_middleware,
-    './routes/usuario/admin/crear-proyecto.tsx': $usuario_admin_crear_proyecto,
-    './routes/usuario/admin/index.tsx': $usuario_admin_index,
-    './routes/usuario/configuracion.tsx': $usuario_configuracion,
-    './routes/usuario/editar/contrasena.ts': $usuario_editar_contrasena,
-    './routes/usuario/editar/nombre.ts': $usuario_editar_nombre,
-    './routes/usuario/editar/tema.ts': $usuario_editar_tema,
-    './routes/usuario/miembro/_middleware.ts': $usuario_miembro_middleware,
-    './routes/usuario/miembro/index.tsx': $usuario_miembro_index,
-    './routes/usuario/notificaciones.tsx': $usuario_notificaciones,
   },
   islands: {
     './islands/Counter.tsx': $Counter,

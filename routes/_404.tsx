@@ -1,4 +1,5 @@
 import { Head } from '$fresh/runtime.ts'
+import { Boton } from '../components/Boton.tsx'
 
 export default function Error404() {
   return (
@@ -42,11 +43,10 @@ export default function Error404() {
           </p>
 
           {/* Botón de acción */}
-          <a
-            href='/'
-            class='inline-block px-6 py-3 bg-green-500 hover:bg-green-600 text-white font-medium rounded-lg shadow-md transition duration-200'
-          >
-            Volver al Inicio
+          <a href='/'>
+            <Boton>
+              Volver al Inicio
+            </Boton>
           </a>
         </div>
       </div>

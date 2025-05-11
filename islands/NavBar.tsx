@@ -20,7 +20,7 @@ export default function NavBar({ rol }: Props) {
   return (
     <header class='fixed w-full h-16 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm border-b border-gray-200 dark:border-gray-800 text-gray-900 dark:text-gray-100 z-40 flex items-center justify-between px-4 sm:px-6'>
       {/* Parte izquierda - Logo y botón de menú */}
-      <div class='flex items-center h-full'>
+      <a href="/a/" class='flex items-center h-full'>
         <div class='flex items-center gap-3 select-none'>
           <img
             src='/iconoTransparente.png'
@@ -36,7 +36,7 @@ export default function NavBar({ rol }: Props) {
             )}
           </h1>
         </div>
-      </div>
+      </a>
 
       <div class='flex items-center gap-1 sm:gap-2 relative'>
         {rol === 'admin' && (
