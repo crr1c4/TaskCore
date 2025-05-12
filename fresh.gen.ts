@@ -20,6 +20,9 @@ import * as $a_proyectos_idProyecto_editar from './routes/a/proyectos/[idProyect
 import * as $a_proyectos_idProyecto_eliminar from './routes/a/proyectos/[idProyecto]/eliminar.tsx'
 import * as $a_proyectos_idProyecto_equipo from './routes/a/proyectos/[idProyecto]/equipo.tsx'
 import * as $a_proyectos_idProyecto_index from './routes/a/proyectos/[idProyecto]/index.tsx'
+import * as $a_proyectos_idProyecto_tareas_idTarea_completar from './routes/a/proyectos/[idProyecto]/tareas/[idTarea]/completar.ts'
+import * as $a_proyectos_idProyecto_tareas_idTarea_editar from './routes/a/proyectos/[idProyecto]/tareas/[idTarea]/editar.tsx'
+import * as $a_proyectos_idProyecto_tareas_idTarea_eliminar from './routes/a/proyectos/[idProyecto]/tareas/[idTarea]/eliminar.tsx'
 import * as $a_proyectos_idProyecto_tareas_idTarea_index from './routes/a/proyectos/[idProyecto]/tareas/[idTarea]/index.tsx'
 import * as $a_proyectos_idProyecto_tareas_crear from './routes/a/proyectos/[idProyecto]/tareas/crear.tsx'
 import * as $index from './routes/index.tsx'
@@ -52,6 +55,9 @@ const manifest = {
     './routes/a/proyectos/[idProyecto]/eliminar.tsx': $a_proyectos_idProyecto_eliminar,
     './routes/a/proyectos/[idProyecto]/equipo.tsx': $a_proyectos_idProyecto_equipo,
     './routes/a/proyectos/[idProyecto]/index.tsx': $a_proyectos_idProyecto_index,
+    './routes/a/proyectos/[idProyecto]/tareas/[idTarea]/completar.ts': $a_proyectos_idProyecto_tareas_idTarea_completar,
+    './routes/a/proyectos/[idProyecto]/tareas/[idTarea]/editar.tsx': $a_proyectos_idProyecto_tareas_idTarea_editar,
+    './routes/a/proyectos/[idProyecto]/tareas/[idTarea]/eliminar.tsx': $a_proyectos_idProyecto_tareas_idTarea_eliminar,
     './routes/a/proyectos/[idProyecto]/tareas/[idTarea]/index.tsx': $a_proyectos_idProyecto_tareas_idTarea_index,
     './routes/a/proyectos/[idProyecto]/tareas/crear.tsx': $a_proyectos_idProyecto_tareas_crear,
     './routes/index.tsx': $index,

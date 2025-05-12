@@ -73,7 +73,7 @@ export default function Configuracion(ctx: FreshContext<Usuario>) {
                       />
                       <input type='hidden' value={ctx.state.correo} name='correo' />
                       <div class='flex justify-end'>
-                        <Boton >Guardar cambios</Boton>
+                        <Boton>Guardar cambios</Boton>
                       </div>
                     </form>
                   </div>
@@ -118,7 +118,7 @@ export default function Configuracion(ctx: FreshContext<Usuario>) {
                         minLength={8}
                       />
                       <div class='flex justify-end'>
-                        <Boton >Actualizar contraseña</Boton>
+                        <Boton>Actualizar contraseña</Boton>
                       </div>
                     </form>
                   </div>
@@ -140,13 +140,13 @@ export default function Configuracion(ctx: FreshContext<Usuario>) {
                     <form action='/a/editar/tema' method='POST' class='space-y-6'>
                       <input type='hidden' value={ctx.state.correo} name='correo' />
                       <div class='flex items-center justify-between'>
-                        <div>
+                        <div class="w-3/4">
                           <h3 class='text-base font-medium text-gray-900 dark:text-white'>Tema</h3>
                           <p class='text-sm text-gray-500 dark:text-gray-400'>
                             Cambia entre modo claro y oscuro
                           </p>
                         </div>
-                        <Boton >Cambiar tema</Boton>
+                        <Boton>Cambiar</Boton>
                       </div>
                     </form>
                   </div>

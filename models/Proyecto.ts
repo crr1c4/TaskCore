@@ -68,13 +68,11 @@ export default class Proyecto {
   public static async eliminar(id: string) {
     const consulta = DB.list({ prefix: ['proyectos', id] })
 
-    console.log(await DB.get(["proyectos", id]))
-
     for await (const elementoProyecto of consulta) {
-      console.log(elementoProyecto)
-      console.log("Entro aqui")
-      // await DB.delete(elementoProyecto.key)
+      await DB.delete(elementoProyecto.key)
     }
+
+    await DB.delete(['proyectos', id])
   }
 
   private async actualizar() {

@@ -1,19 +1,19 @@
-// routes/proyectos/[idProyecto]/tareas/nueva.tsx
+// routes/proyectos/[idProyecto]/tareas/[idTarea]/editar.tsx
 import { FreshContext, Handlers } from '$fresh/server.ts'
-import Tarea from '../../../../../models/Tarea.ts'
-import NavBar from '../../../../../islands/NavBar.tsx'
-import Usuario from '../../../../../models/Usuario.ts'
-import { Boton } from '../../../../../components/Boton.tsx'
-import { Input } from '../../../../../components/Input.tsx'
-import { IconoCrear, IconoVolver } from '../../../../../components/Iconos.tsx'
-import { AreaTexto } from '../../../../../components/AreaTexto.tsx'
-import Proyecto from '../../../../../models/Proyecto.ts'
-import { ModalError } from '../../../../../islands/Modal.tsx'
+import Tarea from '../../../../../../models/Tarea.ts'
+import NavBar from '../../../../../../islands/NavBar.tsx'
+import { Boton } from '../../../../../../components/Boton.tsx'
+import { Input } from '../../../../../../components/Input.tsx'
+import { IconoEditar, IconoVolver } from '../../../../../../components/Iconos.tsx'
+import { AreaTexto } from '../../../../../../components/AreaTexto.tsx'
+import Proyecto from '../../../../../../models/Proyecto.ts'
+import { ModalError } from '../../../../../../islands/Modal.tsx'
+import Usuario from '../../../../../../models/Usuario.ts'
 
 export const handler: Handlers = {
   async POST(req, ctx) {
     const formulario = await req.formData()
-    const { idProyecto } = ctx.params
+    const { idProyecto, idTarea } = ctx.params
 
     try {
       const nombre = formulario.get('nombre')?.toString()
@@ -32,47 +32,49 @@ export const handler: Handlers = {
         throw new Error('Fecha y hora inválidas')
       }
 
-      const tarea = Tarea.crear(
-        nombre,
-        descripcion,
-        fechaExpiracion,
-        responsable,
-      )
-
       const proyecto = await Proyecto.obtener(idProyecto)
-      await proyecto.agregarTarea(tarea)
+      const tarea = await proyecto.obtenerTarea(idTarea)
 
+      // Actualizar campos modificados
+      if (nombre !== tarea.nombre) tarea.nombre = nombre
+      if (descripcion !== tarea.descripcion) tarea.descripcion = descripcion
+      if (fechaExpiracion.getTime() !== tarea.fechaExpiracion.getTime()) {
+        tarea.fechaExpiracion = fechaExpiracion
+      }
+      if (responsable !== tarea.correoResponsable) {
+        tarea.correoResponsable = responsable
+      }
+
+      await proyecto.actualizarTarea(idTarea, tarea)
       const params = new URLSearchParams({
-        mensaje: 'La tarea se ha creado correctamente.',
+        mensaje: 'La tarea se ha actualizado correctamente.',
       })
 
       return new Response(null, {
         status: 303,
         headers: {
-          Location: `/a/proyectos/${idProyecto}?${params.toString()}`,
+          Location: `/a/proyectos/${idProyecto}/tareas/${idTarea}?${params.toString()}`,
         },
       })
     } catch (error) {
       const objetoErrores = error as Error
       const params = new URLSearchParams({
         error: objetoErrores.message,
-        nombre: formulario.get('nombre')?.toString() || '',
-        descripcion: formulario.get('descripcion')?.toString() || '',
       })
 
       return new Response(null, {
         status: 303,
         headers: {
-          Location: `/a/proyectos/${idProyecto}/tareas/crear?${params.toString()}`,
+          Location: `/a/proyectos/${idProyecto}/tareas/${idTarea}/editar?${params.toString()}`,
         },
       })
     }
   },
+
   async GET(_req, ctx) {
-    // Si el usuario es administrador, se permite continuar con la petición.
     if (ctx.state.rol !== 'admin') {
       return new Response(null, {
-        status: 301, // Redirección permanente
+        status: 301,
         headers: { Location: '/a/' },
       })
     }
@@ -82,15 +84,20 @@ export const handler: Handlers = {
   },
 }
 
-export default async function NuevaTarea(_req: Request, ctx: FreshContext<Usuario>) {
-  // Obtener fecha actual en formato YYYY-MM-DD
-  const hoy = new Date()
-  const fechaActual = hoy.toISOString().split('T')[0]
-  const { idProyecto } = ctx.params
-  const proyecto = await Proyecto.obtener(idProyecto)
+export default async function EditarTarea(_req: Request, ctx: FreshContext<Usuario>) {
+  const { idProyecto, idTarea } = ctx.params
   const error = ctx.url.searchParams.get('error') || ''
-  const nombre = ctx.url.searchParams.get('nombre') || ''
-  const descripcion = ctx.url.searchParams.get('descripcion') || ''
+
+  const proyecto = await Proyecto.obtener(idProyecto)
+  const tarea = await proyecto.obtenerTarea(idTarea)
+
+  // Formatear fecha existente
+  const fechaLocal = new Date(tarea.fechaExpiracion)
+  fechaLocal.setMinutes(fechaLocal.getMinutes() - fechaLocal.getTimezoneOffset())
+  const fechaExistente = fechaLocal.toISOString().split('T')[0]
+
+  // Otra alternativa usando solo métodos de fecha
+  const horaExistente = tarea.fechaExpiracion.toTimeString().slice(0, 5)
 
   return (
     <div class={`${ctx.state.tema} min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300`}>
@@ -104,16 +111,14 @@ export default async function NuevaTarea(_req: Request, ctx: FreshContext<Usuari
           <div class='flex flex-col md:flex-row justify-between items-start md:items-center gap-6'>
             <div>
               <h1 class='text-3xl font-bold text-gray-900 dark:text-white tracking-tight'>
-                Crear Nueva Tarea
+                Editar Tarea: {tarea.nombre}
               </h1>
               <p class='mt-2 text-gray-600 dark:text-gray-300'>
-                Completa los detalles para la tarea en:{' '}
-                <span class='font-medium text-indigo-600 dark:text-indigo-400'>Proyecto {proyecto.nombre}</span>
+                Modifica los detalles de la tarea en:{' '}
+                <span class='font-medium text-indigo-600 dark:text-indigo-400'>{proyecto.nombre}</span>
               </p>
             </div>
-            <a
-              href={`/a/proyectos/${idProyecto}`}
-            >
+            <a href={`/a/proyectos/${idProyecto}/tareas/${idTarea}`}>
               <Boton>
                 <IconoVolver />
                 Volver
@@ -125,11 +130,10 @@ export default async function NuevaTarea(_req: Request, ctx: FreshContext<Usuari
 
       {/* Contenido principal */}
       <main class='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8'>
-        {/* Formulario para crear tarea */}
         <section class='bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden transition-colors duration-300'>
           <div class='p-6 border-b border-gray-200 dark:border-gray-700'>
-            <h2 class='text-xl font-semibold text-gray-900 dark:text-white'>Detalles de la tarea</h2>
-            <p class='mt-1 text-sm text-gray-500 dark:text-gray-400'>Completa todos los campos requeridos</p>
+            <h2 class='text-xl font-semibold text-gray-900 dark:text-white'>Editar detalles</h2>
+            <p class='mt-1 text-sm text-gray-500 dark:text-gray-400'>Actualiza los campos necesarios</p>
           </div>
           <div class='p-6'>
             <form method='POST' class='space-y-6 flex flex-col gap-2'>
@@ -138,7 +142,7 @@ export default async function NuevaTarea(_req: Request, ctx: FreshContext<Usuari
                 type='text'
                 name='nombre'
                 required
-                value={nombre}
+                value={tarea.nombre}
                 placeholder='Ej: Implementar funcionalidad X'
               />
 
@@ -147,7 +151,7 @@ export default async function NuevaTarea(_req: Request, ctx: FreshContext<Usuari
                 name='descripcion'
                 rows={4}
                 required
-                value={descripcion}
+                value={tarea.descripcion}
                 placeholder='Describe los detalles de la tarea...'
               />
 
@@ -156,8 +160,7 @@ export default async function NuevaTarea(_req: Request, ctx: FreshContext<Usuari
                   type='date'
                   name='fecha'
                   required
-                  min={fechaActual}
-                  value={fechaActual}
+                  value={fechaExistente}
                   label='Fecha límite:'
                 />
 
@@ -165,28 +168,33 @@ export default async function NuevaTarea(_req: Request, ctx: FreshContext<Usuari
                   type='time'
                   name='hora'
                   required
-                  value='23:59'
+                  value={horaExistente}
                   label='Hora límite:'
                 />
               </div>
 
               <div>
                 <label for='responsable' class='block text-sm font-medium text-gray-700 dark:text-white mb-2'>
-                  Asignar a:
+                  Responsable:
                 </label>
                 <select
                   name='responsable'
-                  className='mt-0.5 py-2 px-4 w-full rounded border border-gray-500 focus:border-none focus:outline-none shadow-sm sm:text-sm dark:bg-slate-700 focus:ring-2 dark:ring-blue-700 dark:text-white invalid:text-rose-500 invalid:ring-rose-600'
+                  class='mt-0.5 py-2 px-4 w-full rounded border border-gray-500 focus:border-none focus:outline-none shadow-sm sm:text-sm dark:bg-slate-700 focus:ring-2 dark:ring-blue-700 dark:text-white invalid:text-rose-500 invalid:ring-rose-600'
+                  value={tarea.correoResponsable}
                 >
                   <option value=''>Sin asignar</option>
-                  {proyecto.integrantes.map((miembro) => <option key={miembro} value={miembro}>{miembro}</option>)}
+                  {proyecto.integrantes.map((miembro) => (
+                    <option key={miembro} value={miembro} selected={miembro === tarea.correoResponsable}>
+                      {miembro}
+                    </option>
+                  ))}
                 </select>
               </div>
 
               <div class='flex justify-end pt-4'>
                 <Boton>
-                  <IconoCrear />
-                  Crear Tarea
+                  <IconoEditar />
+                  Guardar Cambios
                 </Boton>
               </div>
             </form>

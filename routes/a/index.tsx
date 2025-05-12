@@ -1,6 +1,6 @@
 import { FreshContext } from '$fresh/src/server/mod.ts'
 import ComponenteProyecto from '../../components/proyectos/TarjetaProyecto.tsx'
-import { ModalLink } from '../../islands/Modal.tsx'
+import { ModalError, ModalLink } from '../../islands/Modal.tsx'
 import NavBar from '../../islands/NavBar.tsx'
 import Usuario from '../../models/Usuario.ts'
 import Proyecto from '../../models/Proyecto.ts'
@@ -8,6 +8,7 @@ import Proyecto from '../../models/Proyecto.ts'
 export default async function Home(_req: Request, ctx: FreshContext<Usuario>) {
   const url = ctx.url
   const mensaje = url.searchParams.get('mensaje')?.replaceAll('"', '') || ''
+  const error = url.searchParams.get('error')?.replaceAll('"', '') || ''
 
   const usuario = await Usuario.obtener(ctx.state.correo)
   const proyectos = await usuario.obtenerProyectos()
@@ -15,6 +16,8 @@ export default async function Home(_req: Request, ctx: FreshContext<Usuario>) {
 
   return (
     <div class={`h-screen ${ctx.state.tema} dark:bg-gray-900`}>
+
+      {error && <ModalError mensaje={error} />}
       {mensaje
         ? (
           <ModalLink

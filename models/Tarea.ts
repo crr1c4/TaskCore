@@ -50,7 +50,7 @@ export default class Tarea {
   }
 
   public obtenerEstado(): 'completado' | 'en progreso' | 'expirado' {
-    if (this.completada && !this.haExpirado()) return 'completado'
+    if (this.completada) return 'completado'
     else if (!this.completada && !this.haExpirado()) return 'en progreso'
     else if (!this.completada && this.haExpirado()) return 'expirado'
     else throw new Error(`Estado de la tarea ${this.id} desconocido.`)
