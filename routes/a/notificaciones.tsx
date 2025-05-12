@@ -6,7 +6,7 @@ import { IconoEliminar, IconoNotificaciones } from '../../components/Iconos.tsx'
 import { BotonEmergencia } from '../../components/Boton.tsx'
 
 export const handler: Handlers = {
-  async POST(req, ctx) {
+  async POST(_req, ctx) {
     try {
       const usuario = await Usuario.obtener(ctx.state.correo as string)
       await usuario.eliminarNotificaciones()
