@@ -51,10 +51,6 @@ export default function Bienvenida() {
             ✅ <span className='font-semibold'>Gestión de tareas eficiente:</span>{' '}
             Asigna y sigue el progreso de las tareas de tus proyectos.
           </li>
-          <li class='bg-white/50 py-2 px-4 rounded-md shadow-md hover:bg-white/90 transition-colors duration-100'>
-            ✅ <span className='font-semibold'>Notificaciones inteligentes:</span>{' '}
-            Mantente siempre al tanto de lo importante.
-          </li>
         </ul>
       </section>
 

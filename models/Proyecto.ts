@@ -219,13 +219,31 @@ export default class Proyecto {
     if (!resultado.ok) throw new Error(`No se pudo eliminar la tarea con el id ${idTarea}`)
   }
 
-  public async obtenerTareas() {
+  public async obtenerTareasAdministrador() {
     const tareas: Tarea[] = []
 
     const consulta = DB.list<Tarea>({ prefix: ['proyectos', this.id, 'tareas'] })
-    for await (const tarea of consulta) tareas.push(Tarea.deserializar(tarea))
+
+    for await (const tarea of consulta) { 
+      if (tarea.key.length !== 4) continue
+      tareas.push(Tarea.deserializar(tarea))
+    }
 
     return tareas
+  }
+
+  public async obtenerTareasIntegrante(correoIntegrante: string) {
+    const tareas: Tarea[] = []
+
+    const consulta = DB.list<Tarea>({ prefix: ['proyectos', this.id, 'tareas'] })
+
+    for await (const tarea of consulta) { 
+      if (tarea.key.length !== 4) continue
+      tareas.push(Tarea.deserializar(tarea))
+    }
+
+
+    return tareas.filter(tarea => tarea.correoResponsable === correoIntegrante)
   }
 
   public async obtenerTarea(idTarea: string): Promise<Tarea> {

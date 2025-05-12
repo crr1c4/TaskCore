@@ -16,7 +16,8 @@ export default async function PaginaProyecto(_request: Request, ctx: FreshContex
 
   try {
     const proyecto = await Proyecto.obtener(idProyecto)
-    const tareas = await proyecto.obtenerTareas()
+    const tareas = ctx.state.rol === "admin" ? await proyecto.obtenerTareasAdministrador() : await proyecto.obtenerTareasIntegrante(ctx.state.correo)
+
     const integrantes = await proyecto.obtenerIntegrantes()
     const anuncios = await proyecto.obtenerAnuncios()
 

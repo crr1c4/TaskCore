@@ -1,6 +1,5 @@
 // routes/proyectos/[idProyecto]/tareas/[idTarea]/editar.tsx
 import { FreshContext, Handlers } from '$fresh/server.ts'
-import Tarea from '../../../../../../models/Tarea.ts'
 import NavBar from '../../../../../../islands/NavBar.tsx'
 import { Boton } from '../../../../../../components/Boton.tsx'
 import { Input } from '../../../../../../components/Input.tsx'

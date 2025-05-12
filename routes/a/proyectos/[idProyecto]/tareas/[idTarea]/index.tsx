@@ -1,6 +1,5 @@
 // routes/proyecto/[idProyecto]/tareas/[idTarea].tsx
-import { FreshContext, Handlers, PageProps } from '$fresh/server.ts'
-import Tarea from '../../../../../../models/Tarea.ts'
+import { FreshContext, Handlers } from '$fresh/server.ts'
 import Proyecto from '../../../../../../models/Proyecto.ts'
 import NavBar from '../../../../../../islands/NavBar.tsx'
 import { Boton, BotonEmergencia } from '../../../../../../components/Boton.tsx'
@@ -9,56 +8,40 @@ import { formatearFecha, formatearFechaYHora, tiempoRestanteDetallado } from '..
 import Usuario from '../../../../../../models/Usuario.ts'
 import { AreaTexto } from '../../../../../../components/AreaTexto.tsx'
 import { ModalError, ModalLink } from '../../../../../../islands/Modal.tsx'
+import Comentario from '../../../../../../models/Comentario.ts'
 
-// export const handler: Handlers<Tarea> = {
-//   async GET(_, ctx) {
-//     const { idProyecto, idTarea } = ctx.params;
-//     // Obtener la tarea desde la base de datos
-//     const proyecto = await Proyecto.obtener(idProyecto);
-//     const tarea = proyecto.tareas.find(t => t.id === idTarea);
-//
-//     if (!tarea) {
-//       return new Response("Tarea no encontrada", { status: 404 });
-//     }
-//
-//     return ctx.render(tarea);
-//   },
-//
-//   async POST(req, ctx) {
-//     const formData = await req.formData();
-//     const comentario = formData.get("comentario")?.toString();
-//     const usuario = ctx.state.user; // Asume que tienes el usuario en el estado
-//
-//     if (!comentario) {
-//       return new Response("El comentario no puede estar vacío", { status: 400 });
-//     }
-//
-//     const { idProyecto, idTarea } = ctx.params;
-//     const proyecto = await Proyecto.obtener(idProyecto);
-//     const tarea = proyecto.tareas.find(t => t.id === idTarea);
-//
-//     if (!tarea) {
-//       return new Response("Tarea no encontrada", { status: 404 });
-//     }
-//
-//     // Agregar nuevo comentario
-//     const nuevoComentario: Comment = {
-//       id: crypto.randomUUID(),
-//       autor: usuario.nombre,
-//       correo: usuario.correo,
-//       contenido: comentario,
-//       fecha: new Date()
-//     };
-//
-//     tarea.comentarios.push(nuevoComentario);
-//     await proyecto.guardar();
-//
-//     return new Response(null, {
-//       status: 303,
-//       headers: { Location: `/proyecto/${idProyecto}/tareas/${idTarea}` }
-//     });
-//   }
-// };
+// En tu archivo de ruta de la tarea (ej: /routes/proyectos/[idProyecto]/tareas/[idTarea].tsx)
+export const handler: Handlers = {
+  async POST(req, ctx) {
+    const { idProyecto, idTarea } = ctx.params
+    const formData = await req.formData()
+    const cuerpo = formData.get('comentario')?.toString()
+    const usuario = ctx.state.correo as string // Asumiendo que el usuario está en el contexto
+
+    try {
+      if (!cuerpo?.trim()) throw new Error('El comentario no puede estar vacío')
+
+      const proyecto = await Proyecto.obtener(idProyecto)
+      const comentario = new Comentario(cuerpo, usuario)
+
+      await proyecto.agregarComentario(comentario, idTarea)
+
+      return new Response(null, {
+        status: 303,
+        headers: { Location: `/a/proyectos/${idProyecto}/tareas/${idTarea}` },
+      })
+    } catch (error) {
+      const params = new URLSearchParams({
+        error: (error as Error).message,
+      })
+      return new Response(null, {
+        status: 303,
+        headers: { Location: `/a/proyectos/${idProyecto}/tareas/${idTarea}?${params}` },
+      })
+    }
+  },
+}
+
 export default async function VisualizarTarea(_req: Request, ctx: FreshContext<Usuario>) {
   try {
     const { idProyecto, idTarea } = ctx.params
@@ -66,6 +49,7 @@ export default async function VisualizarTarea(_req: Request, ctx: FreshContext<U
     const mensaje = ctx.url.searchParams.get('mensaje') || ''
     const proyecto = await Proyecto.obtener(idProyecto)
     const tarea = await proyecto.obtenerTarea(idTarea)
+    const comentarios = await proyecto.obtenerComentariosTarea(idTarea)
 
     return (
       <div class={`${ctx.state.tema} min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-200`}>
@@ -212,7 +196,32 @@ export default async function VisualizarTarea(_req: Request, ctx: FreshContext<U
           <div class='bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 transition-colors duration-200'>
             <h2 class='text-xl font-semibold text-gray-900 dark:text-white mb-6'>Comentarios</h2>
 
-            {/* Resto del código de comentarios... */}
+            {comentarios.length === 0
+              ? (
+                <p class='text-gray-500 dark:text-gray-400 text-center py-4'>
+                  No hay comentarios aún
+                </p>
+              )
+              : (
+                <div class='space-y-4 mb-8'>
+                  {comentarios.map((comentario) => (
+                    <div class='border-b border-gray-200 dark:border-gray-700 pb-4 last:border-0'>
+                      <div class='flex justify-between items-start mb-2'>
+                        <div>
+                          <p class='font-medium text-gray-900 dark:text-white'>
+                            {comentario.creadoPor}
+                          </p>
+                          <p class='text-sm text-gray-500 dark:text-gray-400'>
+                            {formatearFecha(new Date(comentario.fecha))}
+                          </p>
+                        </div>
+                      </div>
+                      <p class='text-gray-700 dark:text-gray-300'>{comentario.cuerpo}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
+
             <form method='POST' class='mt-8'>
               <div class='mb-4'>
                 <AreaTexto

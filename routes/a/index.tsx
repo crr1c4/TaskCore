@@ -12,7 +12,7 @@ export default async function Home(_req: Request, ctx: FreshContext<Usuario>) {
 
   const usuario = await Usuario.obtener(ctx.state.correo)
   const proyectos = await usuario.obtenerProyectos()
-  const tareas = await Promise.all(proyectos.map(async (proyecto) => await proyecto.obtenerTareas()))
+  const tareas = await Promise.all(proyectos.map(async (proyecto) => await proyecto.obtenerTareasAdministrador()))
 
   return (
     <div class={`h-screen ${ctx.state.tema} dark:bg-gray-900`}>

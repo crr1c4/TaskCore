@@ -142,7 +142,7 @@ export default class Usuario {
 
   /* MÉTODOS PARA PROYECTOS */
   public async obtenerProyectos() {
-    return this.rol === 'admin' ? await this.obtenerProyectosAdministrador() : await this.obtenerProyectosMiembro()
+    return this.rol === 'admin' ? await this.obtenerProyectosAdministrador() : await this.obtenerProyectosIntegrante()
   }
 
   private async obtenerProyectosAdministrador(): Promise<Proyecto[]> {
@@ -160,7 +160,7 @@ export default class Usuario {
     return proyectos
   }
 
-  private async obtenerProyectosMiembro() {
+  private async obtenerProyectosIntegrante() {
     const proyectos: Proyecto[] = []
 
     for await (const proyecto of DB.list<Proyecto>({ prefix: ['proyectos'] })) {
@@ -179,10 +179,10 @@ export default class Usuario {
     if (this.rol === 'admin') return []
 
     const tareas: Tarea[] = []
-    const proyectos = await this.obtenerProyectosMiembro()
+    const proyectos = await this.obtenerProyectosIntegrante()
 
     for (const proyecto of proyectos) {
-      const tareasProyecto = await proyecto.obtenerTareas()
+      const tareasProyecto = await proyecto.obtenerTareasAdministrador()
       for (const tarea of tareasProyecto) {
         if (tarea.correoResponsable === this.correo) tareas.push(tarea)
       }
