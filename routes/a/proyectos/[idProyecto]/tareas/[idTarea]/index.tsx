@@ -13,7 +13,6 @@ import Usuario from '../../../../../../models/Usuario.ts'
 import { AreaTexto } from '../../../../../../components/AreaTexto.tsx'
 import { ModalError, ModalLink } from '../../../../../../islands/Modal.tsx'
 import Comentario from '../../../../../../models/Comentario.ts'
-import Tarea from '../../../../../../models/Tarea.ts'
 import Notificacion from '../../../../../../models/Notificacion.ts'
 
 // En tu archivo de ruta de la tarea (ej: /routes/proyectos/[idProyecto]/tareas/[idTarea].tsx)

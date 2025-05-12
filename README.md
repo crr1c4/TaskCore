@@ -51,6 +51,11 @@ cp .env.example .env
 deno task start  
 ```  
 
+4. Iniciar servicio de notificiones para tareas por vencer:
+```bash  
+deno run -A --unstable-cron cron.ts
+```  
+
 ## 🧪 Testing  
 
 Ejecutar pruebas unitarias:  

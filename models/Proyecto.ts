@@ -1,4 +1,3 @@
-import { unsubscribe } from 'node:diagnostics_channel'
 import Anuncio from './Anuncio.ts'
 import Comentario from './Comentario.ts'
 import { DB } from './mod.ts'
