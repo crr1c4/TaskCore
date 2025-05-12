@@ -1,21 +1,17 @@
 import { FreshContext } from '$fresh/server.ts'
 import { Handlers } from '$fresh/server.ts'
-import { obtenerUsuario } from '../utils/db/modelos/usuario.ts'
+
+import Usuario from '../models/Usuario.ts'
+
 import { crearToken } from '../utils/autenticacion.ts'
-import * as bcrypt from 'jsr:@felix/bcrypt'
 import { setCookie } from 'jsr:@std/http/cookie'
-import { CampoIngreso } from '../components/Input.tsx'
+import { Input } from '../components/Input.tsx'
 import { EncabezadoPrincipal } from '../components/Headers.tsx'
-import { BotonIngresar } from '../components/Button.tsx'
+import { Boton } from '../components/Boton.tsx'
 import { ModalError } from '../islands/Modal.tsx'
 import Fondo from '../components/Fondo.tsx'
 import Enlace from '../components/Enlace.tsx'
 import Footer from '../components/Footer.tsx'
-
-interface DatosErrorInicioSesion {
-  correo: string
-  error: string
-}
 
 /**
  * Manejador de la autenticación de usuarios mediante formulario.
@@ -28,40 +24,31 @@ export const handler: Handlers = {
    * @param {FreshContext} _ctx - El contexto de Fresh (no se usa en este caso).
    */
   async POST(req: Request, _ctx: FreshContext) {
+    const formulario = await req.formData()
+
     try {
-      // Obtención de los datos del formulario enviado por el usuario.
-      const formulario = await req.formData()
       const correo = formulario.get('correo')?.toString().trim()
       const contraseña = formulario.get('contraseña')?.toString().trim()
 
-      // Verificación de que los datos no sean indefinidos o vacíos.
       if (!correo || !contraseña) {
-        throw 'Error en el envío del formulario.'
+        throw new Error('Error en el envío del formulario.')
       }
 
-      // Obtención del usuario desde la base de datos.
-      const usuario = await obtenerUsuario(correo)
+      const usuario = await Usuario.obtener(correo) 
 
-      // Verificación de la existencia del usuario.
-      if (!usuario) {
-        throw { correo, error: 'No hay un usuario registrado con el correo ingresado.' }
+      if (!(await usuario.verificarContraseña(contraseña))) {
+        throw new Error('La contraseña es incorrecta.')
       }
 
-      // Verificación de la contraseña con la almacenada en la base de datos.
-      if (!(await bcrypt.verify(contraseña, usuario.contraseña))) {
-        throw { correo, error: 'La contraseña es incorrecta.' }
-      }
-
-      // Generación del token JWT con la información del usuario.
       const token = await crearToken({
         correo: usuario.correo,
         nombre: usuario.nombre,
         rol: usuario.rol,
+        tema: usuario.tema,
       })
 
       const headers = new Headers()
 
-      // Inserción del token en una cookie segura.
       setCookie(headers, {
         name: 'token',
         value: token,
@@ -75,18 +62,18 @@ export const handler: Handlers = {
         // secure: true, // Solo se envía en conexiones HTTPS.
       })
 
-      // Redirección al área de usuario según su rol.
-      headers.set('Location', `/usuario/${usuario.rol}/`)
+      headers.set('Location', `/a/`)
       return new Response(null, {
         status: 303,
         headers,
       })
     } catch (error) {
-      // En caso de error, se redirige al formulario de inicio de sesión con el mensaje de error.
-      const objetoErrores = error as DatosErrorInicioSesion
+      const objetoErrores = error as Error
+      const correo = formulario.get('correo')?.toString().trim() || ''
+
       const params = new URLSearchParams({
-        correo: objetoErrores.correo,
-        error: objetoErrores.error,
+        correo,
+        error: objetoErrores.message,
       })
 
       return new Response(null, {
@@ -128,27 +115,25 @@ export default function Ingresar(req: Request) {
         method='post'
         class='p-4 flex flex-col w-full gap-2 bg-white h-auto sm:w-2/3 lg:w-1/3 xl:w-1/4 shadow-lg z-20 rounded-md'
       >
-        <img src='/icono.jpeg' alt='Logo TaskCore' class='w-12 h-12 self-center' />
+        <img src='/iconoTransparente.png' alt='Logo TaskCore' class='w-12 h-12 self-center' />
         <EncabezadoPrincipal>Inicio de sesión</EncabezadoPrincipal>
-        <CampoIngreso
-          color='sky-500'
+        <Input
           type='email'
+          label='Correo electrónico'
           name='correo'
-          placeholder='Correo'
           required
           autoComplete='off'
           value={correo}
         />
-        <CampoIngreso
-          color='sky-500'
+        <Input
           type='password'
+          label='Contraseña'
           name='contraseña'
-          placeholder='Contraseña'
           required
           autoComplete='off'
         />
 
-        <BotonIngresar color='sky-500'>Iniciar sesión</BotonIngresar>
+        <Boton >Iniciar sesión</Boton>
         <Enlace direccion='/' texto='Regresar al inicio' />
         <Enlace direccion='/registro' texto='Crear una nueva cuenta' />
       </form>
@@ -157,6 +142,3 @@ export default function Ingresar(req: Request) {
     </div>
   )
 }
-
-// value={'chris@gmail.com'}
-// value={'1234abcD@'}

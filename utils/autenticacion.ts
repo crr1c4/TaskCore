@@ -8,7 +8,7 @@ import { JWTPayload, jwtVerify, SignJWT } from 'npm:jose'
 export async function crearToken(contenidoToken: JWTPayload): Promise<string> {
   // Verificación de la variable de entorno.
   if (!Deno.env.has('SECRETO')) {
-    throw 'Error interno del servidor, no se ha configurado la variable de entorno.'
+    throw new Error('Error interno del servidor, no se ha configurado la variable de entorno.')
   }
 
   const secreto = new TextEncoder().encode(Deno.env.get('SECRETO'))
@@ -28,9 +28,8 @@ export async function crearToken(contenidoToken: JWTPayload): Promise<string> {
  */
 export async function verificarToken(token: string): Promise<JWTPayload> {
   // Verificación de la variable de entorno.
-
   if (!Deno.env.has('SECRETO')) {
-    throw 'Error interno del servidor, no se ha configurado la variable de entorno.'
+    throw new Error('Error interno del servidor, no se ha configurado la variable de entorno.')
   }
 
   const secreto = new TextEncoder().encode(Deno.env.get('SECRETO'))

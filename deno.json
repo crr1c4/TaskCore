@@ -15,7 +15,11 @@
     "build": "deno run -A dev.ts build",
     "preview": "deno run -A main.ts",
     "update": "deno run -A -r https://fresh.deno.dev/update .",
-    "test_db": "deno test --allow-all --unstable-kv utils/db/tests/*.ts"
+    "test_db": "deno test --allow-all --unstable-kv utils/db/tests/*.ts",
+    "test:e2e": "deno run -A npm:playwright test",
+    "test:e2e:headed": "deno run -A npm:playwright test --headed",
+    "test:e2e:debug": "deno run -A npm:playwright test --debug",
+    "install:playwright": "deno run -A npm:playwright install chromium"
   },
   "lint": {
     "rules": {
@@ -30,6 +34,8 @@
   ],
   "imports": {
     "$fresh/": "https://deno.land/x/fresh@1.7.3/",
+    "@felix/bcrypt": "jsr:@felix/bcrypt@^1.0.5",
+    "@playwright/test": "npm:@playwright/test@^1.51.1",
     "preact": "https://esm.sh/preact@10.22.0",
     "preact/": "https://esm.sh/preact@10.22.0/",
     "@preact/signals": "https://esm.sh/*@preact/signals@1.2.2",
@@ -37,7 +43,8 @@
     "tailwindcss": "npm:tailwindcss@3.4.1",
     "tailwindcss/": "npm:/tailwindcss@3.4.1/",
     "tailwindcss/plugin": "npm:/tailwindcss@3.4.1/plugin.js",
-    "$std/": "https://deno.land/std@0.216.0/"
+    "$std/": "https://deno.land/std@0.216.0/",
+    "zod": "npm:zod@^3.24.3"
   },
   "compilerOptions": {
     "jsx": "react-jsx",

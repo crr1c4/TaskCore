@@ -1,0 +1,130 @@
+// routes/proyectos/[id]/crear-anuncio.tsx
+import { FreshContext, Handlers } from '$fresh/server.ts'
+import { Input } from '../../../../../components/Input.tsx'
+import NavBar from '../../../../../islands/NavBar.tsx'
+import Usuario from '../../../../../models/Usuario.ts'
+import { IconoAnuncio } from '../../../../../components/Iconos.tsx'
+import { Boton } from '../../../../../components/Boton.tsx'
+import Anuncio from '../../../../../models/Anuncio.ts'
+import Proyecto from '../../../../../models/Proyecto.ts'
+import { ModalError } from '../../../../../islands/Modal.tsx'
+
+interface State {
+  tema: string
+  rol: string
+}
+
+export const handler: Handlers<unknown, State> = {
+  async POST(req, ctx) {
+    try {
+      const formData = await req.formData()
+      const { idProyecto } = ctx.params
+
+      const datosAnuncio = {
+        titulo: formData.get('titulo')?.toString() || '',
+        descripcion: formData.get('descripcion')?.toString() || '',
+      }
+
+      // Validación básica
+      if (!datosAnuncio.titulo || !datosAnuncio.descripcion) {
+        throw new Error('Faltan campos obligatorios.')
+      }
+
+      const anuncio = new Anuncio(datosAnuncio.titulo, datosAnuncio.descripcion, new Date())
+      const proyecto = await Proyecto.obtener(idProyecto)
+      await proyecto.agregarAnuncio(anuncio)
+
+      // TODO: ENVIAR NOTIFIACION A TODOS LOS USUARIOS
+
+      const params = new URLSearchParams({
+        mensaje: 'Anuncio creado correctamente',
+      })
+      return new Response(null, {
+        status: 303,
+        headers: { 'Location': `/a/proyectos/${idProyecto}?${params.toString()}` },
+      })
+    } catch (error) {
+      const objetoErrores = error as Error
+      const params = new URLSearchParams({
+        error: objetoErrores.message,
+      })
+
+      return new Response(null, {
+        status: 303,
+        headers: {
+          'Location': `/a/proyectos/${ctx.params.idProyecto}/crearo?${params.toString()}`,
+        },
+      })
+    }
+  },
+}
+
+export default function CrearAnuncio(ctx: FreshContext<Usuario>) {
+  const error = ctx.url.searchParams.get('error')
+  const { idProyecto } = ctx.params
+
+  return (
+    <div class={`min-h-screen ${ctx.state.tema} dark:bg-gray-900 bg-gray-50`}>
+      {error && <ModalError mensaje={error} />}
+      <NavBar rol={ctx.state.rol} />
+
+      <main class='pt-20 max-w-4xl mx-auto px-4 py-8 sm:px-6 lg:px-8'>
+        <div class='bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 border border-gray-200 dark:border-gray-700'>
+          {/* Encabezado */}
+          <div class='mb-8 text-center'>
+            <div class='mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-blue-100 dark:bg-blue-900/50 mb-4 p-2 dark:text-gray-300'>
+              <IconoAnuncio />
+            </div>
+            <h2 class='text-2xl font-bold text-gray-900 dark:text-white mb-2'>
+              Crear nuevo anuncio
+            </h2>
+            <p class='text-gray-600 dark:text-gray-300'>
+              Completa los detalles del anuncio para el proyecto
+            </p>
+          </div>
+
+          {/* Formulario */}
+          <form method='POST' class='space-y-6'>
+            <input type='hidden' name='proyectoId' value={idProyecto} />
+
+            <Input
+              type='text'
+              label='Título del anuncio'
+              name='titulo'
+              id='titulo'
+              required
+              class='w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white'
+            />
+
+            <div>
+              <label for='descripcion' class='block text-sm font-medium text-white dark:text-gray-300 mb-1'>
+                Descripción
+              </label>
+              <textarea
+                name='descripcion'
+                id='descripcion'
+                rows={6}
+                required
+                maxLength={250}
+                minLength={1}
+                autoComplete='off'
+                class='resize-none w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white'
+              >
+              </textarea>
+            </div>
+
+            <div class='flex justify-end gap-3 pt-4'>
+              <a
+                href={`/a/proyectos/${idProyecto}`}
+                class='px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 flex items-center'
+              >
+                Cancelar
+              </a>
+              <Boton>Publicar Anuncio</Boton>
+            </div>
+          </form>
+        </div>
+      </main>
+    </div>
+  )
+}
