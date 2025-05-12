@@ -105,6 +105,16 @@ export default class Proyecto {
       .commit()
 
     if (!resultado.ok) throw new Error('No se pudo crear el anuncio.')
+
+    this.integrantes.forEach(async (correoIntegrante) =>
+      await this.enviarNotificacion(
+        correoIntegrante,
+        new Notificacion(
+          '📢 Nuevo anuncio en el proyecto',
+          `¡Atención equipo! 👋 Se ha publicado un nuevo anuncio en "${this.nombre}".`,
+        ),
+      )
+    )
   }
 
   public async eliminarAnuncio(idAnuncio: string) {
@@ -143,22 +153,19 @@ export default class Proyecto {
       throw new Error('El correo no puede pertenecer a un administrador.')
     }
 
-    const fechaExpiracion = new Date()
-    fechaExpiracion.setDate(fechaExpiracion.getDate() + 2)
-
-    const notificacion = new Notificacion(
-      '¡Bienvenido/a al equipo!',
-      `¡Hola! 👋 Ahora formas parte del proyecto "${this.nombre}".`,
-      fechaExpiracion,
-    )
-
-    await integrante.agregarNotificacion(notificacion)
-
     this.integrantes.push(correoIntegrante)
 
     const resultado = await DB.atomic()
       .set(['proyectos', this.id], this)
       .commit()
+
+    await this.enviarNotificacion(
+      correoIntegrante,
+      new Notificacion(
+        '¡Bienvenido/a al equipo!',
+        `¡Hola! 👋 Ahora formas parte del proyecto "${this.nombre}".`,
+      ),
+    )
 
     if (!resultado.ok) throw new Error('No se puede actualizar el proyecto con el nuevo integrante.')
   }
@@ -183,6 +190,17 @@ export default class Proyecto {
       .set(['proyectos', this.id], this)
       .commit()
 
+    const fechaExpiracion = new Date()
+    fechaExpiracion.setHours(fechaExpiracion.getHours() + 10)
+
+    await this.enviarNotificacion(
+      correoIntegrante,
+      new Notificacion(
+        'Aviso de despedida.',
+        `Su acceso al proyecto "${this.nombre}" ha sido revocado.`,
+      ),
+    )
+
     if (!resultado.ok) throw new Error('No se pudo eliminar el integrante.')
   }
 
@@ -192,23 +210,19 @@ export default class Proyecto {
       throw new Error('El usuario no está registrado en el proyecto.')
     }
 
-    const fechaExpiracion = new Date()
-    fechaExpiracion.setDate(fechaExpiracion.getDate() + 2)
-
-    const notificacion = new Notificacion(
-      'Nueva tarea asignada',
-      `Se te ha asignado la tarea: ${tarea.nombre}`,
-      fechaExpiracion,
-    )
-
-    const integrante = await Usuario.obtener(tarea.correoResponsable)
-    await integrante.agregarNotificacion(notificacion)
-
     const resultado = await DB.atomic()
       .set(['proyectos', this.id, 'tareas', tarea.id], tarea)
       .commit()
 
     if (!resultado.ok) throw new Error('No se puede guardar la tarea.')
+
+    await this.enviarNotificacion(
+      tarea.correoResponsable,
+      new Notificacion(
+        '📋 Nueva tarea',
+        `Tarea: ${tarea.nombre} del proyecto ${this.nombre}.`,
+      ),
+    )
   }
 
   public async eliminarTarea(idTarea: string) {
@@ -224,7 +238,7 @@ export default class Proyecto {
 
     const consulta = DB.list<Tarea>({ prefix: ['proyectos', this.id, 'tareas'] })
 
-    for await (const tarea of consulta) { 
+    for await (const tarea of consulta) {
       if (tarea.key.length !== 4) continue
       tareas.push(Tarea.deserializar(tarea))
     }
@@ -237,13 +251,12 @@ export default class Proyecto {
 
     const consulta = DB.list<Tarea>({ prefix: ['proyectos', this.id, 'tareas'] })
 
-    for await (const tarea of consulta) { 
+    for await (const tarea of consulta) {
       if (tarea.key.length !== 4) continue
       tareas.push(Tarea.deserializar(tarea))
     }
 
-
-    return tareas.filter(tarea => tarea.correoResponsable === correoIntegrante)
+    return tareas.filter((tarea) => tarea.correoResponsable === correoIntegrante)
   }
 
   public async obtenerTarea(idTarea: string): Promise<Tarea> {
@@ -257,7 +270,7 @@ export default class Proyecto {
    * WARNING: Se debe obtener la tarea y asignar los nuevos datos antes de mandar a llamar a este método.
    */
   public async actualizarTarea(idTarea: string, nuevaTarea: Tarea) {
-    await this.obtenerTarea(idTarea)
+    const tarea = await this.obtenerTarea(idTarea)
 
     if (!this.integrantes.includes(nuevaTarea.correoResponsable)) {
       throw new Error('El usuario no está registrado en el proyecto.')
@@ -268,6 +281,41 @@ export default class Proyecto {
       .commit()
 
     if (!resultado.ok) throw new Error('No se pudo actualizar la tarea.')
+
+    // La tarea se completo
+    if (nuevaTarea.completada && !tarea.completada) {
+      await this.enviarNotificacion(
+        this.administrador,
+        new Notificacion(
+          '✅ Tarea completada',
+          `🎉 ¡La tarea "${tarea.nombre}" del proyecto "${this.nombre}" ha sido marcada como completada!`,
+        ),
+      )
+    } else if (nuevaTarea.correoResponsable !== tarea.correoResponsable) {
+      await this.enviarNotificacion(
+        nuevaTarea.correoResponsable,
+        new Notificacion(
+          '📋 Nueva tarea',
+          `Tarea: ${tarea.nombre} del proyecto ${this.nombre}.`,
+        ),
+      )
+
+      await this.enviarNotificacion(
+        tarea.correoResponsable,
+        new Notificacion(
+          '🔄 Cambio de asignación',
+          `❗ Ya no eres responsable de la tarea "${tarea.nombre}" en el proyecto "${this.nombre}".`,
+        ),
+      )
+    } else {
+      this.enviarNotificacion(
+        nuevaTarea.correoResponsable,
+        new Notificacion(
+          '✏️ Tarea actualizada',
+          `🛠️ La tarea "${tarea.nombre}" del proyecto "${this.nombre}" ha sido modificada. Revisa los nuevos detalles.`,
+        ),
+      )
+    }
   }
 
   /* ******************************* COMENTARIOS ************************************* */
@@ -300,6 +348,15 @@ export default class Proyecto {
       comentarios.push(comentario.value)
     }
 
-    return comentarios
+    return comentarios.sort((a, b) => {
+      const fechaA = new Date(a.fecha).getTime()
+      const fechaB = new Date(b.fecha).getTime()
+      return fechaA - fechaB
+    })
+  }
+
+  public async enviarNotificacion(correoDestinatario: string, notificacion: Notificacion) {
+    const integrante = await Usuario.obtener(correoDestinatario)
+    await integrante.agregarNotificacion(notificacion)
   }
 }

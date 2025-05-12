@@ -175,62 +175,83 @@ export default class Usuario {
     return proyectos
   }
 
-  public async obtenerTareas() {
-    if (this.rol === 'admin') return []
-
-    const tareas: Tarea[] = []
-    const proyectos = await this.obtenerProyectosIntegrante()
-
-    for (const proyecto of proyectos) {
-      const tareasProyecto = await proyecto.obtenerTareasAdministrador()
-      for (const tarea of tareasProyecto) {
-        if (tarea.correoResponsable === this.correo) tareas.push(tarea)
-      }
-    }
-
-    return tareas
-  }
-
-  /********************************************* NOTIFICACIONES ************************************************/
-
-  public async obtenerTareasProximasAVencer() {
-    const tareas = await this.obtenerTareas()
-    const fechaActual = new Date()
-
-    return tareas.filter((tarea) => {
-      const diferenciaMs = tarea.fechaExpiracion.getTime() - fechaActual.getTime()
-      const unaHoraEnMs = 60 * 60 * 1000
-      return diferenciaMs <= unaHoraEnMs && !tarea.haExpirado()
-    }).map((tarea) =>
-      new Notificacion(
-        '¡Tarea por vencer!', // Asunto
-        `La tarea "${tarea.nombre}" vence en menos de 1 hora.`, // Mensaje
-        tarea.fechaExpiracion,
-      )
-    )
-  }
-
-  public async agregarNotificacion(notificacion: Notificacion) {
-    const tiempoRestante = notificacion.fechaExpiracion.getMilliseconds()
-    const resultado = await DB
-      .atomic()
-      .set(['usuarios', this.correo, 'notificaciones', notificacion.id], notificacion, { expireIn: tiempoRestante })
-      .commit()
-
-    if (!resultado.ok) throw new Error('No se pudo crear la notificación.')
-  }
-
-  // public async eliminarNotificacion(idNotificacion: string) {
-  //   await DB.delete(['usuarios', this.correo, 'notificaciones', idNotificacion])
+  // public async obtenerTareas() {
+  //   if (this.rol === 'admin') return []
+  //
+  //   const tareas: Tarea[] = []
+  //   const proyectos = await this.obtenerProyectosIntegrante()
+  //
+  //   for (const proyecto of proyectos) {
+  //     const tareasProyecto = await proyecto.obtenerTareasAdministrador()
+  //     for (const tarea of tareasProyecto) {
+  //       if (tarea.correoResponsable === this.correo) tareas.push(tarea)
+  //     }
+  //   }
+  //
+  //   return tareas
+  // }
+  //
+  // /********************************************* NOTIFICACIONES ************************************************/
+  //
+  // public async obtenerTareasProximasAVencer() {
+  //   const tareas = await this.obtenerTareas()
+  //   const fechaActual = new Date()
+  //
+  //   return tareas.filter((tarea) => {
+  //     const diferenciaMs = tarea.fechaExpiracion.getTime() - fechaActual.getTime()
+  //     const unaHoraEnMs = 60 * 60 * 1000
+  //     return diferenciaMs <= unaHoraEnMs && !tarea.haExpirado()
+  //   }).map((tarea) =>
+  //     new Notificacion(
+  //       '¡Tarea por vencer!', // Asunto
+  //       `La tarea "${tarea.nombre}" vence en menos de 1 hora.`, // Mensaje
+  //       tarea.fechaExpiracion,
+  //     )
+  //   )
   // }
 
-  public async obtenerNotificaciones() {
-    const notificaciones = []
+  public async agregarNotificacion(notificacion: Notificacion) {
+    const ahora = Date.now()
+    const tiempoRestante = notificacion.fechaExpiracion.getTime() - ahora
 
+    // Validación importante
+    if (tiempoRestante <= 0) {
+      throw new Error('La fecha de expiración debe ser en el futuro')
+    }
+
+    const resultado = await DB
+      .atomic()
+      .set(
+        ['usuarios', this.correo, 'notificaciones', notificacion.id],
+        notificacion,
+        { expireIn: tiempoRestante }, // Deno KV espera milisegundos
+      )
+      .commit()
+
+    if (!resultado.ok) {
+      throw new Error('No se pudo crear la notificación')
+    }
+
+    return notificacion
+  }
+
+  public async eliminarNotificaciones() {
     for await (const notificacion of DB.list({ prefix: ['usuarios', this.correo, 'notificaciones'] })) {
+      await DB.delete(notificacion.key)
+    }
+  }
+
+  public async obtenerNotificaciones() {
+    const notificaciones: Notificacion[] = []
+
+    for await (const notificacion of DB.list<Notificacion>({ prefix: ['usuarios', this.correo, 'notificaciones'] })) {
       notificaciones.push(notificacion.value)
     }
 
-    return notificaciones.concat(await this.obtenerTareasProximasAVencer())
+    return notificaciones.sort((a, b) => {
+      const fechaA = new Date(a.fechaCreacion).getTime()
+      const fechaB = new Date(b.fechaCreacion).getTime()
+      return fechaB - fechaA
+    })
   }
 }

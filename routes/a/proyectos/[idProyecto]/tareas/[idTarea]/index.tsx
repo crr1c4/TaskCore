@@ -4,11 +4,17 @@ import Proyecto from '../../../../../../models/Proyecto.ts'
 import NavBar from '../../../../../../islands/NavBar.tsx'
 import { Boton, BotonEmergencia } from '../../../../../../components/Boton.tsx'
 import { IconoEditar, IconoEliminar, IconoPeligro, IconoVolver } from '../../../../../../components/Iconos.tsx'
-import { formatearFecha, formatearFechaYHora, tiempoRestanteDetallado } from '../../../../../../utils/formato.ts'
+import {
+  formatearFecha,
+  formatearFechaYHora,
+  formatearTiempoRestanteDetallado,
+} from '../../../../../../utils/formato.ts'
 import Usuario from '../../../../../../models/Usuario.ts'
 import { AreaTexto } from '../../../../../../components/AreaTexto.tsx'
 import { ModalError, ModalLink } from '../../../../../../islands/Modal.tsx'
 import Comentario from '../../../../../../models/Comentario.ts'
+import Tarea from '../../../../../../models/Tarea.ts'
+import Notificacion from '../../../../../../models/Notificacion.ts'
 
 // En tu archivo de ruta de la tarea (ej: /routes/proyectos/[idProyecto]/tareas/[idTarea].tsx)
 export const handler: Handlers = {
@@ -25,6 +31,15 @@ export const handler: Handlers = {
       const comentario = new Comentario(cuerpo, usuario)
 
       await proyecto.agregarComentario(comentario, idTarea)
+      const tarea = await proyecto.obtenerTarea(idTarea)
+
+      await proyecto.enviarNotificacion(
+        usuario === proyecto.administrador ? tarea.correoResponsable : proyecto.administrador,
+        new Notificacion(
+          '💬 Nuevo comentario',
+          `📝 Se ha añadido un comentario en la tarea "${tarea.nombre}" del proyecto "${proyecto.nombre}".`,
+        ),
+      )
 
       return new Response(null, {
         status: 303,
@@ -50,6 +65,7 @@ export default async function VisualizarTarea(_req: Request, ctx: FreshContext<U
     const proyecto = await Proyecto.obtener(idProyecto)
     const tarea = await proyecto.obtenerTarea(idTarea)
     const comentarios = await proyecto.obtenerComentariosTarea(idTarea)
+    const usuario = await Usuario.obtener(ctx.state.correo)
 
     return (
       <div class={`${ctx.state.tema} min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-200`}>
@@ -148,7 +164,7 @@ export default async function VisualizarTarea(_req: Request, ctx: FreshContext<U
                         tarea.haExpirado() ? 'text-red-600 dark:text-red-400' : 'text-gray-900 dark:text-white'
                       }`}
                     >
-                      {tiempoRestanteDetallado(tarea.fechaExpiracion)}
+                      {formatearTiempoRestanteDetallado(tarea.fechaExpiracion)}
                     </p>
                   </div>
                 </div>
@@ -158,10 +174,10 @@ export default async function VisualizarTarea(_req: Request, ctx: FreshContext<U
                   <div class='flex items-center gap-2 mt-1'>
                     <span class='inline-flex items-center justify-center h-8 w-8 rounded-full bg-gray-200 dark:bg-gray-700'>
                       <span class='text-sm font-medium text-gray-600 dark:text-gray-300'>
-                        {tarea.correoResponsable.charAt(0).toUpperCase()}
+                        {usuario.nombre.charAt(0).toUpperCase()}
                       </span>
                     </span>
-                    <p class='text-gray-900 dark:text-white'>{tarea.correoResponsable}</p>
+                    <p class='text-gray-900 dark:text-white'>{usuario.nombre}</p>
                   </div>
                 </div>
 

@@ -11,4 +11,3 @@ export default class Comentario {
     this.fecha = new Date()
   }
 }
-
