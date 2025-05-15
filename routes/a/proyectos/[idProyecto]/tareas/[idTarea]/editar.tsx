@@ -1,4 +1,10 @@
-// routes/proyectos/[idProyecto]/tareas/[idTarea]/editar.tsx
+/**
+ * Módulo para edición de tareas
+ * @module EditarTarea
+ * @description
+ * Maneja la interfaz y lógica para editar tareas existentes,
+ * incluyendo validación, formulario y manejo de errores.
+ */
 import { FreshContext, Handlers } from '$fresh/server.ts'
 import NavBar from '../../../../../../islands/NavBar.tsx'
 import { Boton } from '../../../../../../components/Boton.tsx'
@@ -9,6 +15,25 @@ import Proyecto from '../../../../../../models/Proyecto.ts'
 import { ModalError } from '../../../../../../islands/Modal.tsx'
 import Usuario from '../../../../../../models/Usuario.ts'
 
+/**
+ * Handler para operaciones CRUD de edición de tareas
+ * @type {Handlers}
+ * @property {Function} POST - Maneja el envío del formulario de edición
+ * @property {Function} GET - Controla el acceso a la página de edición
+ *
+ * @description
+ * Flujo de operación POST:
+ * 1. Recibe y parsea los datos del formulario
+ * 2. Valida campos obligatorios
+ * 3. Crea objeto Date a partir de fecha y hora
+ * 4. Obtiene proyecto y tarea existente
+ * 5. Actualiza solo campos modificados
+ * 6. Persiste cambios y redirige con feedback
+ *
+ * Flujo de operación GET:
+ * 1. Verifica permisos (solo admin)
+ * 2. Renderiza formulario con datos actuales
+ */
 export const handler: Handlers = {
   async POST(req, ctx) {
     const formulario = await req.formData()
@@ -83,6 +108,25 @@ export const handler: Handlers = {
   },
 }
 
+/**
+ * Componente de formulario para edición de tareas
+ * @function EditarTarea
+ * @param {Request} _req - Objeto Request
+ * @param {FreshContext<Usuario>} ctx - Contexto con estado y parámetros
+ * @returns Página completa con:
+ * - Barra de navegación
+ * - Formulario de edición con datos actuales
+ * - Manejo de errores visual
+ * - Diseño responsive y dark mode
+ *
+ * @description
+ * Características principales:
+ * - Formulario pre-llenado con datos actuales
+ * - Validación de campos en frontend y backend
+ * - Selector de responsables actualizado
+ * - Formateo adecuado de fechas
+ * - Feedback visual claro
+ */
 export default async function EditarTarea(_req: Request, ctx: FreshContext<Usuario>) {
   const { idProyecto, idTarea } = ctx.params
   const error = ctx.url.searchParams.get('error') || ''

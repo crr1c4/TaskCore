@@ -8,7 +8,20 @@ import NavBar from '../../../../islands/NavBar.tsx'
 import Proyecto from '../../../../models/Proyecto.ts'
 import Usuario from '../../../../models/Usuario.ts'
 
+/**
+ * Manejadores para las rutas de gestión de equipos de proyectos.
+ * Contiene los métodos para agregar y eliminar miembros del equipo de un proyecto,
+ * así como para mostrar la interfaz de gestión.
+ */
 export const handler: Handlers = {
+  /**
+   * Maneja las solicitudes POST para modificar el equipo del proyecto.
+   * Permite agregar o eliminar miembros según la acción especificada en el formulario.
+   * Redirecciona con mensajes de éxito o error según el resultado de la operación.
+   * @async
+   * @param req - La solicitud HTTP que contiene los datos del formulario
+   * @param ctx - Contexto que incluye los parámetros de la ruta (idProyecto)
+   */
   async POST(req, ctx) {
     const { idProyecto } = ctx.params
     const formData = await req.formData()
@@ -41,6 +54,14 @@ export const handler: Handlers = {
       })
     }
   },
+  /**
+   * Maneja las solicitudes GET para mostrar la página de gestión de equipo.
+   * Verifica que el usuario tenga rol de administrador antes de permitir el acceso.
+   * Si no es admin, redirecciona a la página principal.
+   * @async
+   * @param _req - La solicitud HTTP
+   * @param ctx - Contexto que incluye el estado del usuario (rol)
+   */
   async GET(_req, ctx) {
     // Si el usuario es administrador, se permite continuar con la petición.
     if (ctx.state.rol !== 'admin') return new Response(null, {
@@ -53,6 +74,17 @@ export const handler: Handlers = {
   },
 }
 
+/**
+ * Componente de página para la gestión de equipos de proyectos.
+ * Muestra una interfaz con:
+ * - Formulario para agregar nuevos miembros por correo electrónico
+ * - Listado de miembros actuales con opción para eliminarlos
+ * - Mensajes de estado (éxito/error) mediante modales
+ * - Diseño responsive adaptado a temas claro/oscuro
+ * @async
+ * @param _req - La solicitud HTTP
+ * @param ctx - Contexto que incluye parámetros de ruta (idProyecto) y estado (tema)
+ */
 export default async function GestionEquipo(_req: Request, ctx: FreshContext<Usuario>) {
   const { idProyecto } = ctx.params
   const proyecto = await Proyecto.obtener(idProyecto)

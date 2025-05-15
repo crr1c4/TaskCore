@@ -10,10 +10,35 @@ import {
 import { useSignal } from '@preact/signals'
 import { Rol } from '../models/Usuario.ts'
 
+/**
+ * Propiedades para el componente NavBar
+ * @interface Props
+ * @property {Rol} rol - Rol del usuario actual (admin o miembro)
+ */
 interface Props {
   rol: Rol
 }
 
+/**
+ * Barra de navegación superior de la aplicación
+ * @component
+ * @param {Props} props - Propiedades del componente
+ * @returns Barra de navegación con:
+ * - Logo y nombre de la aplicación
+ * - Indicador de rol (para administradores)
+ * - Menú de acciones principales
+ * - Menú desplegable de usuario
+ * - Modo oscuro/claro integrado
+ * @description
+ * Componente que renderiza la barra superior de navegación que:
+ * - Muestra opciones según el rol del usuario
+ * - Incluye menú desplegable con iconos
+ * - Tiene efecto de desenfoque en el fondo
+ * - Es completamente responsive
+ * - Maneja su propio estado para el menú desplegable
+ * @example
+ * <NavBar rol="admin" />
+ */
 export default function NavBar({ rol }: Props) {
   const mostrarMenu = useSignal(false)
 

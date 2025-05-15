@@ -3,14 +3,21 @@ import { Handlers } from '$fresh/server.ts'
 import Usuario from '../../../models/Usuario.ts'
 
 /**
- * Manejador de la autenticación de usuarios mediante formulario.
- * @type {Handlers} Manejador de solicitudes HTTP.
+ * Manejador HTTP para el cambio de contraseña de un usuario autenticado.
+ *
+ * Este controlador procesa solicitudes POST provenientes de un formulario de cambio de contraseña.
+ * Valida los datos, verifica la contraseña actual, y si todo es correcto, actualiza la nueva contraseña del usuario.
+ * Redirige a una página de éxito o error con el mensaje correspondiente.
+ *
+ * @type {Handlers}
  */
 export const handler: Handlers = {
   /**
-   * Maneja la solicitud POST para autenticar un usuario y generar un token JWT.
-   * @param {Request} req - La solicitud HTTP entrante.
-   * @param {FreshContext} _ctx - El contexto de Fresh (no se usa en este caso).
+   * Maneja la solicitud POST para actualizar la contraseña del usuario.
+   *
+   * @param {Request} req - La solicitud HTTP entrante con los datos del formulario.
+   * @param {FreshContext} _ctx - Contexto del servidor (no se utiliza en esta función).
+   * @returns Redirección HTTP a la página correspondiente con mensaje de éxito o error.
    */
   async POST(req: Request, _ctx: FreshContext) {
     try {

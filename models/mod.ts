@@ -2,10 +2,15 @@ import Proyecto from '../models/Proyecto.ts'
 import Notificacion from '../models/Notificacion.ts'
 
 export const DB = await Deno.openKv()
+
 /**
+ * Elimina todos los registros de la base de datos actual.
+ * Uso restringido: esta acción es irreversible.
+ * 
  * @author Christian Venegas
- *  WARNING: Esta función elimina todos los registros de la base de datos.
+ * @returns Promesa que se resuelve al finalizar la eliminación.
  */
+
 export async function eliminarBaseDatos() {
   const entries = DB.list({ prefix: [] })
   for await (const registro of entries) {
@@ -15,8 +20,12 @@ export async function eliminarBaseDatos() {
 }
 
 /**
- * Verifica tareas con menos de 1 hora para expirar
+ * Revisa todas las tareas de la base de datos y envía una notificación 
+ * a los responsables si alguna está por vencer en menos de una hora.
+ * 
+ * @returns Promesa que se resuelve tras completar la verificación.
  */
+
 export async function verificarTareasProximas() {
   try {
     const proyectos = await obtenerTodosLosProyectos()
@@ -34,7 +43,7 @@ export async function verificarTareasProximas() {
             tarea.correoResponsable,
             new Notificacion(
               '⏰ Tarea por expirar',
-              `La tarea "${tarea.nombre}" en el proyecto "${proyecto.nombre}" vence en menos de 12 horas.`,
+              `La tarea "${tarea.nombre}" en el proyecto "${proyecto.nombre}" vence en menos de una hora.`,
             ),
           )
         }
@@ -46,7 +55,10 @@ export async function verificarTareasProximas() {
 }
 
 /**
- * Verifica tareas ya vencidas
+ * Revisa todas las tareas y detecta cuáles han vencido. 
+ * Envía notificaciones tanto al responsable como al administrador del proyecto.
+ * 
+ * @returns Promesa que se resuelve tras completar la verificación.
  */
 export async function verificarTareasVencidas() {
   try {
@@ -70,7 +82,7 @@ export async function verificarTareasVencidas() {
           await proyecto.enviarNotificacion(
             proyecto.administrador,
             new Notificacion(
-              '⚠️T area vencida',
+              '⚠️  Tarea vencida',
               `La tarea "${tarea.nombre}" en el proyecto "${proyecto.nombre}" ha vencido.`,
               'advertencia'
             ),
@@ -83,7 +95,10 @@ export async function verificarTareasVencidas() {
   }
 }
 
-// Helper functions
+/**
+ * Recupera y deserializa todos los proyectos almacenados en la base de datos.
+ * @returns Arreglo de instancias de Proyecto obtenidas de la base de datos.
+ */
 async function obtenerTodosLosProyectos(): Promise<Proyecto[]> {
   const proyectos: Proyecto[] = []
   const consulta = DB.list<Proyecto>({ prefix: ['proyectos'] })

@@ -1,3 +1,10 @@
+/**
+ * Módulo para eliminación de tareas
+ * @module EliminarTarea
+ * @description
+ * Maneja la interfaz de confirmación y lógica para eliminar tareas permanentemente,
+ * incluyendo validación de permisos y manejo de errores.
+ */
 import { FreshContext, Handlers } from '$fresh/server.ts'
 import NavBar from '../../../../../../islands/NavBar.tsx'
 import { ModalError } from '../../../../../../islands/Modal.tsx'
@@ -5,6 +12,28 @@ import Proyecto from '../../../../../../models/Proyecto.ts'
 import Usuario from '../../../../../../models/Usuario.ts'
 import { Boton, BotonEmergencia } from '../../../../../../components/Boton.tsx'
 
+/**
+ * Handler para operaciones de eliminación de tareas
+ * @type {Handlers<Usuario>}
+ * @property {Function} POST - Maneja la confirmación de eliminación
+ * @property {Function} GET - Controla el acceso a la página de confirmación
+ *
+ * @description
+ * Flujo de operación POST:
+ * 1. Extrae IDs de proyecto y tarea de los parámetros
+ * 2. Obtiene el proyecto desde la base de datos
+ * 3. Elimina la tarea especificada
+ * 4. Redirige al listado de proyectos con feedback
+ *
+ * Flujo de operación GET:
+ * 1. Verifica permisos (solo admin)
+ * 2. Renderiza página de confirmación
+ *
+ * Seguridad:
+ * - Acceso restringido a administradores
+ * - Validación implícita mediante modelo Proyecto
+ * - Manejo seguro de errores
+ */
 export const handler: Handlers<Usuario> = {
   async POST(_req, ctx) {
     const { idProyecto, idTarea } = ctx.params
@@ -13,7 +42,7 @@ export const handler: Handlers<Usuario> = {
       await proyecto.eliminarTarea(idTarea)
 
       const params = new URLSearchParams({
-        mensaje: 'Tarea eliminada correctamente.' 
+        mensaje: 'Tarea eliminada correctamente.',
       })
 
       return new Response(null, {
@@ -24,9 +53,8 @@ export const handler: Handlers<Usuario> = {
       const e = error as Error
 
       const params = new URLSearchParams({
-        error: e.message
+        error: e.message,
       })
-
 
       return new Response(null, {
         status: 303,
@@ -38,16 +66,39 @@ export const handler: Handlers<Usuario> = {
   },
   async GET(_req, ctx) {
     // Si el usuario es administrador, se permite continuar con la petición.
-    if (ctx.state.rol !== 'admin') return new Response(null, {
-      status: 301, // Redirección permanente
-      headers: { Location: '/a/' },
-    })
+    if (ctx.state.rol !== 'admin') {
+      return new Response(null, {
+        status: 301, // Redirección permanente
+        headers: { Location: '/a/' },
+      })
+    }
 
     const respuesta = await ctx.render()
     return respuesta
   },
 }
 
+/**
+ * Componente de confirmación para eliminación de tareas
+ * @function EliminarTarea
+ * @param {Request} _req - Objeto Request
+ * @param {FreshContext<Usuario>} ctx - Contexto con estado y parámetros
+ * @returns Página de confirmación con:
+ * - Barra de navegación
+ * - Modal de errores (si aplica)
+ * - Tarjeta de confirmación con:
+ *   * Icono de advertencia
+ *   * Nombre de la tarea
+ *   * Mensaje explicativo
+ *   * Botones de acción
+ *
+ * @description
+ * Características principales:
+ * - Diseño claro y enfático para acción destructiva
+ * - Integración con dark mode
+ * - Feedback visual de errores
+ * - Doble confirmación mediante UI
+ */
 export default async function EliminarTarea(_req: Request, ctx: FreshContext<Usuario>) {
   const { idProyecto, idTarea } = ctx.params
   const error = ctx.url.searchParams.get('error')

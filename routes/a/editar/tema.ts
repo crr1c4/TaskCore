@@ -1,22 +1,31 @@
 import { FreshContext } from '$fresh/server.ts'
 import { Handlers } from '$fresh/server.ts'
 import Usuario from '../../../models/Usuario.ts'
-// import { Usuario } from '../../../components/Iconos.tsx'
 import { crearToken } from '../../../utils/autenticacion.ts'
-
-// import { editarUsuario, obtenerUsuario } from '../../../utils/db/modelos/usuario.ts'
 import { setCookie } from 'jsr:@std/http/cookie'
 import { deleteCookie } from 'jsr:@std/http/cookie'
+
 /**
- * Manejador de la autenticación de usuarios mediante formulario.
- * @type {Handlers} Manejador de solicitudes HTTP.
+ * Manejador HTTP para cambiar el tema de visualización del usuario.
+ * 
+ * Procesa una solicitud POST que actualiza el tema preferido del usuario en la base de datos.
+ * Luego genera un nuevo token JWT con la configuración actualizada y lo guarda en una cookie segura.
+ * 
+ * @type {Handlers}
  */
+
 export const handler: Handlers = {
-  /**
-   * Maneja la solicitud POST para autenticar un usuario y generar un token JWT.
-   * @param {Request} req - La solicitud HTTP entrante.
-   * @param {FreshContext} _ctx - El contexto de Fresh (no se usa en este caso).
-   */
+/**
+ * Maneja la solicitud POST para actualizar el tema del usuario.
+ * 
+ * Extrae el correo del formulario, cambia el tema en la base de datos,
+ * genera un nuevo token con la nueva preferencia y actualiza la cookie del cliente.
+ * 
+ * @param {Request} req - La solicitud HTTP entrante.
+ * @param {FreshContext} _ctx - Contexto de ejecución del servidor (no se utiliza).
+ * @returns Redirección HTTP con mensaje de éxito o error.
+ */
+
   async POST(req: Request, _ctx: FreshContext) {
     try {
       const formulario = await req.formData()

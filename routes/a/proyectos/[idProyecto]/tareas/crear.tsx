@@ -1,4 +1,10 @@
-// routes/proyectos/[idProyecto]/tareas/nueva.tsx
+/**
+ * Módulo para creación de nuevas tareas
+ * @module NuevaTarea
+ * @description
+ * Maneja la interfaz y lógica para crear nuevas tareas en proyectos,
+ * incluyendo validación de datos, formulario y manejo de errores.
+ */
 import { FreshContext, Handlers } from '$fresh/server.ts'
 import Tarea from '../../../../../models/Tarea.ts'
 import NavBar from '../../../../../islands/NavBar.tsx'
@@ -10,6 +16,24 @@ import { AreaTexto } from '../../../../../components/AreaTexto.tsx'
 import Proyecto from '../../../../../models/Proyecto.ts'
 import { ModalError } from '../../../../../islands/Modal.tsx'
 
+/**
+ * Handler para operaciones CRUD de creación de tareas
+ * @type {Handlers}
+ * @property {Function} POST - Maneja el envío del formulario de creación
+ * @property {Function} GET - Controla el acceso a la página de creación
+ *
+ * @description
+ * Flujo de operación POST:
+ * 1. Recibe y parsea los datos del formulario
+ * 2. Valida campos obligatorios y formato de fecha/hora
+ * 3. Crea instancia de Tarea
+ * 4. Asocia la tarea al proyecto
+ * 5. Redirige con feedback de éxito/error
+ *
+ * Flujo de operación GET:
+ * 1. Verifica permisos (solo admin)
+ * 2. Renderiza formulario con valores por defecto
+ */
 export const handler: Handlers = {
   async POST(req, ctx) {
     const formulario = await req.formData()
@@ -82,6 +106,28 @@ export const handler: Handlers = {
   },
 }
 
+/**
+ * Componente de formulario para creación de tareas
+ * @function NuevaTarea
+ * @param {Request} _req - Objeto Request
+ * @param {FreshContext<Usuario>} ctx - Contexto con estado y parámetros
+ * @returns Página completa con:
+ * - Barra de navegación
+ * - Formulario de creación con:
+ *   * Campos para nombre, descripción
+ *   * Selector de fecha/hora límite
+ *   * Asignación de responsable
+ * - Manejo de errores visual
+ * - Diseño responsive y dark mode
+ *
+ * @description
+ * Características principales:
+ * - Formulario validado en frontend y backend
+ * - Selector de responsables actualizado
+ * - Fecha mínima establecida a hoy
+ * - Persistencia de datos en errores
+ * - Feedback visual claro
+ */
 export default async function NuevaTarea(_req: Request, ctx: FreshContext<Usuario>) {
   // Obtener fecha actual en formato YYYY-MM-DD
   const hoy = new Date()

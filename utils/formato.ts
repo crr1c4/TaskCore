@@ -1,3 +1,10 @@
+/**
+ * Formatea una fecha en formato legible para México.
+ * Ejemplo: "15 de octubre de 2023"
+ * 
+ * @param {string|Date} fecha - Fecha a formatear (puede ser string o objeto Date)
+ * @returns {string} Fecha formateada en formato largo
+ */
 export function formatearFecha(fecha: string | Date): string {
   return new Date(fecha).toLocaleDateString('es-MX', {
     day: 'numeric',
@@ -6,6 +13,13 @@ export function formatearFecha(fecha: string | Date): string {
   })
 }
 
+/**
+ * Formatea fecha y hora en formato legible para México.
+ * Ejemplo: "15 de octubre de 2023, 08:30 PM"
+ * 
+ * @param {string|Date} fecha - Fecha a formatear (puede ser string o objeto Date)
+ * @returns {string} Fecha y hora formateadas en formato largo
+ */
 export function formatearFechaYHora(fecha: string | Date): string {
   return new Date(fecha).toLocaleString('es-MX', {
     day: 'numeric',
@@ -17,7 +31,16 @@ export function formatearFechaYHora(fecha: string | Date): string {
   })
 }
 
-// Función existente mejorada
+/**
+ * Calcula y formatea el tiempo restante hasta una fecha futura con detalle.
+ * Devuelve el tiempo en días, horas y minutos cuando corresponde.
+ * 
+ * @param {string|Date} fechaFutura - Fecha objetivo para calcular el tiempo restante
+ * @returns {string} Tiempo restante formateado o "Vencido" si ya pasó la fecha
+ * @example 
+ * // Devuelve "2 días, 5 horas, 30 minutos"
+ * formatearTiempoRestanteDetallado(nuevaFechaFutura)
+ */
 export function formatearTiempoRestanteDetallado(fechaFutura: string | Date): string {
   const ahora = new Date()
   const fecha = new Date(fechaFutura)
@@ -37,6 +60,16 @@ export function formatearTiempoRestanteDetallado(fechaFutura: string | Date): st
   return partes.join(', ') || 'Menos de 1 minuto'
 }
 
+/**
+ * Formatea el tiempo restante de manera concisa (horas o días).
+ * Versión simplificada para interfaces donde el espacio es limitado.
+ * 
+ * @param {Date} fecha - Fecha objetivo para calcular el tiempo restante
+ * @returns {string} Tiempo restante en formato compacto o "Expirado"
+ * @example
+ * // Devuelve "Expira en 5 h" (para menos de 24 horas)
+ * // Devuelve "Expira en 3 días" (para más de 24 horas)
+ */
 export function formatearTiempoRestante(fecha: Date): string {
   const ahora = new Date()
   const diff = fecha.getTime() - ahora.getTime()

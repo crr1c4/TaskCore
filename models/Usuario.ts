@@ -7,7 +7,6 @@ import { hash as encriptar, verify as verificarContraseñaHasheada } from '@feli
 import { DB } from './mod.ts'
 import { z as esquema } from 'zod'
 import Proyecto from './Proyecto.ts'
-import Tarea from './Tarea.ts'
 import Notificacion from './Notificacion.ts'
 
 /**
@@ -42,6 +41,60 @@ const esquemaCorreo = esquema.string().email()
 export type Rol = 'admin' | 'miembro'
 export type Tema = 'dark' | ''
 
+/**
+ * Clase que representa un Usuario en el sistema
+ * @class Usuario
+ * @property {string} nombre - Nombre del usuario
+ * @property {string} correo - Correo electrónico (identificador único)
+ * @property {string} contraseña - Contraseña hasheada
+ * @property {Rol} rol - Rol del usuario (admin/miembro)
+ * @property {Tema} tema - Preferencia de tema visual (dark/light)
+ * 
+ * @description
+ * Modelo principal para gestión de usuarios que incluye:
+ * - Validación robusta de datos (correo, contraseña, nombre)
+ * - Encriptación segura de contraseñas (bcrypt)
+ * - Gestión de preferencias de usuario
+ * - Sistema de notificaciones
+ * - Gestión de proyectos asociados
+ * - Persistencia en base de datos (Deno KV)
+ * 
+ * @example
+ * // Crear nuevo usuario
+ * const usuario = new Usuario(
+ *   'Nombre Usuario',
+ *   'correo@ejemplo.com',
+ *   'ContraseñaSegura123!',
+ *   'miembro'
+ * );
+ * await usuario.guardar();
+ * 
+ * @example
+ * // Autenticar usuario
+ * const usuario = await Usuario.obtener('correo@ejemplo.com');
+ * const valido = await usuario.verificarContraseña('contraseña');
+ *
+ * Métodos principales:
+ * @method guardar - Guarda usuario nuevo con validaciones
+ * @method verificarContraseña - Compara contraseña con hash
+ * @method cambiarNombre - Actualiza nombre con validación
+ * @method cambiarTema - Alterna entre temas dark/light
+ * @method cambiarContraseña - Cambia contraseña con validación
+ * 
+ * Gestión de proyectos:
+ * @method obtenerProyectos - Obtiene proyectos según rol
+ * @private obtenerProyectosAdministrador - Proyectos como admin
+ * @private obtenerProyectosIntegrante - Proyectos como miembro
+ * 
+ * Gestión de notificaciones:
+ * @method agregarNotificacion - Añade notificación con expiración
+ * @method eliminarNotificaciones - Elimina todas las notificaciones
+ * @method obtenerNotificaciones - Obtiene notificaciones ordenadas
+ * 
+ * Métodos estáticos:
+ * @static obtener - Obtiene usuario por correo
+ * @private static deserializar - Reconstruye instancia desde DB
+ */
 export default class Usuario {
   public nombre: string
   public readonly correo: string
@@ -174,41 +227,6 @@ export default class Usuario {
 
     return proyectos
   }
-
-  // public async obtenerTareas() {
-  //   if (this.rol === 'admin') return []
-  //
-  //   const tareas: Tarea[] = []
-  //   const proyectos = await this.obtenerProyectosIntegrante()
-  //
-  //   for (const proyecto of proyectos) {
-  //     const tareasProyecto = await proyecto.obtenerTareasAdministrador()
-  //     for (const tarea of tareasProyecto) {
-  //       if (tarea.correoResponsable === this.correo) tareas.push(tarea)
-  //     }
-  //   }
-  //
-  //   return tareas
-  // }
-  //
-  // /********************************************* NOTIFICACIONES ************************************************/
-  //
-  // public async obtenerTareasProximasAVencer() {
-  //   const tareas = await this.obtenerTareas()
-  //   const fechaActual = new Date()
-  //
-  //   return tareas.filter((tarea) => {
-  //     const diferenciaMs = tarea.fechaExpiracion.getTime() - fechaActual.getTime()
-  //     const unaHoraEnMs = 60 * 60 * 1000
-  //     return diferenciaMs <= unaHoraEnMs && !tarea.haExpirado()
-  //   }).map((tarea) =>
-  //     new Notificacion(
-  //       '¡Tarea por vencer!', // Asunto
-  //       `La tarea "${tarea.nombre}" vence en menos de 1 hora.`, // Mensaje
-  //       tarea.fechaExpiracion,
-  //     )
-  //   )
-  // }
 
   public async agregarNotificacion(notificacion: Notificacion) {
     const ahora = Date.now()

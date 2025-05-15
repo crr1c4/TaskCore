@@ -2,11 +2,31 @@ import { IconoEquipo, IconoTarea } from '../Iconos.tsx'
 import Proyecto from '../../models/Proyecto.ts'
 import { Rol } from '../../models/Usuario.ts'
 
+/**
+ * Interfaz que define las propiedades del componente ComponenteProyecto
+ * @interface Props
+ * @property {Proyecto} proyecto - Objeto proyecto que contiene los datos a mostrar
+ * @property {Rol} rol - Rol del usuario actual (determina el estilo y la información mostrada)
+ * @property {number} numeroTareas - Cantidad de tareas asociadas al proyecto
+ */
 interface Props {
   proyecto: Proyecto
   rol: Rol
   numeroTareas: number
 }
+
+/**
+ * Componente que muestra una tarjeta resumen de un proyecto con información básica
+ * @component
+ * @param {Props} props - Propiedades del componente
+ * @param {Proyecto} props.proyecto - Datos del proyecto a mostrar
+ * @param {Rol} props.rol - Rol del usuario actual (admin o miembro)
+ * @param {number} props.numeroTareas - Número total de tareas del proyecto
+ * @returns Tarjeta interactiva con información del proyecto, incluyendo:
+ *                       - Nombre del proyecto (header con color según rol)
+ *                       - Descripción (recortada si es muy larga)
+ *                       - Estadísticas de miembros y tareas (solo visible para admins)
+ */
 export default function ComponenteProyecto({ rol, proyecto, numeroTareas }: Props) {
   return (
     <a
@@ -53,4 +73,4 @@ export default function ComponenteProyecto({ rol, proyecto, numeroTareas }: Prop
       </div>
     </a>
   )
-} // }
+}

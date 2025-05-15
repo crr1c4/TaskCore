@@ -1,14 +1,42 @@
 import { useSignal } from '@preact/signals'
 
+/**
+ * Propiedades base para componentes de modal
+ * @interface Props
+ * @property {string} mensaje - Texto principal a mostrar en el modal
+ */
 interface Props {
   mensaje: string
 }
 
+/**
+ * Propiedades extendidas para modal con enlace
+ * @interface LinkProps
+ * @extends {Props}
+ * @property {string} enlace - URL para el botón de acción
+ * @property {string} textoEnlace - Texto para el botón de acción
+ */
 interface LinkProps extends Props {
   enlace: string
   textoEnlace: string
 }
 
+/**
+ * Modal de error con diseño estilizado
+ * @component
+ * @param {Props} props - Propiedades del componente
+ * @returns Modal flotante centrado con:
+ * - Icono de error (triángulo rojo)
+ * - Mensaje personalizado
+ * - Botón para cerrar
+ * - Fondo oscuro semitransparente
+ * @description
+ * Componente modal para mostrar errores que:
+ * - Se auto-gestiona su estado visible/oculto
+ * - Incluye accesibilidad (role="alert")
+ * - Soporta modo oscuro/claro
+ * - Tiene animación de cierre suave
+ */
 export function ModalError({ mensaje }: Props) {
   const mostrar = useSignal(true)
 
@@ -64,6 +92,23 @@ export function ModalError({ mensaje }: Props) {
   )
 }
 
+/**
+ * Modal informativo con enlace de acción
+ * @component
+ * @param {LinkProps} props - Propiedades extendidas del componente
+ * @returns Modal flotante centrado con:
+ * - Icono informativo (verde)
+ * - Mensaje personalizado
+ * - Botón de acción con enlace
+ * - Botón para cerrar
+ * - Fondo oscuro semitransparente
+ * @description
+ * Componente modal para acciones que:
+ * - Permite incluir un enlace/acción principal
+ * - Maneja su propio estado de visibilidad
+ * - Diseño responsive para móviles
+ * - Integración perfecta con dark mode
+ */
 export function ModalLink({ mensaje, enlace, textoEnlace }: LinkProps) {
   const mostrar = useSignal(true)
 

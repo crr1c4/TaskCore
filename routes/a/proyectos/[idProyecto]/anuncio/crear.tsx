@@ -1,4 +1,10 @@
-// routes/proyectos/[id]/crear-anuncio.tsx
+/**
+ * Módulo para creación de anuncios en proyectos
+ * @module CrearAnuncio
+ * @description
+ * Maneja la interfaz y lógica para crear nuevos anuncios en proyectos,
+ * incluyendo validación, formulario y manejo de errores.
+ */
 import { FreshContext, Handlers } from '$fresh/server.ts'
 import { Input } from '../../../../../components/Input.tsx'
 import NavBar from '../../../../../islands/NavBar.tsx'
@@ -14,6 +20,23 @@ interface State {
   rol: string
 }
 
+/**
+ * Handler para creación de anuncios
+ * @type {Handlers}
+ * @property {Function} POST - Maneja el envío del formulario
+ * @description
+ * Flujo de operación:
+ * 1. Recibe y parsea los datos del formulario
+ * 2. Valida campos obligatorios
+ * 3. Crea instancia de Anuncio
+ * 4. Asocia el anuncio al proyecto
+ * 5. Redirige con feedback
+ *
+ * Manejo de errores:
+ * - Validación básica de campos
+ * - Captura de errores en operaciones async
+ * - Redirección con mensajes de error
+ */
 export const handler: Handlers<unknown, State> = {
   async POST(req, ctx) {
     try {
@@ -25,7 +48,6 @@ export const handler: Handlers<unknown, State> = {
         descripcion: formData.get('descripcion')?.toString() || '',
       }
 
-      // Validación básica
       if (!datosAnuncio.titulo || !datosAnuncio.descripcion) {
         throw new Error('Faltan campos obligatorios.')
       }
@@ -33,8 +55,6 @@ export const handler: Handlers<unknown, State> = {
       const anuncio = new Anuncio(datosAnuncio.titulo, datosAnuncio.descripcion, new Date())
       const proyecto = await Proyecto.obtener(idProyecto)
       await proyecto.agregarAnuncio(anuncio)
-
-      // TODO: ENVIAR NOTIFIACION A TODOS LOS USUARIOS
 
       const params = new URLSearchParams({
         mensaje: 'Anuncio creado correctamente',
@@ -59,6 +79,49 @@ export const handler: Handlers<unknown, State> = {
   },
 }
 
+/**
+ * Componente de formulario para creación de anuncios
+ * @function CrearAnuncio
+ * @param {FreshContext<Usuario>} ctx - Contexto con estado y parámetros
+ * @returns Página completa con:
+ * - Barra de navegación
+ * - Formulario de creación
+ * - Manejo de errores visual
+ * - Diseño responsive
+ *
+ * @description
+ * Características principales:
+ * - Formulario accesible y validado
+ * - Integración con dark mode
+ * - Feedback visual de errores
+ * - Diseño consistente con el sistema
+ *
+ * Estructura del componente:
+ *
+ * 1. NavBar - Barra de navegación superior
+ * 2. ModalError - Para mostrar errores (si existen)
+ * 3. Contenedor principal:
+ *    - Header con icono y título
+ *    - Formulario con:
+ *      * Campo de título (Input component)
+ *      * Área de descripción (textarea)
+ *      * Botones de acción
+ *
+ * Elementos del formulario:
+ * @field titulo - Input de texto (requerido)
+ * @field descripcion - Textarea (requerido, max 250 chars)
+ * @hidden proyectoId - ID del proyecto actual
+ *
+ * Validaciones:
+ * - Frontend: required, minLength, maxLength
+ * - Backend: validación de campos vacíos
+ *
+ * Diseño responsive:
+ * - Padding adaptable
+ * - Ancho máximo controlado (max-w-4xl)
+ * - Grid flexible
+ * - Tipografía responsive
+ */
 export default function CrearAnuncio(ctx: FreshContext<Usuario>) {
   const error = ctx.url.searchParams.get('error')
   const { idProyecto } = ctx.params

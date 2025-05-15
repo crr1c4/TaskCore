@@ -6,6 +6,16 @@ import NavBar from '../../../islands/NavBar.tsx'
 import Proyecto from '../../../models/Proyecto.ts'
 import Usuario from '../../../models/Usuario.ts'
 
+/**
+ * Handler HTTP para la creación de un nuevo proyecto.
+ *
+ * Procesa solicitudes POST, valida los datos del formulario y guarda un nuevo proyecto.
+ * Redirige a una página de éxito o error según el resultado.
+ *
+ * @param {Request} req - La solicitud entrante con datos del formulario.
+ * @param {FreshContext} _ctx - Contexto de Fresh (no utilizado).
+ * @returns {Promise<Response>} Redirección HTTP con estado 303.
+ */
 export const handler: Handlers = {
   async POST(req, _ctx) {
     const formulario = await req.formData()
@@ -47,6 +57,15 @@ export const handler: Handlers = {
   },
 }
 
+/**
+ * Componente de la interfaz para crear un nuevo proyecto.
+ *
+ * Muestra un formulario con campos básicos y permite al usuario administrador enviar la información.
+ * En caso de error, despliega un modal con el mensaje correspondiente.
+ *
+ * @param {FreshContext<Usuario>} ctx - Contexto que incluye estado y parámetros de URL.
+ * @returns Estructura visual del formulario de creación de proyectos.
+ */
 export default function PaginaCrearProyecto(ctx: FreshContext<Usuario>) {
   const error = ctx.url.searchParams.get('error')
 

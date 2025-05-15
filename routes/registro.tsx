@@ -8,7 +8,20 @@ import Fondo from '../components/Fondo.tsx'
 import Enlace from '../components/Enlace.tsx'
 import Footer from '../components/Footer.tsx'
 
+/**
+ * Manejador de rutas para el proceso de registro de usuarios.
+ * Controla la creación de nuevas cuentas de usuario con validación básica.
+ */
 export const handler: Handlers = {
+  /**
+   * Procesa el formulario de registro y crea un nuevo usuario.
+   * Valida los campos requeridos y maneja dos flujos:
+   * - Registro exitoso: Redirige con mensaje de confirmación
+   * - Error en registro: Redirige conservando los datos ingresados
+   *
+   * @param {Request} req - Solicitud HTTP con los datos del formulario
+   * @returns Redirección con estado según resultado del registro
+   */
   async POST(req: Request) {
     const formulario = await req.formData()
     try {
@@ -55,12 +68,30 @@ export const handler: Handlers = {
   },
 }
 
+/**
+ * Página de registro para nuevos usuarios.
+ *
+ * Características principales:
+ * - Formulario con validación de campos obligatorios
+ * - Opción para registrarse como administrador
+ * - Manejo de errores con modal
+ * - Auto-relleno de datos en caso de error previo
+ * - Mensaje de confirmación post-registro
+ * - Diseño responsive con fondo animado
+ *
+ * @param {Request} req - Objeto Request para extraer parámetros de URL
+ * @returns Componente completo con:
+ *   - Formulario de registro
+ *   - Modales para errores/éxitos
+ *   - Enlaces de navegación
+ *   - Componente Footer
+ */
 export default function Registro(req: Request) {
   const url = new URL(req.url)
   const error = url.searchParams.get('error')?.replaceAll('"', '') || ''
   const nombre = url.searchParams.get('nombre')?.replaceAll('"', '') || ''
   const correo = url.searchParams.get('correo')?.replaceAll('"', '') || ''
-  
+
   const rol = url.searchParams.get('rol') || ''
   const mensaje = url.searchParams.get('mensaje')?.replaceAll('"', '') || ''
 

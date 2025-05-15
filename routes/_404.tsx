@@ -1,6 +1,34 @@
 import { Head } from '$fresh/runtime.ts'
 import { Boton } from '../components/Boton.tsx'
 
+/**
+ * Página de error 404 personalizada
+ * @function Error404
+ * @returns Página de error 404 con:
+ * - Diseño visual atractivo
+ * - Gradiente de fondo suave
+ * - Logo de la aplicación
+ * - Ilustración SVG temática
+ * - Mensaje claro y botón de acción
+ * 
+ * @description
+ * Componente que muestra una página de error 404 personalizada con:
+ * - Branding consistente con la aplicación
+ * - Mensaje amigable al usuario
+ * - Acción clara para regresar al inicio
+ * - Diseño responsive y accesible
+ * 
+ * Características:
+ * - Gradiente visual from-green-100 to-indigo-100
+ * - Ilustración SVG inline (cara de decepción)
+ * - Tipografía clara y jerarquía visual
+ * - Botón de acción destacado
+ * - Meta-título para SEO
+ * 
+ * @example
+ * // Se muestra automáticamente al navegar a rutas no existentes
+ * // No requiere uso manual
+ */
 export default function Error404() {
   return (
     <>

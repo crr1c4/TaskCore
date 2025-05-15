@@ -1,4 +1,10 @@
-// routes/proyectos/[idProyecto]/editar.tsx
+/**
+ * Módulo para edición de proyectos
+ * @module EditarProyecto
+ * @description
+ * Maneja la interfaz y lógica para editar proyectos existentes,
+ * incluyendo validación de datos, formulario y manejo de errores.
+ */
 import { FreshContext, Handlers } from '$fresh/server.ts'
 import { AreaTexto } from '../../../../components/AreaTexto.tsx'
 import { Boton } from '../../../../components/Boton.tsx'
@@ -10,6 +16,24 @@ import Proyecto from '../../../../models/Proyecto.ts'
 import Usuario from '../../../../models/Usuario.ts'
 import { formatearFecha } from '../../../../utils/formato.ts'
 
+/**
+ * Handler para operaciones CRUD de edición de proyectos
+ * @type {Handlers}
+ * @property {Function} POST - Maneja el envío del formulario de edición
+ * @property {Function} GET - Controla el acceso a la página de edición
+ * 
+ * @description
+ * Flujo de operación POST:
+ * 1. Recibe y parsea los datos del formulario
+ * 2. Valida campos obligatorios
+ * 3. Obtiene el proyecto desde la base de datos
+ * 4. Actualiza solo los campos modificados
+ * 5. Persiste cambios y redirige con feedback
+ * 
+ * Flujo de operación GET:
+ * 1. Verifica permisos (solo admin)
+ * 2. Renderiza formulario con datos actuales
+ */
 export const handler: Handlers = {
   async POST(req, ctx) {
     const formulario = await req.formData()
@@ -53,16 +77,39 @@ export const handler: Handlers = {
   },
   async GET(_req, ctx) {
     // Si el usuario es administrador, se permite continuar con la petición.
-    if (ctx.state.rol !== 'admin') return new Response(null, {
-      status: 301, // Redirección permanente
-      headers: { Location: '/a/' },
-    })
+    if (ctx.state.rol !== 'admin') {
+      return new Response(null, {
+        status: 301, // Redirección permanente
+        headers: { Location: '/a/' },
+      })
+    }
 
     const respuesta = await ctx.render()
     return respuesta
   },
 }
 
+/**
+ * Componente de formulario para edición de proyectos
+ * @function EditarProyecto
+ * @param {Request} _req - Objeto Request
+ * @param {FreshContext<Usuario>} ctx - Contexto con estado y parámetros
+ * @returns Página completa con:
+ * - Barra de navegación
+ * - Header con información del proyecto
+ * - Formulario de edición con:
+ *   * Campos para nombre y descripción
+ *   * Visualización de metadatos (fecha creación)
+ * - Manejo de errores visual
+ * - Diseño responsive y dark mode
+ * 
+ * @description
+ * Características principales:
+ * - Formulario pre-llenado con datos actuales
+ * - Actualización optimizada (solo campos modificados)
+ * - Visualización de información de solo lectura
+ * - Feedback visual claro
+ */
 export default async function EditarProyecto(_req: Request, ctx: FreshContext<Usuario>) {
   const { idProyecto } = ctx.params
   const error = ctx.url.searchParams.get('error') || ''
