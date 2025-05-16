@@ -3,7 +3,7 @@
  * @description Modelo de Usuario, con los metodos para manejarlo en la BD.
  * @license MIT
  */
-import { hash as encriptar, verify as verificarContraseñaHasheada } from '@felix/bcrypt'
+import { hash as encriptar, verify as verificarContraseñaHasheada } from 'jsr:@felix/bcrypt'
 import { DB } from './mod.ts'
 import { z as esquema } from 'zod'
 import Proyecto from './Proyecto.ts'
