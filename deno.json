@@ -20,7 +20,6 @@
   "exclude": ["**/_fresh/*"],
   "imports": {
     "$fresh/": "https://deno.land/x/fresh@1.7.3/",
-    "@felix/bcrypt": "jsr:@felix/bcrypt@^1.0.5",
     "@playwright/test": "npm:@playwright/test@^1.51.1",
     "preact": "https://esm.sh/preact@10.22.0",
     "preact/": "https://esm.sh/preact@10.22.0/",
