@@ -56,9 +56,7 @@ export const handler: Handlers = {
         domain: new URL(req.url).hostname, // Se usa el dominio actual.
         path: '/', // La cookie es accesible en toda la aplicación.
         httpOnly: true, // No accesible desde JavaScript en el navegador.
-        // WARNING: Cambiar esto a true cuando se llame a producción.
-        secure: false, // Solo se envía en conexiones HTTPS.
-        // secure: true, // Solo se envía en conexiones HTTPS.
+        secure: true, // Solo se envía en conexiones HTTPS.
       })
 
       const params = new URLSearchParams({
