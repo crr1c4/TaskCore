@@ -3,7 +3,7 @@
  * @description Modelo de Usuario, con los metodos para manejarlo en la BD.
  * @license MIT
  */
-import { hash as encriptar, compare as verificarContraseñaHasheada, genSalt as obtenerSaltos } from 'jsr:@da/bcrypt'
+import { hashSync as encriptar, compareSync as verificarContraseñaHasheada } from 'jsr:@da/bcrypt'
 import { DB } from './mod.ts'
 import { z as esquema } from 'zod'
 import Proyecto from './Proyecto.ts'
@@ -123,7 +123,7 @@ export default class Usuario {
       )
     }
 
-    this.contraseña = await encriptar(this.contraseña)
+    this.contraseña = encriptar(this.contraseña)
 
     const llave = ['usuarios', this.correo]
 
@@ -139,8 +139,8 @@ export default class Usuario {
     }
   }
 
-  public async verificarContraseña(contraseña: string) {
-    return await verificarContraseñaHasheada(contraseña, this.contraseña)
+  public verificarContraseña(contraseña: string) {
+    return verificarContraseñaHasheada(contraseña, this.contraseña)
   }
 
   private static deserializar(usuarioSerializado: Deno.KvEntry<Usuario>) {
@@ -189,7 +189,7 @@ export default class Usuario {
       )
     }
 
-    this.contraseña = await encriptar(contraseña)
+    this.contraseña = encriptar(contraseña)
     await this.actualizar()
   }
 

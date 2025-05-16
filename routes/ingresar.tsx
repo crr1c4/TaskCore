@@ -45,7 +45,7 @@ export const handler: Handlers = {
 
       const usuario = await Usuario.obtener(correo)
 
-      if (!(await usuario.verificarContraseña(contraseña))) {
+      if (!usuario.verificarContraseña(contraseña)) {
         throw new Error('La contraseña es incorrecta.')
       }
 
