@@ -1,12 +1,7 @@
 {
   "lock": false,
   "unstable": ["kv"],
-  "fmt": {
-    "semiColons": false,
-    "lineWidth": 120,
-    "semiColons": false,
-    "singleQuote": true
-  },
+  "fmt": { "semiColons": false, "lineWidth": 120, "singleQuote": true },
   "tasks": {
     "check": "deno fmt --check && deno lint && deno check **/*.ts && deno check **/*.tsx",
     "cli": "echo \"import '\\$fresh/src/dev/cli.ts'\" | deno run --unstable -A -",
@@ -21,17 +16,8 @@
     "test:e2e:debug": "deno run -A npm:playwright test --debug",
     "install:playwright": "deno run -A npm:playwright install chromium"
   },
-  "lint": {
-    "rules": {
-      "tags": [
-        "fresh",
-        "recommended"
-      ]
-    }
-  },
-  "exclude": [
-    "**/_fresh/*"
-  ],
+  "lint": { "rules": { "tags": ["fresh", "recommended"] } },
+  "exclude": ["**/_fresh/*"],
   "imports": {
     "$fresh/": "https://deno.land/x/fresh@1.7.3/",
     "@felix/bcrypt": "jsr:@felix/bcrypt@^1.0.5",
@@ -46,9 +32,6 @@
     "$std/": "https://deno.land/std@0.216.0/",
     "zod": "npm:zod@^3.24.3"
   },
-  "compilerOptions": {
-    "jsx": "react-jsx",
-    "jsxImportSource": "preact"
-  },
+  "compilerOptions": { "jsx": "react-jsx", "jsxImportSource": "preact" },
   "nodeModulesDir": "auto"
 }
