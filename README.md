@@ -2,6 +2,7 @@
 
 ![Deno Version](https://img.shields.io/badge/Deno-2.2.4+-black?logo=deno&logoColor=white)  
 ![License](https://img.shields.io/badge/License-MIT-green)
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/crr1c4/TaskCore)
 
 Plataforma colaborativa de gestión de proyectos con autenticación, paneles interactivos y notificaciones en tiempo real.  
 
