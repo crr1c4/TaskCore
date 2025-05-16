@@ -9,6 +9,20 @@ import Proyecto from '../../../../models/Proyecto.ts'
 import Usuario from '../../../../models/Usuario.ts'
 import { formatearFecha } from '../../../../utils/formato.ts'
 
+/**
+ * Página principal de visualización de un proyecto específico.
+ * Muestra información detallada del proyecto, incluyendo:
+ * - Encabezado con datos básicos del proyecto y opciones de edición (para admin)
+ * - Sección de equipo con lista de integrantes
+ * - Resumen gráfico del progreso de tareas (solo para admin)
+ * - Listado de anuncios recientes
+ * - Tabla de tareas con su estado y fechas límite
+ * Maneja errores durante la carga y muestra modales para mensajes de estado
+ * 
+ * @param _request - Objeto Request de la petición HTTP
+ * @param ctx - Contexto de Fresh que incluye parámetros de ruta y estado del usuario
+ * @returns Renderizado de la página del proyecto o redirección en caso de error
+ */
 export default async function PaginaProyecto(_request: Request, ctx: FreshContext<Usuario>) {
   const { idProyecto } = ctx.params
   const error = ctx.url.searchParams.get('error') || ''

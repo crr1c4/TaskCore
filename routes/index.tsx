@@ -2,8 +2,22 @@ import { Boton } from '../components/Boton.tsx'
 import Fondo from '../components/Fondo.tsx'
 import Footer from '../components/Footer.tsx'
 
-/* Componente principal Home: Renderiza la estructura de la página principal con distintos componentes.
- Muestra encabezados, botones, inputs, listas de tareas y detalles de proyectos.*/
+/**
+ * Componente de página de bienvenida (Home) para TaskCore.
+ * Muestra la presentación inicial de la aplicación con:
+ * - Mensaje de bienvenida
+ * - Logo de la aplicación
+ * - Botones de acceso (Iniciar sesión / Registro)
+ * - Sección de ventajas competitivas
+ * 
+ * Utiliza un diseño responsive con grid layout que se adapta a móvil y desktop.
+ * Incluye componentes reutilizables como Fondo animado y Footer.
+ * 
+ * @returns Estructura completa de la página de inicio con:
+ *   - Sección principal con título y botones de acceso
+ *   - Sección secundaria con lista de beneficios
+ *   - Componente Footer
+ */
 export default function Bienvenida() {
   // const count = useSignal(3)
   return (

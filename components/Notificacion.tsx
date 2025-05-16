@@ -2,10 +2,37 @@ import Notificacion from '../models/Notificacion.ts'
 import { formatearFechaYHora } from '../utils/formato.ts'
 import { IconoAdvertencia, IconoChat, IconoNotificaciones, } from './Iconos.tsx'
 
+
+/**
+ * Propiedades para el componente CartaNotificacion
+ * @interface Props
+ * @property {Notificacion} notificacion - Objeto con los datos de la notificación a mostrar
+ */
 interface Props {
   notificacion: Notificacion
 }
 
+/**
+ * Componente que muestra una notificación estilizada según su tipo
+ * @component
+ * @param {Props} props - Propiedades del componente
+ * @param {Notificacion} props.notificacion - Datos de la notificación
+ * @returns Tarjeta de notificación con:
+ * - Borde lateral colorido según tipo
+ * - Icono correspondiente al tipo
+ * - Estilos para modo claro/oscuro
+ * - Indicador visual si está próxima a expirar
+ * - Fecha de recepción formateada
+ * @description
+ * Componente que renderiza una notificación con:
+ * - Diferentes estilos según tipo (advertencia, comentario, etc.)
+ * - Indicador visual cuando faltan menos de 24 horas para expirar
+ * - Integración con el sistema de iconos
+ * - Soporte completo para dark mode
+ * - Efectos hover y transiciones
+ * @example
+ * <CartaNotificacion notificacion={notificacion} />
+ */
 export default function CartaNotificacion({ notificacion }: Props) {
   // Calcular si la notificación está próxima a expirar
   const horasRestantes = Math.floor(

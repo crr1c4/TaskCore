@@ -4,17 +4,26 @@ import { crearToken } from '../../../utils/autenticacion.ts'
 import Usuario from '../../../models/Usuario.ts'
 import { setCookie } from 'jsr:@std/http/cookie'
 import { deleteCookie } from 'jsr:@std/http/cookie'
-// import { crearToken } from '../../../utils/autenticacion.ts'
 
 /**
- * Manejador de la autenticación de usuarios mediante formulario.
- * @type {Handlers} Manejador de solicitudes HTTP.
+ * Manejador HTTP para actualizar el nombre del usuario autenticado.
+ *
+ * Procesa una solicitud POST que contiene un nuevo nombre y actualiza el perfil del usuario en la base de datos.
+ * Luego genera un nuevo token JWT y lo almacena en una cookie segura.
+ *
+ * @type {Handlers}
  */
+
 export const handler: Handlers = {
   /**
-   * Maneja la solicitud POST para autenticar un usuario y generar un token JWT.
+   * Maneja la solicitud POST para cambiar el nombre del usuario.
+   *
+   * Valida los datos del formulario, actualiza el nombre del usuario en la base de datos,
+   * genera un nuevo token JWT y lo guarda en una cookie.
+   *
    * @param {Request} req - La solicitud HTTP entrante.
-   * @param {FreshContext} _ctx - El contexto de Fresh (no se usa en este caso).
+   * @param {FreshContext} _ctx - Contexto del servidor (no se usa directamente en esta función).
+   * @returns Respuesta HTTP con redirección a la página correspondiente.
    */
   async POST(req: Request, _ctx: FreshContext) {
     try {
@@ -53,9 +62,7 @@ export const handler: Handlers = {
         domain: new URL(req.url).hostname, // Se usa el dominio actual.
         path: '/', // La cookie es accesible en toda la aplicación.
         httpOnly: true, // No accesible desde JavaScript en el navegador.
-        // WARNING: Cambiar esto a true cuando se llame a producción.
-        secure: false, // Solo se envía en conexiones HTTPS.
-        // secure: true, // Solo se envía en conexiones HTTPS.
+        secure: true, // Solo se envía en conexiones HTTPS.
       })
 
       const params = new URLSearchParams({

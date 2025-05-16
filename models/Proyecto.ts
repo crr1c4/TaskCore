@@ -5,6 +5,79 @@ import Notificacion from './Notificacion.ts'
 import Tarea from './Tarea.ts'
 import Usuario from './Usuario.ts'
 
+/**
+ * Clase que representa un Proyecto en el sistema
+ * @class Proyecto
+ * @property {string} id - Identificador único del proyecto (UUID v4)
+ * @property {string} nombre - Nombre del proyecto
+ * @property {string} descripcion - Descripción del proyecto
+ * @property {Date} fechaCreacion - Fecha de creación del proyecto
+ * @property {string} administrador - Correo del administrador del proyecto
+ * @property {string[]} integrantes - Lista de correos de los integrantes
+ * 
+ * @description
+ * Modelo principal que gestiona toda la lógica de proyectos incluyendo:
+ * - Creación y gestión de proyectos
+ * - Administración de miembros (agregar/eliminar)
+ * - Gestión completa de tareas (CRUD)
+ * - Sistema de comentarios en tareas
+ * - Sistema de anuncios del proyecto
+ * - Notificaciones automáticas a usuarios
+ * - Persistencia en base de datos (Deno KV)
+ * - Validaciones de integridad de datos
+ * 
+ * @example
+ * // Crear nuevo proyecto
+ * const proyecto = Proyecto.crear(
+ *   'Mi Proyecto',
+ *   'Descripción del proyecto',
+ *   'admin@example.com'
+ * );
+ * await proyecto.guardar();
+ * 
+ * @example
+ * // Obtener proyecto existente
+ * const proyecto = await Proyecto.obtener('project-id');
+ * 
+ * @example
+ * // Agregar tarea a proyecto
+ * const tarea = new Tarea(...);
+ * await proyecto.agregarTarea(tarea);
+ *
+ * Métodos estáticos principales:
+ * @static
+ * @method crear - Crea nueva instancia de Proyecto
+ * @method deserializar - Reconstruye instancia desde DB
+ * @method obtener - Obtiene proyecto por ID
+ * @method eliminar - Elimina proyecto y sus elementos asociados
+ * 
+ * Métodos de gestión de miembros:
+ * @method agregarIntegrante - Añade usuario al proyecto
+ * @method eliminarIntegrante - Elimina usuario del proyecto
+ * @method obtenerIntegrantes - Obtiene detalles de los miembros
+ * 
+ * Métodos de tareas:
+ * @method agregarTarea - Crea nueva tarea
+ * @method eliminarTarea - Elimina tarea
+ * @method obtenerTareasAdministrador - Obtiene todas las tareas
+ * @method obtenerTareasIntegrante - Obtiene tareas de un miembro
+ * @method obtenerTarea - Obtiene tarea específica
+ * @method actualizarTarea - Actualiza tarea existente
+ * 
+ * Métodos de anuncios:
+ * @method agregarAnuncio - Crea nuevo anuncio
+ * @method eliminarAnuncio - Elimina anuncio
+ * @method obtenerAnuncios - Obtiene todos los anuncios
+ * 
+ * Métodos de comentarios:
+ * @method agregarComentario - Añade comentario a tarea
+ * @method eliminarComentario - Elimina comentario
+ * @method obtenerComentariosTarea - Obtiene comentarios de tarea
+ * 
+ * Métodos internos:
+ * @private @method actualizar - Actualiza proyecto en DB
+ * @private @method enviarNotificacion - Envía notificación a usuario
+ */
 export default class Proyecto {
   public id: string
   public nombre: string
@@ -222,6 +295,21 @@ export default class Proyecto {
         `Tarea: ${tarea.nombre} del proyecto ${this.nombre}.`,
       ),
     )
+
+    const ahora = Date.now()
+    const tiempoRestante = tarea.fechaExpiracion.getTime() - ahora
+    const unaHoraEnMs = 60 * 60 * 1000
+    
+    if (tiempoRestante > 0 && tiempoRestante <= unaHoraEnMs) {
+        await this.enviarNotificacion(
+            tarea.correoResponsable,
+            new Notificacion(
+                '⏳ Tarea por vencer',
+                `¡Atención! La tarea "${tarea.nombre}" vence en menos de una hora.`,
+                'recordatorio'
+            )
+        )
+    }
   }
 
   public async eliminarTarea(idTarea: string) {

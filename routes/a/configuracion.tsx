@@ -5,6 +5,66 @@ import { ModalError } from '../../islands/Modal.tsx'
 import BarraNavegacion from '../../islands/NavBar.tsx'
 import Usuario from '../../models/Usuario.ts'
 
+/**
+ * Página de configuración de usuario
+ * @function Configuracion
+ * @param {FreshContext<Usuario>} ctx - Contexto de Fresh con estado de usuario
+ * @returns Página completa de configuración con:
+ * - Barra de navegación
+ * - Modal de errores (si existe)
+ * - Tres secciones configurables:
+ *   1. Información personal
+ *   2. Seguridad
+ *   3. Preferencias
+ * 
+ * @description
+ * Página que permite a los usuarios:
+ * - Actualizar su nombre de usuario
+ * - Cambiar su contraseña
+ * - Modificar preferencias de tema (claro/oscuro)
+ * - Navegar entre secciones
+ * 
+ * Características:
+ * - Diseño responsive (mobile/desktop)
+ * - Soporte para dark mode
+ * - Manejo de errores mediante URL params
+ * - Formularios protegidos
+ * - Validación de campos
+ * 
+ * @example
+ * // Ruta accesible:
+ * /configuracion
+ * 
+ * // Con error:
+ * /configuracion?error="Mensaje de error"
+ *
+ * Estructura principal:
+ * 
+ * 1. BarraNavegacion - Componente de navegación superior
+ * 2. ModalError - Muestra errores pasados por URL
+ * 3. Layout principal:
+ *    - Sidebar con navegación interna
+ *    - Contenido principal con 3 secciones:
+ *      a. Información personal (nombre)
+ *      b. Seguridad (contraseña)
+ *      c. Preferencias (tema)
+ * 
+ * Formularios:
+ * @form /a/editar/nombre - Actualiza nombre de usuario
+ * @form /a/editar/contrasena - Cambia contraseña
+ * @form /a/editar/tema - Modifica tema claro/oscuro
+ * 
+ * Seguridad:
+ * - Todos los formularios incluyen el correo como hidden field
+ * - Validación del lado del cliente (required, minLength)
+ * - Contraseñas con autocomplete="new-password"
+ * 
+ * Diseño:
+ * - Max-width 7xl para contenido principal
+ * - Grid flexbox para sidebar + contenido
+ * - Shadows y borders para secciones
+ * - Transiciones suaves para dark mode
+ */
 export default function Configuracion(ctx: FreshContext<Usuario>) {
   const url = ctx.url
   const error = url.searchParams.get('error')?.replaceAll('"', '')

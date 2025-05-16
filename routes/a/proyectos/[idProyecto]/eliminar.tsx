@@ -1,4 +1,3 @@
-// routes/proyecto/[idProyecto]/eliminar.tsx
 import { FreshContext, Handlers } from '$fresh/server.ts'
 import NavBar from '../../../../islands/NavBar.tsx'
 import { ModalError } from '../../../../islands/Modal.tsx'
@@ -6,17 +5,26 @@ import Proyecto from '../../../../models/Proyecto.ts'
 import Usuario from '../../../../models/Usuario.ts'
 import { Boton, BotonEmergencia } from '../../../../components/Boton.tsx'
 
+/**
+ * Manejadores para las rutas de eliminación de proyectos.
+ * @type {Handlers<Usuario>}
+ */
 export const handler: Handlers<Usuario> = {
+  /**
+   * Maneja las solicitudes POST para eliminar un proyecto.
+   * @async
+   * @param _req - La solicitud HTTP.
+   * @param ctx - Contexto de Fresh con parámetros de ruta.
+   * @returns Redirección con mensaje de éxito o error.
+   */
   async POST(_req, ctx) {
     const { idProyecto } = ctx.params
     try {
-      await Proyecto.eliminar(idProyecto) 
+      await Proyecto.eliminar(idProyecto)
 
       const params = new URLSearchParams({
-        mensaje:'Proyecto eliminado correctamente.' 
+        mensaje: 'Proyecto eliminado correctamente.',
       })
-
-
 
       return new Response(null, {
         status: 303,
@@ -26,9 +34,8 @@ export const handler: Handlers<Usuario> = {
       const e = error as Error
 
       const params = new URLSearchParams({
-        error: e.message
+        error: e.message,
       })
-
 
       return new Response(null, {
         status: 303,
@@ -38,18 +45,35 @@ export const handler: Handlers<Usuario> = {
       })
     }
   },
+  /**
+   * Maneja las solicitudes GET para mostrar la página de confirmación de eliminación.
+   * Solo accesible para administradores.
+   * @async
+   * @param _req - La solicitud HTTP.
+   * @param ctx - Contexto de Fresh con estado de usuario.
+   * @returns Respuesta renderizada o redirección si no es admin.
+   */
   async GET(_req, ctx) {
     // Si el usuario es administrador, se permite continuar con la petición.
-    if (ctx.state.rol !== 'admin') return new Response(null, {
-      status: 301, // Redirección permanente
-      headers: { Location: '/a/' },
-    })
+    if (ctx.state.rol !== 'admin') {
+      return new Response(null, {
+        status: 301, // Redirección permanente
+        headers: { Location: '/a/' },
+      })
+    }
 
     const respuesta = await ctx.render()
     return respuesta
   },
 }
 
+/**
+ * Componente de página para confirmar la eliminación de un proyecto.
+ * @async
+ * @param {Request} _req - La solicitud HTTP.
+ * @param {FreshContext<Usuario>} ctx - Contexto de Fresh con parámetros y estado.
+ * @returns Página de confirmación de eliminación.
+ */
 export default async function EliminarProyecto(_req: Request, ctx: FreshContext<Usuario>) {
   const { idProyecto } = ctx.params
   const error = ctx.url.searchParams.get('error')

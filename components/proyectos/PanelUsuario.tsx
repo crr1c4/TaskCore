@@ -1,9 +1,21 @@
 import Usuario from '../../models/Usuario.ts'
 
+
+/**
+ * Interfaz que define las propiedades del componente PanelUsuario
+ * @interface Props
+ * @property {Usuario} miembro - Objeto usuario que representa al miembro a mostrar
+ */
 interface Props {
   miembro: Usuario
 }
 
+/**
+ * Componente que muestra un panel con la información básica de un usuario/miembro
+ * @component
+ * @param {Props} props - Propiedades del componente
+ * @param {Usuario} props.miembro - Datos del usuario a mostrar
+ */
 export default function PanelUsuario({ miembro }: Props) {
   return (
     <div class='flex items-center space-x-3 p-3 rounded-lg transition-colors duration-200'>

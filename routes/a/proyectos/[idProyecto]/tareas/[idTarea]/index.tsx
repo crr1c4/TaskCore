@@ -1,4 +1,13 @@
-// routes/proyecto/[idProyecto]/tareas/[idTarea].tsx
+/**
+ * Módulo para visualización detallada de tareas
+ * @module VisualizarTarea
+ * @description 
+ * Maneja la visualización completa de tareas incluyendo:
+ * - Información detallada de la tarea
+ * - Gestión de comentarios
+ * - Acciones administrativas
+ * - Notificaciones relacionadas
+ */
 import { FreshContext, Handlers } from '$fresh/server.ts'
 import Proyecto from '../../../../../../models/Proyecto.ts'
 import NavBar from '../../../../../../islands/NavBar.tsx'
@@ -15,7 +24,22 @@ import { ModalError, ModalLink } from '../../../../../../islands/Modal.tsx'
 import Comentario from '../../../../../../models/Comentario.ts'
 import Notificacion from '../../../../../../models/Notificacion.ts'
 
-// En tu archivo de ruta de la tarea (ej: /routes/proyectos/[idProyecto]/tareas/[idTarea].tsx)
+/**
+ * Handler para operaciones POST (comentarios)
+ * @type {Handlers}
+ * @property {Function} POST - Maneja la creación de nuevos comentarios
+ * @description
+ * Flujo de operación POST:
+ * 1. Recibe y valida el comentario
+ * 2. Crea instancia de Comentario
+ * 3. Asocia el comentario a la tarea
+ * 4. Envía notificación al responsable/admin
+ * 5. Redirige con estado 303 (POST-Redirect-GET)
+ * 
+ * Notificaciones:
+ * - Notifica al admin si comenta el responsable
+ * - Notifica al responsable si comenta el admin
+ */
 export const handler: Handlers = {
   async POST(req, ctx) {
     const { idProyecto, idTarea } = ctx.params
@@ -56,6 +80,26 @@ export const handler: Handlers = {
   },
 }
 
+/**
+ * Componente de visualización de tarea
+ * @function VisualizarTarea
+ * @param {Request} _req - Objeto Request
+ * @param {FreshContext<Usuario>} ctx - Contexto con estado y parámetros
+ * @returns Página completa con:
+ * - Barra de navegación
+ * - Información detallada de la tarea
+ * - Sección de comentarios
+ * - Formulario para nuevos comentarios
+ * - Acciones administrativas (para admins)
+ * 
+ * @description
+ * Características principales:
+ * - Vista detallada con todos los campos de la tarea
+ * - Sistema de comentarios completo
+ * - Estado visual claro (colores, iconos)
+ * - Integración con dark mode
+ * - Componentes modales para feedback
+ */
 export default async function VisualizarTarea(_req: Request, ctx: FreshContext<Usuario>) {
   try {
     const { idProyecto, idTarea } = ctx.params

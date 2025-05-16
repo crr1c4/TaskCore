@@ -1,3 +1,22 @@
+/**
+ * Colección de componentes de iconos SVG reutilizables
+ * @description
+ * Este módulo exporta múltiples componentes de iconos en formato SVG
+ * para uso en la interfaz de usuario. Todos los iconos:
+ * - Usan el color actual del texto (currentColor)
+ * - Tienen un tamaño consistente (size-6 o w-5/h-5)
+ * - Están optimizados para dark/light mode
+ * - Incluyen los iconos más comunes para aplicaciones web:
+ *   (usuario, menú, proyectos, tareas, notificaciones, etc.)
+ * 
+ * Los iconos están diseñados para ser accesibles y adaptables,
+ * usando propiedades SVG estándar como strokeWidth y viewBox.
+ * 
+ * @example 
+ * // Uso básico de cualquier icono
+ * <IconoUsuario />
+ * <IconoTarea className="text-blue-500" />
+ */
 export const Usuario = () => (
   <svg
     xmlns='http://www.w3.org/2000/svg'

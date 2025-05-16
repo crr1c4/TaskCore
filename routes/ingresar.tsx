@@ -14,14 +14,23 @@ import Enlace from '../components/Enlace.tsx'
 import Footer from '../components/Footer.tsx'
 
 /**
- * Manejador de la autenticación de usuarios mediante formulario.
- * @type {Handlers} Manejador de solicitudes HTTP.
+ * Manejador de rutas para el proceso de autenticación de usuarios.
+ * Controla tanto la visualización del formulario (GET) como el procesamiento
+ * de credenciales (POST) incluyendo la generación de tokens JWT.
  */
 export const handler: Handlers = {
   /**
-   * Maneja la solicitud POST para autenticar un usuario y generar un token JWT.
-   * @param {Request} req - La solicitud HTTP entrante.
-   * @param {FreshContext} _ctx - El contexto de Fresh (no se usa en este caso).
+   * Procesa el formulario de inicio de sesión y autentica al usuario.
+   * En caso exitoso:
+   * - Genera un token JWT con los datos del usuario
+   * - Establece una cookie HTTP-only segura
+   * - Redirige al área privada
+   * En caso de error:
+   * - Redirige de vuelta al formulario con mensaje de error
+   *
+   * @param {Request} req - Solicitud HTTP con los datos del formulario
+   * @param {FreshContext} _ctx - Contexto de Fresh (no utilizado)
+   * @returns Redirección según el resultado de la autenticación
    */
   async POST(req: Request, _ctx: FreshContext) {
     const formulario = await req.formData()
@@ -34,7 +43,7 @@ export const handler: Handlers = {
         throw new Error('Error en el envío del formulario.')
       }
 
-      const usuario = await Usuario.obtener(correo) 
+      const usuario = await Usuario.obtener(correo)
 
       if (!(await usuario.verificarContraseña(contraseña))) {
         throw new Error('La contraseña es incorrecta.')
@@ -57,9 +66,7 @@ export const handler: Handlers = {
         domain: new URL(req.url).hostname, // Se usa el dominio actual.
         path: '/', // La cookie es accesible en toda la aplicación.
         httpOnly: true, // No accesible desde JavaScript en el navegador.
-        // WARNING: Cambiar esto a true cuando se llame a producción.
-        secure: false, // Solo se envía en conexiones HTTPS.
-        // secure: true, // Solo se envía en conexiones HTTPS.
+        secure: true, // Solo se envía en conexiones HTTPS.
       })
 
       headers.set('Location', `/a/`)
@@ -133,7 +140,7 @@ export default function Ingresar(req: Request) {
           autoComplete='off'
         />
 
-        <Boton >Iniciar sesión</Boton>
+        <Boton>Iniciar sesión</Boton>
         <Enlace direccion='/' texto='Regresar al inicio' />
         <Enlace direccion='/registro' texto='Crear una nueva cuenta' />
       </form>
