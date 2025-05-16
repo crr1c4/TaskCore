@@ -1,6 +1,6 @@
 {
   "lock": false,
-  "unstable": ["kv"],
+  "unstable": ["kv", "ffi"],
   "fmt": { "semiColons": false, "lineWidth": 120, "singleQuote": true },
   "tasks": {
     "check": "deno fmt --check && deno lint && deno check **/*.ts && deno check **/*.tsx",
