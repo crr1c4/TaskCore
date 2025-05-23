@@ -17,7 +17,7 @@ export default function Empresa() {
           <div class='max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center'>
             <h1 class='text-4xl'>Conoce TaskCore</h1>
             <p class='mt-4 text-xl text-black max-w-3xl mx-auto'>
-              Innovando en gestión de proyectos desde 2023
+              Innovando en gestión de proyectos desde 2025
             </p>
           </div>
         </header>
