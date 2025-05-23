@@ -15,7 +15,7 @@ export default function Empresa() {
         {/* Header Hero */}
         <header class='relative pt-20 pb-16 bg-gradient-to-b from-blue-900/80 to-transparent'>
           <div class='max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center'>
-            <h1 class='text-4xl'>Conoce TaskCore</h1>
+            <h1 class='text-4xl'>Conoce Navetix</h1>
             <p class='mt-4 text-xl text-black max-w-3xl mx-auto'>
               Innovando en gestión de proyectos desde 2025
             </p>
