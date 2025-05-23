@@ -24,7 +24,7 @@ const esquemaContraseña = esquema
   .refine((val) => /[A-Z]/.test(val))
   .refine((val) => /[a-z]/.test(val))
   .refine((val) => /[0-9]/.test(val))
-  .refine((val) => /[!@#$%^&*(),.?":{}|<>]/.test(val))
+  .refine((val) => /[!@#$%^&*(),.?":{}|<>-_]/.test(val))
 
 /**
  * @description Esquema de validación para nombres.

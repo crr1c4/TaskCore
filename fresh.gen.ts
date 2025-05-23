@@ -29,6 +29,7 @@ import * as $index from './routes/index.tsx'
 import * as $ingresar from './routes/ingresar.tsx'
 import * as $registro from './routes/registro.tsx'
 import * as $salir from './routes/salir.ts'
+import * as $sobre_nosotros from './routes/sobre-nosotros.tsx'
 import * as $Modal from './islands/Modal.tsx'
 import * as $NavBar from './islands/NavBar.tsx'
 import type { Manifest } from '$fresh/server.ts'
@@ -63,6 +64,7 @@ const manifest = {
     './routes/ingresar.tsx': $ingresar,
     './routes/registro.tsx': $registro,
     './routes/salir.ts': $salir,
+    './routes/sobre-nosotros.tsx': $sobre_nosotros,
   },
   islands: {
     './islands/Modal.tsx': $Modal,
